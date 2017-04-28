@@ -1,0 +1,521 @@
+.article {
+	background: #fff;
+	border: 1px solid #e2e2e2;
+	float: left;
+	min-height: 500px;
+	padding: 15px 25px 30px;
+	width: 692px
+}
+
+.article,.mod-essence-ans {
+	position: relative
+}
+
+.article .art-title {
+	font-size: 22px;
+	font-weight: 100
+}
+
+.article .art-info {
+	line-height: 25px;
+	margin: 5px 0;
+	position: relative
+}
+
+.mod-essence-ans .catalog {
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 62px;
+	z-index: 15;
+	zoom: 1
+}
+
+.mod-essence-ans .catalog ul li {
+	border-bottom: 1px solid #e6e6e6;
+	color: #989898;
+	cursor: pointer;
+	height: 36px;
+	line-height: 35px;
+	text-align: center
+}
+
+.article .art-info .art-time {
+	color: #aeaeae
+}
+
+.article .art-info .art-org {
+	position: absolute;
+	right: 0;
+	top: -42px
+}
+
+.article .art-info .edit-btn {
+	background: url(http://p5.qhimg.com/t0183ed2a2145d9a68a.png) 0 2px no-repeat;
+	color: #999;
+	font-size: 12px;
+	padding-left: 13px
+}
+
+.article .art-info .delete-btn {
+	background: url(http://p7.qhimg.com/t01fb532ae0438bee7f.png) 0 2px no-repeat;
+	color: #999;
+	font-size: 12px;
+	padding-left: 12px
+}
+
+.mod-essence-ans .catalog ul .on,.mod-essence-ans .catalog ul li:hover {
+	background: #2bbc12;
+	border-right: 2px solid #1d9d07;
+	color: #fff;
+	text-indent: 2px
+}
+
+.aside {
+	float: right;
+	width: 226px
+}
+
+.mod-author-info {
+	background: #fff;
+	border: 1px solid #e2e2e2;
+	position: relative;
+	text-align: center
+}
+
+.mod-fixed {
+	background: rgba(0,0,0,.7);
+	background: #414141\0;
+	*background: #414141;
+	bottom: 0;
+	height: 95px;
+	left: 0;
+	line-height: 95px;
+	position: fixed;
+	text-align: center;
+	width: 100%;
+	z-index:1000;
+	       
+}
+
+.mod-fixed > * {
+	display: inline-block;
+	vertical-align: middle
+}
+
+.deletePanel {
+	background: #fff;
+	border: 1px solid #dcdcdc;
+	color: #333;
+	font-size: 14px
+}
+
+.ui-sub-suc {
+	border: 2px solid #f1f1f1;
+	text-align: center;
+	width: auto
+}
+
+.ui-sub-suc-inner {
+	background: #fff;
+	border: 1px solid #d6d6d6;
+	color: #666;
+	font-size: 14px;
+	padding: 20px 46px
+}
+
+.ico-ok {
+	background: url(http://p3.qhimg.com/t019c0597ab400e1814.png) 0 0 no-repeat;
+	display: inline-block;
+	*display: inline;
+	vertical-align: -7px;
+	*vertical-align: -4px;
+	*zoom: 1
+}
+
+.ico-ok,.ico-info {
+	height: 22px;
+	margin-right: 5px;
+	width: 22px
+}
+
+.ico-info {
+	background: url(http://p2.qhimg.com/t014b110577ea8fba6c.png) 0 0 no-repeat;
+	display: inline-block;
+	*display: inline;
+	vertical-align: -7px;
+	*vertical-align: -4px;
+	*zoom: 1
+}
+
+.mod-create a {
+	background: url(http://p2.qhimg.com/t01bcd798fe4e7212f3.png) no-repeat 0 0;
+	color: #fff;
+	display: inline-block;
+	font-size: 20px;
+	height: 55px;
+	line-height: 55px;
+	text-align: center;
+	width: 226px
+}
+
+.mod-author-info table {
+	margin-top: 15px;
+	width: 100%
+}
+
+.mod-fixed span {
+	color: #fff;
+	font-size: 32px;
+	font-family: 'KaiTi'
+}
+
+.mod-author-info table tr td {
+	color: #b5b5b5;
+	font-size: 16px;
+	text-align: center;
+	width: 50%
+}
+
+.mod-essence-ans .main-content {
+	text-align: left
+}
+
+.mod-essence-ans .text {
+	font-size: 16px;
+	line-height: 28px;
+	text-align: justify;
+	word-wrap: break-word
+}
+
+.mod-tips .tag {
+	background: #ff5400;
+	border: 1px solid #ff5400;
+	border-radius: 2px;
+	color: #fff;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	margin-right: 10px;
+	text-align: center;
+	width: 36px
+}
+
+.mod-author-info .author-icon {
+	position: absolute;
+	right: -5px;
+	top: -5px
+}
+
+.mod-author-info .pic {
+	margin-top: 20px
+}
+
+.mod-author-info .name {
+	margin-top: 5px
+}
+
+.mod-author-info .other {
+	border-top: 1px solid #e2e2e2;
+	margin-top: 25px;
+	padding: 15px 10px 14px
+}
+
+.mod-fixed .btn-login,.mod-fixed .btn-reg {
+	background: #2B9CEC;
+	border: 1px solid #2B9CEC;
+	border-radius: 2px;
+	color: #fff;
+	*display: inline;
+	height: 36px;
+	line-height: 36px;
+	margin-right: 10px;
+	padding: 0;
+	width: 116px;
+	*zoom: 1
+}
+
+.mod-fixed .btn-reg {
+	background: #bbb;
+	border-color: #bbb;
+	color: #3c3c3c
+}
+
+.mod-fixed .close {
+	background: url(http://p1.qhimg.com/t017b44a3151d3cc793.png) 0 0 no-repeat;
+	display: block;
+	height: 44px;
+	position: absolute;
+	right: 20px;
+	top: 0;
+	width: 44px
+}
+
+.deletePanel .hd {
+	background: #f7f8f9;
+	border-bottom: 1px solid #edeff5;
+	color: #37a92f;
+	font-size: 16px;
+	height: 38px;
+	line-height: 38px;
+	padding-left: 24px
+}
+
+.deletePanel .bd {
+	padding: 20px 24px 15px
+}
+
+.deletePanel .submit-btn {
+	margin-bottom: 10px;
+	margin-top: 15px;
+	text-align: right
+}
+
+.ui-sub-suc .close {
+	background: url(http://p2.qhimg.com/t014808c1b902286382.gif);
+	cursor: pointer;
+	display: none;
+	_display: inline-block;
+	height: 16px;
+	position: absolute;
+	right: 6px;
+	top: 6px;
+	width: 16px
+}
+
+.mod-essence-ans .text em {
+	font-style: italic
+}
+
+.mod-essence-ans .text strong,.mod-essence-ans .text em strong,.mod-essence-ans .text strong em {
+	font-weight: 700
+}
+
+.mod-create a:hover {
+	background-position: 0 -56px;
+	text-decoration: none
+}
+
+.mod-create a:active {
+	background-position: 0 -112px
+}
+
+.mod-author-info .pic a {
+	border-radius: 50%;
+	display: inline-block;
+	height: 64px;
+	overflow: hidden
+}
+
+.mod-author-info .pic a,.mod-author-info .pic img {
+	width: 64px
+}
+
+.mod-author-info .name a {
+	color: #4c4c4c;
+	font-size: 16px
+}
+
+.mod-author-info table .coin,.mod-author-info table .score {
+	background: url(http://p6.qhimg.com/t0197096f42d4407d98.png) no-repeat 26px 1px;
+	padding-left: 17px
+}
+
+.mod-author-info table .score {
+	background-position: 22px -66px
+}
+
+.mod-author-info table .border {
+	border-right: 1px solid #f3f3f3
+}
+
+.mod-author-info table .orange {
+	color: #ff5a00
+}
+
+.mod-author-info .other h3 {
+	font-weight: 100;
+	font-size: 18px;
+	text-align: left
+}
+
+.mod-author-info .other h3,.mod-author-info .other h3 a {
+	color: #43bb10
+}
+
+.mod-author-info .other ul {
+	text-align: left
+}
+
+.deletePanel .bd li {
+	display: inline-block;
+	*display: inline;
+	_display: inline;
+	margin-right: 46px;
+	width: 96px;
+	zoom: 1;
+	*zoom: 1;
+	_zoom: 1
+}
+
+.mod-essence-ans .text em strong,.mod-essence-ans .text strong em {
+	font-style: italic
+}
+
+.mod-author-info .other ul li {
+	border-bottom: 1px dotted #c3c3c3;
+	font-size: 16px;
+	height: 45px;
+	line-height: 45px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 204px
+}
+
+.deletePanel .bd li input,.deletePanel .bd li span {
+	vertical-align: middle;
+	cursor: pointer
+}
+
+.mod-author-info .other ul li a {
+	color: #4e4e4e;
+	font-size: 14px
+}
+
+.mod-essence-ans .main-content .section {
+	margin-top: 20px
+}
+
+.mod-essence-ans .main-content .brief {
+	margin-top: 0
+}
+
+.mod-essence-ans .section .title {
+	color: #2bb214;
+	font-size: 18px;
+	font-weight: 400;
+	padding-bottom: 5px
+}
+
+.mod-essence-ans .section .content {
+	color: #333;
+	padding: 10px 0;
+	word-wrap: break-word
+}
+
+.mod-essence-ans .ol .list-icon {
+	background: url(http://p1.qhimg.com/t01310d6adc650f9352.png) -1px -199px no-repeat;
+	color: #fff;
+	font-size: 12px;
+	height: 21px;
+	left: 0;
+	line-height: 21px;
+	margin-right: 10px;
+	position: absolute;
+	text-align: center;
+	top: 14px;
+	width: 21px
+}
+
+.mod-essence-ans .ul .list-icon {
+	background: url(http://p1.qhimg.com/t01310d6adc650f9352.png) -1px -247px no-repeat;
+	display: inline-block;
+	height: 11px;
+	left: 0;
+	position: absolute;
+	text-indent: -999px;
+	top: 19px;
+	width: 11px
+}
+
+.mod-essence-ans .steps .text {
+	margin-left: 30px
+}
+
+.mod-author-info .other .more {
+	text-align: right
+}
+
+.mod-fixed .btn-reg:hover {
+	background: #ddd
+}
+
+.mod-fixed .btn-login:hover {
+	background: #47c711
+}
+
+.mod-fixed .close:hover {
+	background-position: 0 -44px
+}
+
+.deletePanel .bd .reason-list {
+	margin-top: 5px
+}
+
+.deletePanel .bd .other {
+	margin-top: 18px
+}
+
+.deletePanel .submit-btn .errmsg {
+	color: red;
+	display: none;
+	float: left;
+	font-size: 12px
+}
+
+.deletePanel .submit-btn .btn {
+	background: #37aa2f;
+	border: 1px solid #26951e;
+	color: #fff;
+	padding: 8px 29px
+}
+
+.ui-sub-suc .close:hover {
+	background-position: 0 -17px
+}
+
+.ui-sub-suc:hover .close {
+	display: inline-block
+}
+
+.mod-essence-ans .section .content li {
+	padding: 10px 0;
+	position: relative
+}
+
+.mod-essence-ans .section .content img {
+	max-width: 100%
+}
+
+.mod-essence-ans .brief .text p {
+	margin: 20px 0
+}
+
+.mod-author-info .other ul .last {
+	border: 0
+}
+
+.mod-author-info .other .more a {
+	color: #9c9c9c
+}
+
+.deletePanel .bd .other textarea {
+	border: 1px solid #dadada;
+	height: 70px;
+	margin-top: 5px;
+	padding: 2px 4px;
+	width: 420px
+}
+
+.mod-essence-ans .section .content .pic {
+	margin-top: 10px
+}
+
+.mod-essence-ans .steps .content .pic {
+	margin-left: 30px
+}
+
+.deletePanel .submit-btn .btn:hover {
+	background: #43d339
+}

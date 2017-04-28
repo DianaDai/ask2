@@ -1,0 +1,58 @@
+@CHARSET "UTF-8";
+/*礼品商城*/
+.tipmod{background: none repeat scroll 0 0 #FEFFD8;border: 1px solid #ECE05D;}
+.tipmod h3{margin-left: 10px;padding: 5px;}
+.gift-list{ padding:10px 0 10px 15px;text-align: center;width:auto;}
+.gift-list li{ float:left; padding:10px 15px; width:140px;}
+.gift-list  img{ display:block; border:1px solid #ccc;}
+.gift-list .name{ display:block; margin:3px 0 0; height:24px; line-height:24px; overflow:hidden; color:#333;}
+.gift-list span{ color:#f60;overflow: hidden;}
+.credit_note{margin-left: 15px;}
+.credit_note p{height:25px;}
+
+.exchange{padding:4px 10px 5px;}
+.exchange p{color: #333333;margin: 8px 10px 0;padding-bottom: 6px;}
+
+
+/*分页模块*/
+.pages{ padding:10px 0px 10px 0px; font-family:Tahoma; font-weight:bold;}
+.pages a,.pages strong,.pages span{ display:inline-block; padding:0 9px; margin:0 2px; min-width:10px; _width:10px; white-space:nowrap; height:27px; line-height:27px; text-align:center; font-size:14px; font-weight:normal;}
+.pages a{ border:1px solid #d6d6d6; background:#fff;}
+.pages a:hover{ color:#333; background-color:#e3e3e3; text-decoration:none;}
+.pages strong{border:1px solid #d6d6d6; background-color:#F9F9F9; color:#333; font-weight:bold;}
+.pages span{color: #999999;font-size: 12px;}
+/*用户信息*/
+.userinfo-box{ background:none repeat scroll 0 0 #FCFCFC;}
+.userinfo{ padding:10px;}
+.userinfo .control{width:250px;}
+.userinfo .control span{line-height:30px;margin-left: 10px;}
+.userinfo .pic{ float:left; width:50px; height:50px; margin:0 10px 0 0;}
+.userinfo .pic img{width:52px;height:52px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}
+.userinfo h3{ float:left; width:142px;font-size:12px;color:#666; }
+.userinfo p{ float:left; width:142px;color:#888; overflow:hidden;}
+.userinfo p span{margin-left: 20px;}
+
+
+
+/*左边的问题列表*/
+.right-list,.left-expert-list{ padding:4px 10px 5px;}
+.last {padding-bottom:12px;}
+.right-list li{ position:relative; padding:0 0 0 26px; height:28px; line-height:28px; overflow:hidden;}
+.right-list em{ position:absolute; top:6px; left:0; display:block; width:16px; height:16px; font-size:10px; line-height:16px; text-align:center;-webkit-text-size-adjust:none;}
+.right-list .n1{ background:#FF9900; color:#fff;}
+.right-list .n2{ background:#e5e5e5; color:#666;}
+.right-list .credit{float: right;color:#FF8100;margin-right: 5px;}
+
+.button_4 {
+   
+    border: 0;
+   line-height:24px;
+    font-size: 12px;
+    padding-bottom: 1px;
+  
+    cursor: pointer;
+}
+.auto-login{
+	margin-left:-229px;
+	text-align:center;
+}

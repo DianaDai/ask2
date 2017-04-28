@@ -1,0 +1,1279 @@
+.catgorybtn {
+		background: url(../images/t0103b0e241ae637e69.png) repeat-x 0 0;
+	border: 0;
+	cursor: pointer;
+	display: inline-block;
+
+	outline: none;
+	padding: 0;
+	background-position: 0 0;
+
+	margin: 0;
+	height: 39px;
+	line-height: 39px;
+	width: 143px;
+}
+
+.g-grey {
+	margin-right: 13px;
+}
+
+body,a {
+	font-size: 14px
+}
+
+a {
+	color: #222
+}
+
+.g-grey {
+	color: #aaa
+}
+
+.i-clock,.i-mobile,.i-glod,.i-ref,.i-pen,.i-hat,.i-hand,.i-setting,.i-write {
+	background: url(http://p3.qhimg.com/t01669e13e921c53531.png) no-repeat 0 0;
+	display: inline-block;
+	margin-right: 3px
+}
+
+.i-clock {
+	background-position: 0 -40px;
+	height: 12px;
+	vertical-align: -1px;
+	width: 12px
+}
+
+.i-mobile {
+	background-position: 0 0;
+	height: 16px;
+	margin-left: 3px;
+	vertical-align: -3px;
+	width: 11px
+}
+
+.i-glod {
+	background-position: 0 -20px;
+	height: 8px;
+	width: 8px
+}
+
+.i-ref {
+	background-position: 0 -60px;
+	height: 12px;
+	vertical-align: -2px;
+	width: 12px
+}
+
+.i-pen {
+	background-position: 0 -80px;
+	height: 9px;
+	margin-right: 5px;
+	width: 9px
+}
+
+.i-setting {
+	background-position: -15px -100px;
+	height: 14px;
+	vertical-align: -2px;
+	width: 14px
+}
+
+.i-write {
+	background-position: 0 -120px;
+	height: 19px;
+	vertical-align: -3px;
+	width: 18px
+}
+
+.i-ask,.i-ans {
+	border-radius: 2px;
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	font-style: normal;
+	height: 18px;
+	line-height: 18px;
+	margin-right: 10px;
+	text-align: center;
+	width: 18px
+}
+
+.i-ask {
+	background: #4eaaf0;
+	border: 1px solid #1792e9
+}
+
+.i-ans {
+	background: #6ab849;
+	border: 1px solid #55a334
+}
+
+.ie6 .i-glod {
+	vertical-align: -5px
+}
+
+.ie6 .i-ref {
+	vertical-align: -2px
+}
+
+.ie6 .i-pen {
+	position: relative;
+	top: 7px;
+	vertical-align: 5px
+}
+
+.ie7 .i-mobile,.ie6 .i-write,.ie6 .i-setting {
+	vertical-align: 1px
+}
+
+.ie7 .i-glod,.ie7 .i-setting,.ie7 .i-clock,.ie7 .i-write,.ie7 .i-ref,.ie7 .i-pen {
+	vertical-align: 3px
+}
+
+#bd .mod-top,#bd .mod-bottom {
+	border: 1px solid #d9e0e7;
+	overflow: hidden
+}
+
+#bd .mod-top .left,#bd .mod-bottom .left {
+	float: left;
+	height: auto !important;
+	min-height: 10px;
+	width: 148px
+}
+
+#bd .mod-top .center,#bd .mod-bottom .center {
+	border-left: 1px solid #d9e0e7;
+	border-right: 1px solid #d9e0e7;
+	float: left;
+	width: 580px
+}
+
+#bd .mod-top .right,#bd .mod-bottom .right {
+	float: left;
+	overflow: hidden;
+	padding: 13px;
+	width: 240px
+}
+
+#bd .mod-top,#bd .mod-top .left,#bd .mod-top .center {
+	height: 272px;
+	overflow: hidden
+}
+
+.mod-userpanel-nologin,.mod-userpanel-login {
+	padding: 15px 25px 0
+}
+
+.mod-top-ad img {
+	height: 272px;
+	width: 148px
+}
+
+.mod-userpanel-nologin h2 {
+	font-size: 20px;
+	font-weight: 100;
+	text-align: center
+}
+
+.mod-userpanel-login p {
+	line-height: 20px
+}
+
+.mod-userpanel-nologin h2 span {
+	color: #2B9CEC;
+	font-size: 30px;
+	font-family: arial;
+	font-style: italic;
+	margin: 0 15px
+}
+
+.mod-userpanel-nologin .askinput {
+	margin: 14px 0
+}
+
+.mod-userpanel-nologin .sync {
+	height: 120px;
+	overflow: hidden;
+	position: relative
+}
+
+.mod-userpanel-login .green {
+	color: #2B9CEC
+}
+
+.mod-userpanel-login .fs20 {
+	font-size: 20px
+}
+
+.mod-userpanel-login .user {
+	border-bottom: 1px solid #f3f3f3;
+	padding-bottom: 15px
+}
+
+.mod-userpanel-nologin .askinput input {
+	border: 3px solid #2B9CEC;
+	border-right: 0;
+	float: left;
+	font-size: 20px;
+	overflow: hidden;
+	padding: 10px 15px;
+	width: 352px
+}
+
+.mod-userpanel-nologin .askinput a {
+	background: #2B9CEC;
+	color: #fff;
+	display: inline-block;
+	float: left;
+	font-size: 20px;
+	height: 50px;
+	line-height: 50px;
+	overflow: hidden;
+	text-align: center;
+	vertical-align: -3px;
+	width: 145px
+}
+
+.mod-userpanel-nologin .sync li {
+	clear: both;
+	height: 30px;
+	line-height: 30px;
+	margin: 0;
+	vertical-align: bottom
+}
+
+.mod-userpanel-nologin .sync li div {
+	display: inline-block;
+	float: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 420px
+}
+
+.mod-userpanel-nologin .sync li span {
+	margin: 0 10px
+}
+
+.mod-userpanel-login .user .pic,.mod-userpanel-login .user .info {
+	float: left
+}
+
+.mod-userpanel-login .user .pic {
+	margin-right: 20px
+}
+
+.mod-userpanel-login .user .tools {
+	float: right;
+	width: 173px
+}
+
+.mod-userpanel-nologin .askinput a:hover {
+	background: #50b949
+}
+
+.mod-userpanel-nologin .askinput a:active {
+	background: #16960e
+}
+
+.mod-userpanel-nologin .sync a:hover {
+	text-decoration: underline
+}
+
+.mod-userpanel-nologin .sync li .i-ask,.mod-userpanel-nologin .sync li .i-ans {
+	float: left;
+	margin-top: 5px;
+	width: 18px
+}
+
+.mod-userpanel-nologin .sync li .time {
+	float: right;
+	font-family: 'SimSun';
+	font-size: 13px;
+	margin: 0;
+	text-align: right;
+	width: 75px
+}
+
+.mod-userpanel-login .user .pic img {
+	border: 1px solid #eaeef2;
+	height: 98px;
+	width: 98px
+}
+
+.mod-userpanel-login .user .info a {
+	font-size: 18px
+}
+
+.mod-userpanel-login .user .info i {
+	background: #ff8f2c;
+	border: 1px solid #f4791f;
+	color: #fef96f;
+	cursor: pointer;
+	display: inline-block;
+	font-style: normal;
+	font-size: 12px;
+	font-family: 'SimSun';
+	height: 10px;
+	line-height: 12px;
+	margin-left: 5px;
+	overflow: hidden;
+	padding: 0 2px
+}
+
+.mod-userpanel-login .user .info .data {
+	line-height: 18px;
+	margin: 12px 0 8px
+}
+
+.ie6 .mod-userpanel-nologin .sync li .time {
+	margin-top: 8px
+}
+
+.mod-userpanel-login .user .tools a:hover,.mod-userpanel-login dl a:hover {
+	text-decoration: underline
+}
+
+.mod-subnav {
+	position: relative;
+	width: 148px;
+	z-index: 10
+}
+
+.mod-bastinfo {
+	padding: 13px 25px 12px
+}
+
+.mod-asklist {
+	position: relative
+}
+
+.mod-daren {
+	padding: 12px 25px 20px
+}
+
+.mod-hotnews {
+	overflow: hidden;
+	padding-bottom: 15px
+}
+
+.mod-hotnews,.mod-today-help {
+	border-bottom: 1px solid #d9e0e7
+}
+
+.mod-today-help {
+	margin-top: 13px;
+	padding-bottom: 13px
+}
+
+.mod-bast-daren {
+	margin-top: 10px
+}
+
+.mod-userpanel-login dl {
+	margin-top: 20px
+}
+
+.mod-daypaper h3 {
+	font-size: 18px;
+	font-weight: 100;
+	height: 26px;
+	line-height: 26px;
+	margin-bottom: 11px;
+	overflow: hidden
+}
+
+.mod-daypaper p {
+	text-align: right
+}
+
+.mod-daypaper ul {
+	position: relative
+}
+
+.mod-subnav b {
+	background: #2B9CEC;
+	height: 36px;
+	left: 0;
+	line-height: 36px;
+	position: absolute;
+	top: 0;
+	visibility: hidden;
+	width: 148px;
+	z-index: 10
+}
+
+.mod-bastinfo h3 {
+	color: #2B9CEC;
+	font-weight: 400;
+	font-size: 14px;
+	height: 20px;
+	line-height: 20px
+}
+
+.mod-bastinfo dl {
+	margin-top: 13px
+}
+
+.mod-daren h3 {
+	font-weight: 100;
+	font-size: 18px;
+	line-height: 40px
+}
+
+.mod-hotnews h3 {
+	font-weight: 100;
+	font-size: 18px;
+	line-height: 30px
+}
+
+.mod-hotnews ul {
+	margin-top: 4px
+}
+
+.mod-today-help i {
+	background: #cdcdcd;
+	border-radius: 2px;
+	border: 1px solid #b5b5b5;
+	color: #fff;
+	display: inline-block;
+	font-size: 14px;
+	font-style: normal;
+	height: 18px;
+	line-height: 18px;
+	margin-right: 5px;
+	text-align: center;
+	width: 18px
+}
+
+.mod-today-help h3 {
+	font-weight: 100;
+	font-size: 18px;
+	height: 40px;
+	line-height: 40px;
+	overflow: hidden
+}
+
+.mod-today-help dl {
+	margin-top: 13px
+}
+
+.mod-today-help ul {
+	border-top: 1px solid #f3f3f3;
+	padding-top: 6px
+}
+
+.mod-bast-daren h3 {
+	font-weight: 100;
+	font-size: 18px;
+	line-height: 40px
+}
+
+.mod-userpanel-login dl dt {
+	float: left
+}
+
+.mod-userpanel-login dl dd {
+	margin-bottom: 15px;
+	padding-left: 35px
+}
+
+.mod-daypaper p a {
+	color: #51a32f;
+	font-size: 12px
+}
+
+.mod-daypaper ul li {
+	line-height: 25px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 240px
+}
+
+.mod-subnav b i {
+	border-color: transparent transparent transparent #2B9CEC;
+	border-style: dashed dashed dashed solid;
+	border-width: 18px 0 18px 14px;
+	font-size: 0;
+	height: 0;
+	left: 148px;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	width: 0
+}
+
+.mod-subnav ul li {
+	position: relative;
+	z-index: 20
+}
+
+.mod-bastinfo dl dt {
+	float: left
+}
+
+.mod-bastinfo dl dd {
+	margin-left: 30px;
+	margin-bottom: 4px;
+	min-height: 22px;
+	overflow: hidden;
+	width: 490px
+}
+
+.mod-daren h3 img {
+	margin-left: 10px;
+	vertical-align: -3px
+}
+
+.mod-hotnews ul li {
+	line-height: 30px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 240px
+}
+
+.mod-today-help h3 span {
+	font-size: 14px;
+	font-family: 'SimSun'
+}
+
+.mod-today-help dl dt {
+	clear: both;
+	float: left;
+	position: relative
+}
+
+.mod-today-help dl dd {
+	font-size: 12px;
+	margin-left: 67px;
+	margin-bottom: 10px;
+	width: 138px
+}
+
+.mod-today-help ul li {
+	height: 30px;
+	line-height: 30px
+}
+
+.mod-userpanel-login dl dt img {
+	vertical-align: middle;
+	width: 26px
+}
+
+.mod-userpanel-login dl dd p {
+	margin-bottom: 5px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 480px
+}
+
+.mod-subnav ul li a {
+	display: block;
+	height: 36px;
+	line-height: 36px;
+	padding-left: 36px
+}
+
+.mod-bastinfo dl dd p {
+	line-height: 22px;
+	max-height: 44px
+}
+
+.mod-today-help dl dt img {
+	border: 1px solid #eaeef2;
+	height: 57px;
+	width: 57px
+}
+
+.mod-today-help dl dt i {
+	left: 0;
+	position: absolute;
+	top: 0
+}
+
+.mod-today-help dl dd a {
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 170px
+}
+
+.mod-today-help dl dd p {
+	line-height: 18px
+}
+
+.mod-userpanel-login .nodata {
+	margin-top: 18px
+}
+
+.mod-asklist .nologin-nav {
+	margin-bottom: 5px;
+	overflow: hidden
+}
+
+.mod-asklist .set-good-guide {
+	overflow: hidden;
+	padding: 100px 0;
+	text-align: center
+}
+
+.mod-asklist .loading {
+	background: #fff url(http://p3.qhimg.com/t0189e56fb928b22dcf.gif) no-repeat center 100px;
+	display: none;
+	height: 930px;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 580px;
+	z-index: 1
+}
+
+.mod-asklist .list {
+	padding: 0 25px 10px
+}
+
+.mod-asklist .tools {
+	border-bottom: 1px solid #d9e0e7;
+	height: 21px;
+	margin: 0 25px;
+	padding-bottom: 20px
+}
+
+.mod-daren .boxs {
+	margin-top: 13px
+}
+
+.mod-daren .ref {
+	text-align: right
+}
+
+.mod-daren .nodata {
+	margin: 40px 0;
+	text-align: center
+}
+
+.mod-today-help .help-img {
+	display: block;
+	height: 80px;
+	overflow: hidden;
+	width: 100%
+}
+
+.mod-today-help .img-icon {
+	float: left;
+	height: 80px;
+	margin-right: 10px;
+	width: 80px
+}
+
+.mod-today-help .word-des {
+	float: left;
+	padding-top: 5px;
+	width: 150px
+}
+
+.mod-today-help .org-1 {
+	background: #ff2c2c;
+	border-color: #da0909
+}
+
+.mod-today-help .org-2 {
+	background: #ff8f2c;
+	border-color: #f4791f
+}
+
+.mod-today-help .more {
+	text-align: right
+}
+
+.mod-bast-daren .box {
+	margin-top: 10px
+}
+
+.mod-daypaper a:hover {
+	text-decoration: underline
+}
+
+.mod-daypaper ul .first {
+	border: 1px solid #eaeef2;
+	height: 131px;
+	margin-bottom: 6px;
+	position: relative
+}
+
+.mod-bastinfo a:hover {
+	text-decoration: underline
+}
+
+.mod-asklist .nologin-nav li {
+	float: left
+}
+
+.mod-asklist .set-good-guide h3 {
+	color: #37a508;
+	font-size: 28px;
+	font-weight: 700;
+	margin: 15px 0
+}
+
+.mod-asklist .set-good-guide a {
+	background: #2B9CEC;
+	border-radius: 2px;
+	color: #fff;
+	display: inline-block;
+	height: 45px;
+	line-height: 45px;
+	margin-top: 45px;
+	text-align: center;
+	width: 150px
+}
+
+.mod-asklist .list li {
+	border-bottom: 1px solid #f4f4f4;
+	clear: both;
+	height: 40px;
+	line-height: 40px;
+	overflow: hidden;
+	position: relative;
+	vertical-align: bottom
+}
+
+.mod-daren .ref a {
+	color: #6fa856;
+	font-size: 12px
+}
+
+.mod-hotnews a:hover {
+	text-decoration: underline
+}
+
+.mod-today-help .more a {
+	color: #51a32f;
+	font-size: 12px
+}
+
+.mod-bast-daren .box p {
+	line-height: 20px
+}
+
+.mod-userpanel-login dl dd .info {
+	color: #f37200;
+	font-size: 12px;
+	font-family: 'SimSun'
+}
+
+.mod-daypaper p a:hover {
+	text-decoration: underline
+}
+
+.mod-daypaper ul .first img {
+	height: 131px;
+	width: 240px
+}
+
+.mod-bastinfo dl dd .fir-title {
+	font-size: 16px;
+	font-weight: 700
+}
+
+.mod-bastinfo dl dd .cate {
+	color: #b2b2b2
+}
+
+.mod-asklist .nologin-nav li a {
+	background: #f5f5f5;
+	border-top: 1px solid #dbe1e8;
+	border-bottom: 1px solid #dbe1e8;
+	display: block;
+	height: 34px;
+	line-height: 34px;
+	text-align: center;
+	width: 192px
+}
+
+.mod-userpanel-login dl dd p .title {
+	font-size: 16px;
+	margin-right: 5px
+}
+
+.mod-userpanel-login dl dd p .desc {
+	font-size: 13px
+}
+
+.mod-subnav ul li a:hover {
+	background: #f4f4f4
+}
+
+.mod-subnav ul li a.selected {
+	color: #fff
+}
+
+.mod-bastinfo dl dd .cate a {
+	font-family: 'SimSun';
+	font-size: 13px
+}
+
+.mod-bastinfo dl dd p .more {
+	color: #6fa856;
+	font-size: 12px
+}
+
+.mod-userpanel-login .nodata .title {
+	color: #6fa856;
+	line-height: 22px
+}
+
+.mod-userpanel-login .nodata .content {
+	line-height: 22px;
+	margin-top: 18px;
+	text-align: center
+}
+
+.mod-asklist .login-nav .tags {
+	float: left;
+	width: 460px
+}
+
+.mod-asklist .login-nav .cate {
+	color: #222;
+	float: left;
+	font-size: 16px
+}
+
+.mod-asklist .login-nav .setting {
+	float: right;
+	font-family: 'SimSun';
+	font-size: 13px;
+	margin-top: 5px
+}
+
+.mod-asklist .tools .more {
+	color: #6fa856;
+	float: left;
+	font-size: 12px
+}
+
+.mod-asklist .tools .ref {
+	color: #6fa856;
+	float: right;
+	font-size: 12px
+}
+
+.mod-daren .boxs .box {
+	float: left;
+	margin-bottom: 15px;
+	overflow: hidden;
+	width: 265px
+}
+
+.mod-bast-daren .box .info {
+	height: 59px;
+	margin-bottom: 8px;
+	overflow: hidden
+}
+
+.mod-bast-daren .box .pic {
+	float: left
+}
+
+.mod-bast-daren .box .tools {
+	padding-left: 67px
+}
+
+.mod-bast-daren .box .cate {
+	color: #ebba50;
+	font-family: 'SimSun';
+	font-size: 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 240px
+}
+
+.mod-bast-daren .box .desc {
+	font-size: 12px;
+	margin-top: 10px
+}
+
+.mod-userpanel-login .user .tools table {
+	width: 100%
+}
+
+.mod-daypaper ul .first .title,.mod-daypaper ul .first .bg {
+	bottom: 0;
+	height: 25px;
+	left: 0;
+	line-height: 25px;
+	position: absolute;
+	width: 240px
+}
+
+.mod-daypaper ul .first .title {
+	color: #fff;
+	margin: 0 5px;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 230px;
+	z-index: 2
+}
+
+.mod-daypaper ul .first .bg {
+	background: #000;
+	opacity: .5;
+	filter: alpha(opacity=50);
+	z-index: 1
+}
+
+.mod-asklist .login-nav .tab li {
+	float: left
+}
+
+.mod-asklist .login-nav .tags a {
+	background: #f8f8f8;
+	border: 1px solid #e5e5e5;
+	border-radius: 12px;
+	display: inline-block;
+	height: 24px;
+	line-height: 24px;
+	margin: 0 12px 12px 0;
+	min-width: 62px;
+	padding: 0 8px;
+	text-align: center
+}
+
+.mod-asklist .login-nav .cate a {
+	color: #298fdc;
+	display: inline-block;
+	font-family: 'SimSun';
+	font-size: 13px;
+	margin-right: 5px;
+	padding: 0 2px
+}
+
+.mod-asklist .set-good-guide a:hover {
+	background: #54c000
+}
+
+.mod-asklist .set-good-guide a:active {
+	background: #24a11c
+}
+
+.mod-asklist .list li .reward {
+	border: 1px solid #f4791f;
+	color: #fe510d;
+	display: inline-block;
+	font-size: 12px;
+	font-family: 'SimSun';
+	height: 14px;
+	line-height: 16px;
+	margin: 0 3px;
+	overflow: hidden;
+	padding: 0 2px;
+	vertical-align: -2px
+}
+
+.mod-asklist .list li .max-reward {
+	border: 1px solid #fe510d
+}
+
+.mod-asklist .list li .fl {
+	float: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 370px
+}
+
+.mod-asklist .list li .fr {
+	float: right
+}
+
+.mod-daren .boxs .box p {
+	line-height: 20px;
+	margin-bottom: 8px
+}
+
+.mod-today-help .more a:hover {
+	text-decoration: underline
+}
+
+.mod-bast-daren .box .pic img {
+	border: 1px solid #eaeef2;
+	height: 57px;
+	width: 57px
+}
+
+.mod-bast-daren .box .cate em {
+	background: #ffae00;
+	color: #fff;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	margin-right: 5px;
+	padding: 2px
+}
+
+.mod-bast-daren .box .desc span {
+	font-size: 14px
+}
+
+.mod-asklist .nologin-nav li a.middle {
+	border-left: 1px solid #dbe1e8;
+	border-right: 1px solid #dbe1e8;
+	
+}
+
+.mod-asklist .nologin-nav li a.selected {
+	background: #fff;
+	border-bottom: 1px solid #fff
+}
+
+.mod-asklist .login-nav .tab li a {
+	background: #f5f5f5;
+	border-bottom: 1px solid #dbe1e8;
+	border-right: 1px solid #f5f5f5;
+	display: block;
+	height: 43px;
+	line-height: 43px;
+	text-align: center;
+	width: 289px
+}
+
+.mod-asklist .list li.hover a {
+	color: #2B9CEC
+}
+
+.mod-asklist .list li.hover a,.mod-asklist .list li a:hover {
+	text-decoration: underline
+}
+
+.mod-asklist .list li .fr span {
+	display: inline-block;
+	font-size: 12px;
+	text-align: right
+}
+
+.mod-userpanel-login .user .tools table tr td {
+	padding: 0 15px;
+	text-align: center
+}
+
+.mod-userpanel-login dl dd p .desc:hover {
+	text-decoration: none
+}
+
+.mod-subnav ul li a.selected:hover {
+	background: #2B9CEC
+}
+
+.mod-bastinfo dl dd .cate a:hover {
+	text-decoration: none
+}
+
+.mod-userpanel-login .user .tools .border {
+	border-right: 1px solid #f3f3f3
+}
+
+.mod-userpanel-login .user .tools .join {
+	background: #edf4ec;
+	border: 1px solid #edf4ec;
+	border-radius: 3px;
+	color: #5b645a;
+	display: block;
+	height: 35px;
+	line-height: 35px;
+	margin-top: 8px;
+	text-align: center;
+	width: 168px
+}
+
+.mod-asklist .login-nav .tab-items .item {
+	border-bottom: 1px solid #f3f3f3;
+	display: none;
+	margin: 0 25px;
+	padding: 15px 0 10px
+}
+
+.mod-asklist .login-nav .tags .current {
+	background: #f1faef;
+	border: 1px solid #b8e3a8;
+	color: #4da721
+}
+
+.mod-asklist .login-nav .cate .selected {
+	background: #4eaaf0;
+	color: #fff
+}
+
+.mod-asklist .login-nav .setting:hover {
+	color: #298fdc
+}
+
+.mod-asklist .tools .more:hover {
+	text-decoration: underline
+}
+
+.mod-daren .boxs .box .info {
+	height: 59px;
+	margin-bottom: 8px;
+	overflow: hidden
+}
+
+.mod-daren .boxs .box .pic {
+	float: left
+}
+
+.mod-daren .boxs .box .tools {
+	padding-left: 67px
+}
+
+.mod-daren .boxs .box .cate {
+	color: #ebba50;
+	font-family: 'SimSun';
+	font-size: 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 250px
+}
+
+.mod-bast-daren .box .tools .ask-to {
+	background: #ff7600;
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	height: 24px;
+	line-height: 24px;
+	margin-top: 8px;
+	padding-left: 8px;
+	width: 70px
+}
+
+.mod-bast-daren .box .tools .data {
+	font-size: 12px;
+	line-height: 18px;
+	margin-top: 5px
+}
+
+.mod-bast-daren .box .desc .more {
+	color: #6fa856;
+	font-size: 12px
+}
+
+.mod-asklist .login-nav .tab li .first {
+	border-color: #dbe1e8
+}
+
+.mod-asklist .login-nav .tab li .current {
+	background: #fff;
+	border-bottom: 1px solid #fff
+}
+
+.mod-asklist .login-nav .cate a:hover {
+	text-decoration: underline
+}
+
+.mod-asklist .login-nav .setting:hover i {
+	background-position: 0 -100px
+}
+
+.mod-asklist .list li .fr .num {
+	margin-right: 10px;
+	width: 42px
+}
+
+.mod-asklist .list li .fr .time {
+	margin-left: 10px;
+	width: 62px
+}
+
+.ie6 .mod-asklist .list li .reward {
+	position: relative;
+	top: 12px;
+	vertical-align: 16px
+}
+
+.ie7 .mod-asklist .list li .reward {
+	vertical-align: 2px
+}
+
+.mod-daren .boxs .box .pic img {
+	border: 1px solid #eaeef2;
+	height: 57px;
+	width: 57px
+}
+
+.mod-daren .boxs .box .cate em {
+	background: #ffae00;
+	color: #fff;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	margin-right: 5px;
+	padding: 2px;
+	text-align: center
+}
+
+.mod-userpanel-login .user .tools .join:hover {
+	background: #f8fdf8;
+	border-color: #d8e6d6;
+	text-decoration: none
+}
+
+.mod-userpanel-login .user .tools .join:active {
+	background: #daebd9;
+	border-color: #ccdcca
+}
+
+.mod-asklist .login-nav .cate .selected:hover {
+	text-decoration: none
+}
+
+.mod-daren .boxs .box .tools .ask-to {
+	background: #ff7600;
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	font-family: 'SimSun';
+	height: 24px;
+	line-height: 24px;
+	padding-left: 8px;
+	width: 70px
+}
+
+.mod-bast-daren .box .tools .ask-to:hover {
+	background: #ff9000
+}
+
+.mod-bast-daren .box .tools .ask-to:active {
+	background: #f95e00
+}
+
+.mod-bast-daren .box .desc .more:hover {
+	text-decoration: underline
+}
+
+.mod-daren .boxs .box .tools .ask-to:hover {
+	background: #ff9000
+}
+
+.mod-daren .boxs .box .tools .ask-to:active {
+	background: #f95e00
+}
+
+#bd .mod-bottom {
+	margin-top: 10px;
+	position: relative
+}
+
+#bd .mod-bottom .center {
+	height: auto !important;
+	min-height: 1000px
+}

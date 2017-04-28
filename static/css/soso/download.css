@@ -1,0 +1,37 @@
+@CHARSET "UTF-8";
+.down_right{
+	background:#ffffff;width:33%;margin-left:30px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.width_auto{
+	width:auto;
+}
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+.btn {
+    background-image: none !important;
+    border: none;
+}
+
+.pull-right {
+    float: right !important;
+}
+.btn-primary {
+    color: #fff;
+    background-color: #2B9CEC;
+    border-color: ##2B9CEC;
+}
+.version-list li {
+    line-height: 38px;
+    margin-bottom: 10px;
+   
+}
+.content ul li{
+	font-size:12px;
+}

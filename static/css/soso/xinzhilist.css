@@ -1,0 +1,92 @@
+.mod-items {
+	float:left;
+	width:744px
+}
+.aside {
+	float:right;
+	width:226px
+}
+.mod-create {
+	margin-bottom:10px
+}
+.mod-create a {
+	background:url(http://p2.qhimg.com/t01bcd798fe4e7212f3.png) no-repeat 0 0;
+	color:#fff;
+	display:inline-block;
+	font-size:20px;
+	height:55px;
+	line-height:55px;
+	text-align:center;
+	width:226px
+}
+.mod-items .item {
+	background:#fff;
+	border:1px solid #f2f0f1;
+	height:162px;
+	margin-bottom:10px;
+	overflow:hidden;
+	padding:8px
+}
+.mod-items .empty {
+	color:#b5b5b5;
+	font-size:16px;
+	padding-top:84px;
+	text-align:center
+}
+.mod-create a:hover {
+	background-position:0 -56px;
+	text-decoration:none
+}
+.mod-create a:active {
+	background-position:0 -112px
+}
+.mod-items .item .pic {
+	float:left;
+	height:162px;
+	overflow:hidden;
+	width:202px;
+	margin-right: 10px;
+}
+.mod-items .item .info {
+	
+}
+.mod-items .item .pic a {
+	display:table-cell;
+	*display:block;
+	*font-size:141px;
+	*font-family:Arial;
+	height:162px;
+	overflow:hidden;
+	text-align:center;
+	vertical-align:middle
+}
+.mod-items .item .pic a,.mod-items .item .pic img {
+	width:202px
+}
+.mod-items .item .info h3 {
+	margin-bottom:10px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	width:480px
+}
+.mod-items .item .info p {
+	font-size:16px;
+	height:100px;
+	line-height:25px;
+	overflow:hidden;
+	word-wrap:break-word
+}
+.mod-items .item .info h3 a {
+	color:#414141;
+	font-size:20px
+}
+.mod-items .item .info .time {
+	color:#a3a3a3;
+	text-align:right
+}
+.mod-items .item .info .time .tag{
+	color:#a3a3a3;
+	text-align:left;
+	float:left;
+}

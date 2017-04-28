@@ -1,0 +1,66 @@
+@CHARSET "UTF-8";
+
+/*分页模块*/
+.pages{ padding:10px 0px 10px 0px; font-family:Tahoma; font-weight:bold;}
+.pages a,.pages strong,.pages span{ display:inline-block; padding:0 9px; margin:0 2px; min-width:10px; _width:10px; white-space:nowrap; height:27px; line-height:27px; text-align:center; font-size:14px; font-weight:normal;}
+.pages a{ border:1px solid #d6d6d6; background:#fff;}
+.pages a:hover{ color:#333; background-color:#e3e3e3; text-decoration:none;}
+.pages strong{border:1px solid #d6d6d6; background-color:#F9F9F9; color:#333; font-weight:bold;}
+.pages span{color: #999999;font-size: 12px;}
+/*专家模块*/
+.experts .expert{ position:relative; margin-bottom:5px; padding:10px 10px 3px 110px; border:1px solid #D5D5D5; background:#FCFCFC; zoom:1;min-height: 100px;}
+.experts .expert ul{margin-bottom:10px;}
+.experts .expert ul li{width: 290px;float:left;height: 23px;background: url("lidot.gif") no-repeat scroll 2px 10px transparent;padding:0 0 0 8px;}
+.experts .pic{ position:absolute; top:10px; left:10px;}
+.experts .pic img{width:80px;height:80px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;}
+.experts .name{ display:inline-block; height:22px; line-height:22px;font-weight: bold;color:#333;}
+
+.experts .general em a,.experts .general em,.experts span a{ color:#333;}
+.experts .general h4{font: 12px/28px "Microsoft YaHei";}
+.experts h3{ padding:12px 0 16px; font-size:12px; line-height:22px; font-weight:normal;}
+.experts h3 a{ text-decoration:underline;}
+.ask-input{ height:30px; line-height:30px;}
+.ask-input span,.ask-input input{ float:left;}
+.ask-input .text{ padding:0 5px; width:414px; height:28px; font-size:12px; line-height:28px; font-family:arial; border:1px solid #ccc;}
+.ask-input .blue-btn-w90{ margin:0 0 0 10px; border:0 none; cursor:pointer;}
+.button_4 {
+   
+    border: 0;
+   
+    font-size: 12px;
+    padding-bottom: 1px;
+  
+    cursor: pointer;
+}
+.clearfix {*zoom:1}
+.clr {clear: both;font-size: 0;height: 0;line-height: 0;margin: 0;padding: 0;visibility: hidden;width: 0;}
+.wrapper{ width:980px; margin:0 auto;}
+.aside{ width:190px; float:left;}
+.user-aside{ width:220px; float:left;}
+.content{ width:780px; float:right;}
+.tipcontent{width:650px;margin: 0 auto;border:1px solid #D5D5D5;text-align: center;}
+.user-content{ width:750px; float:right;}
+.main{ width:520px; float:left;}
+.side{ width:250px; float:right;}
+.srsite{width: 570px;float: left;}
+.content-left{ width:720px; float:left;}
+.aside-right{ width:250px; float:right;}
+.mb10{ margin-bottom:10px;}
+.mt10{ margin-top:10px;}
+.mt15{ margin-top:15px;}
+.mt30{ margin-top:30px;}
+.pdt15{padding-top:15px;}
+.flright{float: right;}
+ul,ol {list-style:none;}
+
+
+.aside-right .list{ padding:0 10px;}
+.aside-right .list li{background: url("lidot.gif") no-repeat scroll 1px 10px transparent;padding:0 0 0 10px; height:26px; font-size:14px; line-height:26px;overflow:hidden;}
+.modbox .list li{font-size: 12px;background: url("lidot.gif") no-repeat scroll 1px 12px transparent;padding:0 0 0 10px;}
+.aside-right .list .answer-number{ float:right; color:#999; font-size:12px;}
+.aside-right .list .answer-number a{ color:#333;}
+.aside-right .list .answer-number a:hover{ color:#f60; text-decoration:none;}
+.aside-right .list .type{ margin:0 0 0 5px; font-size:12px; color:#999;}
+.aside-right .list .answer{ float:right; font-size:12px;}
+.aside-right .list .time{ float:right; font-size:12px; color:#999;}
+.aside-right .list .gold {color: #FF6600;}

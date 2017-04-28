@@ -1,0 +1,446 @@
+.mod-bread-crumb {
+	position: relative;
+	z-index: 15
+}
+
+.mod-bread-crumb li {
+	float: left;
+	padding-bottom: 9px
+}
+
+.mod-bread-crumb .line {
+	color: #c3c7c7;
+	font-family: "simsun";
+	margin: 0 5px
+}
+
+.mod-bread-crumb .ico-caret {
+	background: url(http://p1.qhimg.com/t01fb7f46ba0413f57b.png) 100% 8px no-repeat;
+	display: inline-block;
+	padding-right: 10px;
+	position: relative
+}
+
+.mod-bread-crumb .ico-caret-on,.mod-bread-crumb .ico-caret:hover {
+	background-position: 100% -30px
+}
+
+.mod-bread-crumb .sub-crumb {
+	background: #fff;
+	border: 1px solid #888;
+	display: none;
+	left: 0;
+	padding: 3px 0;
+	position: absolute;
+	top: 20px;
+	z-index: 3
+}
+
+.mod-bread-crumb .sub-crumb-scroll {
+	height: 330px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 125px
+}
+
+.mod-bread-crumb .sub-crumb li {
+	float: none;
+	line-height: 22px;
+	padding: 0 20px 0 10px;
+	white-space: nowrap
+}
+
+.mod-bread-crumb .sub-crumb li,.mod-bread-crumb .ico-caret-on .sub-crumb,.mod-bread-crumb .ico-caret:hover .sub-crumb {
+	display: block
+}
+
+.mod-mgr {
+	border: 1px #d5d5d5 solid;
+	margin-bottom: 10px
+}
+
+.mgr {
+	background: url(http://p1.qhimg.com/t0115061130df3a05b1.png) no-repeat;
+	display: inline-block;
+	height: 12px;
+	margin-bottom: -2px;
+	width: 12px
+}
+
+.mgr-1 {
+	background-position: -1px -394px
+}
+
+.mgr-2 {
+	background-position: -1px -370px
+}
+
+.mgr-3 {
+	background-position: -1px -320px
+}
+
+.mgr-4 {
+	background-position: -1px -293px
+}
+
+.mgr-5 {
+	background-position: -2px -288px;
+	display: none
+}
+
+.mgr-6 {
+	background-position: -2px -288px;
+	display: none
+}
+
+.mgr-7 {
+	background-position: -1px -345px
+}
+
+.grid-3 {
+	position: relative
+}
+
+.mod-category {
+	background: url(http://p3.qhimg.com/t01aa66724cc9a7b1b0.png) repeat-x 0 0;
+	border: 1px #e0e0e0 solid;
+	padding: 0 25px
+}
+
+.mod-answer-list {
+	background: url(http://p2.qhimg.com/t0123abafe8d4803365.png) repeat-x 0 0;
+	border: 1px #e0e0e0 solid;
+	margin-top: 10px;
+	position: relative
+}
+
+.mod-mgr .hd {
+	border-bottom: 1px #e0e0e0 solid;
+	padding: 6px 10px;
+	position: relative
+}
+
+.mod-mgr .bd {
+	padding: 14px 14px 0
+}
+
+.mod-mgr .into-sys {
+	background: url(http://p1.qhimg.com/t01cd7d210abc05694e.png) no-repeat 0 0;
+	background-position: 0 -78px;
+	color: #474747;
+	display: inline-block;
+	font-size: 16px;
+	height: 22px;
+	line-height: 22px;
+	margin: 10px 0 8px 46px;
+	padding-left: 25px;
+	width: 146px
+}
+
+.grid-3 .article {
+	float: left;
+	width: 700px
+}
+
+.grid-3 .aside {
+	float: right;
+	width: 270px
+}
+
+.grid-3 .sh-ipt {
+	border: 1px solid #E1E1E3;
+	height: 24px;
+	line-height: 24px;
+	margin-right: -1px;
+	padding-left: 5px;
+	*vertical-align: -1px;
+	width: 200px
+}
+
+.grid-3 .mod-inspire-info {
+	margin-top: 10px
+}
+
+.mod-category .hd {
+	font-size: 14px;
+	padding: 7px 0 0
+}
+
+.mod-category .list {
+	overflow: hidden;
+	width: 100%
+}
+
+.mod-category .bd {
+	margin-top: 15px
+}
+
+.mod-answer-list .bd {
+	padding: 0 23px
+}
+
+.mod-answer-list .pagination {
+	margin: 10px 0
+}
+
+.mod-answer-list .guide {
+	background: url(http://p2.qhimg.com/t01d5f8bfc293e96034.png) 0 0 no-repeat;
+	display: none;
+	height: 244px;
+	left: 50%;
+	margin-left: -650px;
+	position: fixed;
+	top: 30%;
+	width: 157px
+}
+
+.mod-mgr .hd h3 {
+	color: #666;
+	font-size: 14px;
+	font-weight: 400;
+	font-family: "Microsoft YaHei"
+}
+
+.mod-mgr .bd li {
+	margin-bottom: 10px;
+	position: relative;
+	vertical-align: middle
+}
+
+.mod-category .hd h3 {
+	background: url(http://p1.qhimg.com/t01f79c2324ca69a073.png) no-repeat 0 2px;
+	padding: 0 0 0 20px
+}
+
+.mod-category .list ul {
+	padding: 0 0 20px;
+	width: 110%
+}
+
+.mod-category .list li {
+	float: left;
+	font-size: 14px;
+	padding: 8px 0 0;
+	width: 160px
+}
+
+.mod-category .bd h4 {
+	background-position: 0 8px;
+	font-size: 14px;
+	margin-left: -7px;
+	padding-left: 7px
+}
+
+.mod-answer-list .hd li {
+	background: url(http://p19.qhimg.com/d/_open360/wenda/bg_cate_tab_li.png) no-repeat 0 center;
+	float: left;
+	font-size: 14px;
+	height: 35px;
+	line-height: 35px;
+	margin-left: -2px;
+	padding: 0 15px
+}
+
+.mod-mgr .hd .join-daren {
+	color: #666;
+	position: absolute;
+	right: 10px;
+	top: 9px
+}
+
+.mod-mgr .into-sys:hover {
+	color: #0063c8
+}
+
+.grid-3 .mod-userinfo .qa-btn {
+	background-position: -310px -127px;
+	width: 244px
+}
+
+.mod-category .bd .form,.mod-category .bd .goodat {
+	margin: 7px 0 20px;
+	overflow: hidden;
+	zoom: 1
+}
+
+.mod-answer-list .hd .tab-card {
+	height: 35px;
+	margin-left: 25px;
+	overflow: hidden;
+	zoom: 1
+}
+
+.mod-answer-list .guide .close {
+	cursor: pointer;
+	display: block;
+	height: 24px;
+	left: 40px;
+	position: absolute;
+	top: 68px;
+	width: 75px
+}
+
+.mod-mgr .hd .join-daren a {
+	color: #666;
+	cursor: pointer
+}
+
+.mod-mgr .hd .join-daren span {
+	background: #FF7600;
+	border-radius: 3px;
+	color: #fff;
+	font-size: 12px;
+	margin-right: 6px;
+	padding: 0 6px
+}
+
+.mod-mgr .bd li .mgr-level-info {
+	color: #999;
+	position: absolute;
+	right: 0;
+	top: 0
+}
+
+.mod-answer-list .hd li.on {
+	background: #fff;
+	border: 1px #e0e0e0 solid;
+	border-width: 0 1px;
+	font-weight: 700;
+	margin-left: 2px;
+	position: relative
+}
+
+.mod-mgr .bd li a.ask-to-btn {
+	background: #FD6400;
+	border: 1px solid #DA5926;
+	border-radius: 2px;
+	color: #FFF;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 12px;
+	height: 21px;
+	left: 170px;
+	line-height: 21px;
+	margin: 0;
+	outline: none;
+	padding: 0 6px;
+	position: absolute;
+	top: 18px
+}
+
+.grid-3 .mod-userinfo .qa-btn li a {
+	text-indent: 47px;
+	width: 121px
+}
+
+.mod-category .bd .goodat .tag {
+	background: url(http://p2.qhimg.com/t011935a2682aa6d292.png) 0 -621px no-repeat;
+	color: #a5835e;
+	display: inline-block;
+	*display: inline;
+	font-size: 14px;
+	height: 28px;
+	line-height: 27px;
+	margin-right: -7px;
+	padding-left: 8px;
+	width: 108px;
+	*zoom: 1
+}
+
+.mod-category .bd .goodat .good-cates {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1
+}
+
+.mod-category .bd .goodat .setcate-btn {
+	background: url(http://p2.qhimg.com/t011935a2682aa6d292.png) 0 -566px no-repeat;
+	display: inline-block;
+	*display: inline;
+	height: 26px;
+	margin-left: 10px;
+	vertical-align: -9px;
+	*vertical-align: -3px;
+	_vertical-align: -6px;
+	width: 65px;
+	*zoom: 1
+}
+
+.mod-mgr-list .bd li .info .pic {
+	border: 1px #e5e2da solid;
+	float: left;
+	height: 46px;
+	margin-right: 8px;
+	overflow: hidden;
+	padding: 2px;
+	width: 46px
+}
+
+.mod-mgr-list .bd li .info .text {
+	color: #666;
+	line-height: 18px;
+	_margin-top: -18px;
+	*margin-top: -18px;
+	overflow: hidden;
+	zoom: 1
+}
+
+.mod-category .bd .goodat .good-cates li {
+	background: #fffdf5;
+	border: #f2eacc solid 1px;
+	border-radius: 13px;
+	color: #c28d6b;
+	cursor: pointer;
+	display: inline-block;
+	*display: inline;
+	line-height: 20px;
+	margin-left: 10px;
+	padding: 0 13px;
+	text-align: center;
+	width: auto;
+	*zoom: 1
+}
+
+.mod-mgr .bd li a.ask-to-btn:hover {
+	background: #FF7600
+}
+
+.mod-mgr .bd li a.ask-to-btn:active {
+	background: #F50
+}
+
+.mod-mgr-list .bd li .info .text a {
+	color: #000;
+	font-weight: 700;
+	text-decoration: none
+}
+
+.mod-mgr-list .bd li .info .text em {
+	color: #999
+}
+
+.mod-category .bd .goodat .good-cates li a {
+	color: #c28d6b
+}
+
+.mod-category .bd .goodat .good-cates .selected {
+	background: #ef9f23;
+	border-color: #ef9f23
+}
+
+.mod-category .bd .goodat .setcate-btn:hover {
+	background-position: 0 -593px
+}
+
+.mod-category .bd .goodat .setcate-btn:active {
+	background-position: 0 -539px
+}
+
+.mod-category .bd .goodat .good-cates li:hover {
+	background: #ef9f23;
+	border-color: #ef9f23
+}
+
+.mod-category .bd .goodat .good-cates li:hover,.mod-category .bd .goodat .good-cates li:hover a,.mod-category .bd .goodat .good-cates .selected a {
+	color: #fff
+}

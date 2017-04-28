@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+
+.table{
+	
+	width:100%;
+}
+.table thead{
+	height:30px;
+	line-height:30px;
+	font-size:18px;
+	text-align:center;
+	background:#F0F0F0;
+}
+.table thead th{ 
+	
+	text-align:center;
+}
+.table tr{
+	
+	height:35px;
+	line-height:35px;
+}
+.table td{
+	font-size:15px;
+	text-align:center;
+	border:solid 1px silver;
+}
+.itinfo{
+	background:#F0F0F0;
+}
+.ui-back-top,.mod-lift, .g-mod-fixed{
+	display:none;
+}
+.qlist{
+	color:#ffffff;
+	font-size:15px;
+	    background-color: rgba(250, 99, 0, 0.58) !important;
+	text-align:left;
+}
+.buymethod  h2{
+	margin-top:10px;
+	font-size:18px;
+	text-align:left;
+}
+.buytip{
+	font-size:15px;
+	color:red;
+}
