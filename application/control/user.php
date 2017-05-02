@@ -2,198 +2,215 @@
 
 !defined('IN_ASK2') && exit('Access Denied');
 
-class usercontrol extends base {
-var $whitelist;
+class usercontrol extends base
+{
+    var $whitelist;
 
-    function usercontrol(& $get, & $post) {
-    	
+    function usercontrol(& $get, & $post)
+    {
+
         $this->base($get, $post);
         $this->load('user');
         $this->load('topic');
         $this->load('question');
         $this->load('answer');
-         $this->load("category");
+        $this->load("category");
         $this->load("favorite");
-         
-         $this->whitelist="search,spacefollower,vertifyemail,editemail,sendcheckmail,getsmscode";
+
+        $this->whitelist = "search,spacefollower,vertifyemail,editemail,sendcheckmail,getsmscode";
     }
 
-    function ondefault() {
-    	
+    function ondefault()
+    {
+
         $this->onscore();
     }
 
-    function oncode() {
+    function oncode()
+    {
         ob_clean();
         $code = random(4);
         $_ENV['user']->save_code(strtolower($code));
         makecode($code);
     }
-     function ongetsmscode(){
+
+    function ongetsmscode()
+    {
 //     	 $startime=tcookie('smstime');
 //          $timespan=time()-$startime;
 //          echo $timespan;exit();
-            if( $this->setting['smscanuse']==0){
-            	 echo '0';
-          	         exit();
-            }
-     	$phone=$this->post['phone'];
-     	if(!preg_match("/^1[34578]{1}\d{9}$/",$phone)){  
-   
+        if ($this->setting['smscanuse'] == 0) {
+            echo '0';
+            exit();
+        }
+        $phone = $this->post['phone'];
+        if (!preg_match("/^1[34578]{1}\d{9}$/", $phone)) {
 
-    exit("3");  
-} 
-                $userone=$_ENV['user']->get_by_phone($phone);
-            if($userone!=null){
-            	exit("2");
+
+            exit("3");
+        }
+        $userone = $_ENV['user']->get_by_phone($phone);
+        if ($userone != null) {
+            exit("2");
+        }
+        session_start();
+        if ($_SESSION["time"] != null) {
+            $startime = $_SESSION['time'];
+
+            $timespan = time() - $startime;
+
+            if ($timespan < 60) {
+
+                echo '0';
+                exit();
+            } else {
+                $phone = $this->post['phone'];
+                $_SESSION["time"] = null;
+                $_SESSION["time"] = time();
+                $code = random(4);
+                $_ENV['user']->save_code(strtolower($code));
+                $codenum = $this->setting['smstmpvalue'];
+                $codenum = str_replace('{code}', $code, $codenum);
+                $msg = sendsms($this->setting['smskey'], $phone, $this->setting['smstmpid'], $codenum);
+                exit('1');
             }
-              session_start();
-             if($_SESSION["time"]!=null){
-             	 $startime=$_SESSION['time'];
-          
-                 $timespan=time()-$startime;
-                 
-                  if($timespan<60){
-                  
-                  	echo '0';
-          	         exit();
-                  }else{
-                  	$phone=$this->post['phone'];
-                  	 $_SESSION["time"]=null;
-                  	 	 $_SESSION["time"]=time();
-                  	 	  $code = random(4);
-                       $_ENV['user']->save_code(strtolower($code));
-                       $codenum=$this->setting['smstmpvalue'];
-    	     	 $codenum=str_replace('{code}', $code, $codenum);
-                         $msg=sendsms($this->setting['smskey'],$phone,$this->setting['smstmpid'],$codenum);
-             	        exit('1');
-                  }
-             }else{
-             	$phone=$this->post['phone'];
-                $userone=$_ENV['user']->get_by_phone($phone);
-            if($userone!=null){
-            	exit("2");
+        } else {
+            $phone = $this->post['phone'];
+            $userone = $_ENV['user']->get_by_phone($phone);
+            if ($userone != null) {
+                exit("2");
             }
-            
-             	 $code = random(4);
-                 $_ENV['user']->save_code(strtolower($code));
-                      $codenum=$this->setting['smstmpvalue'];
-    	     	 $codenum=str_replace('{code}', $code, $codenum);
-                  $msg=sendsms($this->setting['smskey'],$phone,$this->setting['smstmpid'],$codenum);
-             	 $_SESSION["time"]=time();
-             	  exit('1');
-             }
-              
-            
-          echo  $timespan;exit();
-         
-     }
-    function onsearch(){
-    	      $hidefooter='hidefooter';
-    	        $type="user";
-        $word =urldecode($this->get[2]);
-        $word = str_replace(array("\\","'"," ","/","&"),"", $word);
+
+            $code = random(4);
+            $_ENV['user']->save_code(strtolower($code));
+            $codenum = $this->setting['smstmpvalue'];
+            $codenum = str_replace('{code}', $code, $codenum);
+            $msg = sendsms($this->setting['smskey'], $phone, $this->setting['smstmpid'], $codenum);
+            $_SESSION["time"] = time();
+            exit('1');
+        }
+
+
+        echo $timespan;
+        exit();
+
+    }
+
+    function onsearch()
+    {
+        $hidefooter = 'hidefooter';
+        $type = "user";
+        $word = urldecode($this->get[2]);
+        $word = str_replace(array("\\", "'", " ", "/", "&"), "", $word);
         $word = strip_tags($word);
         $word = htmlspecialchars($word);
         $word = taddslashes($word, 1);
         (!$word) && $this->message("搜索关键词不能为空!", 'BACK');
-        $navtitle = $word ;
+        $navtitle = $word;
         @$page = max(1, intval($this->get[3]));
-       // var_dump($this->get);exit();
+        // var_dump($this->get);exit();
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
-          $seo_description=$word;
-     $seo_keywords= $word;
+        $seo_description = $word;
+        $seo_keywords = $word;
         $rownum = $this->db->fetch_total('user', " username like '%$word%'");
-    	 $userlist = $_ENV['user']->list_by_search_condition(" username like '%$word%'",$startindex, $pagesize);
-    
-    	    $departstr = page($rownum, $pagesize, $page, "user/search/$word");
+        $userlist = $_ENV['user']->list_by_search_condition(" username like '%$word%'", $startindex, $pagesize);
+
+        $departstr = page($rownum, $pagesize, $page, "user/search/$word");
         include template('serach_huser');
     }
-    function onxinzhi(){
-    	
-    	include template('myxinzhi');
+
+    function onxinzhi()
+    {
+
+        include template('myxinzhi');
     }
-   function onaddxinzhi(){
- 
-   	if($this->user['doarticle']==0&&$this->user['grouptype']!=1){
-   		   $this->message('您所在用户组站长设置不允许发布文章！','topic/default');
-   	}
-    if (isset($this->post['submit'])) {
-   
+
+    function onaddxinzhi()
+    {
+
+        if ($this->user['doarticle'] == 0 && $this->user['grouptype'] != 1) {
+            $this->message('您所在用户组站长设置不允许发布文章！', 'topic/default');
+        }
+        if (isset($this->post['submit'])) {
+
 //    	if(trim($this->post['code'])==''&&$this->user['grouptype']!=1&&$this->user['credit1']<$this->setting['jingyan']){
 //    		  $this->message($this->post['state']."验证码不能为空!", 'BACK');
 //    	}
 //    			   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()&&$this->user['grouptype']!=1&&$this->user['credit1']<$this->setting['jingyan']) {
 //            $this->message($this->post['state']."验证码错误!", 'BACK');
 //        }
-    	if(isset($this->setting['register_on'])&&$this->setting['register_on']=='1'&&$this->user['grouptype']!=1){
-        				if($this->user['active']!=1){
-        					$viewhref=urlmap('user/editemail',1);
-        					   $this->message("必须激活邮箱才能发布文章!",$viewhref );
-        				}
-        			}
-    	if($this->user['isblack']==1){
-        $this->message('黑名单用户无法发布文章！','index/default');
-        	}
-       /* 检查提问数是否超过组设置 */
-        			 $this->load("userlog");
-        if(($_ENV['userlog']->rownum_by_time('topic') >= $this->user['articlelimits'])&&$this->user['grouptype']!=1) 
-        
-        {
-        	
-        	 
-        	
-                $this->message('你已超过每小时最大文章发布数,请稍后再试！','user/addxinzhi');
-                                   exit();
-        }
-        				
-    	 $this->load("topic");
-    	
-    	    	 $this->load("topic_tag");
-    	    	
-            $title = $this->post['title'];
-          $topic_tag = $this->post['topic_tag'];
-           $ataglist = explode(",", $topic_tag);
-            $desrc = $this->post['desc'];
-              $outimgurl = $this->post['outimgurl'];
-            // $tagarr= dz_segment($title,$desrc);
-               $acid = $this->post['topicclass'];
-              // if($ataglist!=null){
-               //	$tagarr=array_merge($ataglist,$tagarr);
-               //}
-               
-          
-               if($acid==null)$acid=1;
-         
-            if ('' == $title || '' == $desrc) {
-            	 $this->message('请完整填写专题相关参数!','user/addxinzhi');
-               
-                exit;
+            if (isset($this->setting['register_on']) && $this->setting['register_on'] == '1' && $this->user['grouptype'] != 1) {
+                if ($this->user['active'] != 1) {
+                    $viewhref = urlmap('user/editemail', 1);
+                    $this->message("必须激活邮箱才能发布文章!", $viewhref);
+                }
             }
-              if($_FILES['image']['name']==null&&trim($outimgurl)==''){
-              	 $this->message('封面图和外部图片至少填写一个!','user/addxinzhi');
-               
-                exit;
-              }
-            if($_FILES['image']['name']!=null&&trim($outimgurl)==''){
-            	
-           
-               $imgname = strtolower($_FILES['image']['name']);
-            $type = substr(strrchr($imgname, '.'), 1);
-            if (!isimage($type)) {
-            	 $this->message('当前图片图片格式不支持，目前仅支持jpg、gif、png格式！','user/addxinzhi');
-              
-                exit;
+            if ($this->user['isblack'] == 1) {
+                $this->message('黑名单用户无法发布文章！', 'index/default');
             }
-            $upload_tmp_file = ASK2_ROOT . '/data/tmp/topic_' . random(6, 0) . '.' . $type;
+            /* 检查提问数是否超过组设置 */
+            $this->load("userlog");
+            if (($_ENV['userlog']->rownum_by_time('topic') >= $this->user['articlelimits']) && $this->user['grouptype'] != 1) {
 
-            $filepath = '/data/attach/topic/topic' . random(6, 0) . '.' . $type;
-            forcemkdir(ASK2_ROOT . '/data/attach/topic');
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_tmp_file)) {
-                image_resize($upload_tmp_file, ASK2_ROOT . $filepath, 270, 220);
-   
-                //try{
+
+                $this->message('你已超过每小时最大文章发布数,请稍后再试！', 'user/addxinzhi');
+                exit();
+            }
+
+            $this->load("topic");
+
+            $this->load("topic_tag");
+
+            $title = $this->post['title'];
+            $topic_tag = $this->post['topic_tag'];
+            $ataglist = explode(",", $topic_tag);
+            $desrc = $this->post['desc'];
+            $outimgurl = $this->post['outimgurl'];
+            // $tagarr= dz_segment($title,$desrc);
+            $acid = $this->post['topicclass'];
+            // if($ataglist!=null){
+            //	$tagarr=array_merge($ataglist,$tagarr);
+            //}
+            $authoritycontrol = 0;
+            if(isset($this->post['duiwai'])){
+               $authoritycontrol = $this->post['duiwai'];
+            }else{
+                if(isset($this->post['duinei'])){
+                    $authoritycontrol = $this->post['duinei'];
+                }
+            }
+
+            if ($acid == null) $acid = 1;
+
+            if ('' == $title || '' == $desrc) {
+                $this->message('请完整填写专题相关参数!', 'user/addxinzhi');
+
+                exit;
+            }
+            if ($_FILES['image']['name'] == null && trim($outimgurl) == '') {
+                $this->message('封面图和外部图片至少填写一个!', 'user/addxinzhi');
+
+                exit;
+            }
+            if ($_FILES['image']['name'] != null && trim($outimgurl) == '') {
+
+
+                $imgname = strtolower($_FILES['image']['name']);
+                $type = substr(strrchr($imgname, '.'), 1);
+                if (!isimage($type)) {
+                    $this->message('当前图片图片格式不支持，目前仅支持jpg、gif、png格式！', 'user/addxinzhi');
+
+                    exit;
+                }
+                $upload_tmp_file = ASK2_ROOT . '/data/tmp/topic_' . random(6, 0) . '.' . $type;
+
+                $filepath = '/data/attach/topic/topic' . random(6, 0) . '.' . $type;
+                forcemkdir(ASK2_ROOT . '/data/attach/topic');
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_tmp_file)) {
+                    image_resize($upload_tmp_file, ASK2_ROOT . $filepath, 270, 220);
+
+                    //try{
 //                require_once ASK2_STATIC_ROOT.'/js/neweditor/php/Config.php';
 //                if(Config::OPEN_OSS){
 //                
@@ -214,95 +231,107 @@ var $whitelist;
 //                }catch (Exception $e){
 //                	print $e->getMessage();  
 //                }
-         
-            } else {
-              
-                $this->message('服务器忙，请稍后再试！','user/addxinzhi');
+
+                } else {
+
+                    $this->message('服务器忙，请稍后再试！', 'user/addxinzhi');
+                }
             }
-             }
-             if(trim($outimgurl)!=''){
-             	$filepath=$outimgurl;
-             }
-                  $aid= $_ENV['topic']->addtopic($title, $desrc, $filepath,$this->user['username'],$this->user['uid'],1,$acid);
+            if (trim($outimgurl) != '') {
+                $filepath = $outimgurl;
+            }
+            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['username'], $this->user['uid'], 1, $acid,$authoritycontrol);
 //$tag=implode(',',$tagarr);
-               // $taglist = explode(",", $tag);
-                  $_ENV['userlog']->add('topic');
-     $ataglist && $_ENV['topic_tag']->multi_add(array_unique($ataglist),  $aid);
-     
-                      $this->load("doing");
-               $_ENV['doing']->add($this->user['uid'], $this->user['username'], 9, $aid, $title);
-                $this->message('添加成功！','article-'.$aid);
+            // $taglist = explode(",", $tag);
+            $_ENV['userlog']->add('topic');
+            $ataglist && $_ENV['topic_tag']->multi_add(array_unique($ataglist), $aid);
+
+            $this->load("doing");
+            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 9, $aid, $title);
+            $this->message('添加成功！', 'article-' . $aid);
         } else {
-        	// $this->load("topicclass");
-        	//$topiclist=  $_ENV['topicclass']->get_list();
-         if ($this->user['uid']==0||$this->user['uid']==null) {
-           $this->message('您还没有登录！', 'user/login');
+            // $this->load("topicclass");
+            //$topiclist=  $_ENV['topicclass']->get_list();
+            if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+                $this->message('您还没有登录！', 'user/login');
+            }
+
+            $categoryjs = $_ENV['category']->get_js();
+            include template('addxinzhi');
         }
-          
-               $categoryjs = $_ENV['category']->get_js();
-           include template('addxinzhi');
-        }
-    	
+
     }
-     function ondeletexinzhi(){
-           if ($this->user['uid']==0||$this->user['uid']==null) {
-           $this->message('非法操作，你的ip已被记录');
+
+    function ondeletexinzhi()
+    {
+        if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+            $this->message('非法操作，你的ip已被记录');
         }
-     	 $this->load("topic");
-     	 
-     	  $topic = $_ENV['topic']->get(intval($this->get[2]));
-     	  
-     	  if($this->user['uid']!=$topic['authorid']&&$this->user['grouptype']!=1){
-     	  	$this->message('非法操作，你的ip已被记录');
-     	  }
-     	  $_ENV['topic']->remove(intval($this->get[2]));
-     	    $this->message('文章删除成功！','topic/default');
-     }
- function oneditxinzhi(){
- 		session_start();
- 		$this->load("topic");
- 	  $this->load("topic_tag");
- 	    $topic = $_ENV['topic']->get(intval($this->get[2]));
-    if (isset($this->post['submit'])) {
-    	 
-    	   $tid = intval($this->post['id']);
-    	    $topic = $_ENV['topic']->get($tid);
-    	
-    	 if($topic['authorid']!=$this->user['uid']&&$this->user['groupid']!=1){
-    	 	$this->message('非法操作，你的ip已被记录');
-    	 }
-    	if(isset($this->setting['register_on'])&&$this->setting['register_on']=='1'){
-        				if($this->user['active']!=1){
-        					$viewhref=urlmap('user/editemail',1);
-        					   $this->message("必须激活邮箱才能修改文章!",$viewhref );
-        				}
-        			}
-      $title = $this->post['title'];
-       $topic_tag = $this->post['topic_tag'];
+        $this->load("topic");
+
+        $topic = $_ENV['topic']->get(intval($this->get[2]));
+
+        if ($this->user['uid'] != $topic['authorid'] && $this->user['grouptype'] != 1) {
+            $this->message('非法操作，你的ip已被记录');
+        }
+        $_ENV['topic']->remove(intval($this->get[2]));
+        $this->message('文章删除成功！', 'topic/default');
+    }
+
+    function oneditxinzhi()
+    {
+        session_start();
+        $this->load("topic");
+        $this->load("topic_tag");
+        $topic = $_ENV['topic']->get(intval($this->get[2]));
+        if (isset($this->post['submit'])) {
+
+            $tid = intval($this->post['id']);
+            $topic = $_ENV['topic']->get($tid);
+
+            if ($topic['authorid'] != $this->user['uid'] && $this->user['groupid'] != 1) {
+                $this->message('非法操作，你的ip已被记录');
+            }
+            if (isset($this->setting['register_on']) && $this->setting['register_on'] == '1') {
+                if ($this->user['active'] != 1) {
+                    $viewhref = urlmap('user/editemail', 1);
+                    $this->message("必须激活邮箱才能修改文章!", $viewhref);
+                }
+            }
+            $title = $this->post['title'];
+            $topic_tag = $this->post['topic_tag'];
             $taglist = explode(",", $topic_tag);
             $desrc = $this->post['desc'];
-               $outimgurl = $this->post['outimgurl'];
-            $upimg=$this->post['upimg'];
-          $views=$this->post['views'];
-        $isphone= $this->post['isphone'];
-            if($isphone=='on'){
-            	$isphone=1;
-            }else{
-            	$isphone=0;
+            $outimgurl = $this->post['outimgurl'];
+            $upimg = $this->post['upimg'];
+            $views = $this->post['views'];
+            $isphone = $this->post['isphone'];
+            if ($isphone == 'on') {
+                $isphone = 1;
+            } else {
+                $isphone = 0;
             }
-             $acid = $this->post['topicclass'];
-      // $tagarr= dz_segment($title,$desrc);
-           
-              // if($taglist!=null){
-               //	$tagarr=array_merge($taglist,$tagarr);
-              // }
-               if($acid==null)$acid=1;
+            $acid = $this->post['topicclass'];
+            // $tagarr= dz_segment($title,$desrc);
+
+            // if($taglist!=null){
+            //	$tagarr=array_merge($taglist,$tagarr);
+            // }
+            if ($acid == null) $acid = 1;
+            $authoritycontrol = 0;
+            if(isset($this->post['duiwai'])){
+                $authoritycontrol = $this->post['duiwai'];
+            }else{
+                if(isset($this->post['duinei'])){
+                    $authoritycontrol = $this->post['duinei'];
+                }
+            }
             $imgname = strtolower($_FILES['image']['name']);
             if ('' == $title || '' == $desrc) {
                 $this->message('请完整填写专题相关参数!', 'errormsg');
                 exit;
             }
-             // print_r($tagarr);
+            // print_r($tagarr);
             // exit();
             if ($imgname) {
                 $type = substr(strrchr($imgname, '.'), 1);
@@ -337,53 +366,57 @@ var $whitelist;
 //                }catch (Exception $e){
 //                	print $e->getMessage();  
 //                }
-                       $ispc=$topic['ispc'];
-                    $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath,$isphone,$views,$acid,$ispc);
- $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
-                    $this->message('文章修改成功！','article-'.$tid);
+                    $ispc = $topic['ispc'];
+                    $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath, $isphone, $views, $acid, $ispc,$authoritycontrol);
+                    $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
+                    $this->message('文章修改成功！', 'article-' . $tid);
                 } else {
                     $this->message('服务器忙，请稍后再试！');
                 }
             } else {
-            	if($outimgurl!=$upimg&&trim($upimg)!=''){
-            		$upimg=$outimgurl;
-            	}
-            	$ispc=$topic['ispc'];
-                $_ENV['topic']->updatetopic($tid, $title, $desrc,$upimg,$isphone,$views,$acid,$ispc);
-            	  $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
-                $this->message('文章修改成功！','article-'.$tid);
+                if ($outimgurl != $upimg && trim($upimg) != '') {
+                    $upimg = $outimgurl;
+                }
+                $ispc = $topic['ispc'];
+                $_ENV['topic']->updatetopic($tid, $title, $desrc, $upimg, $isphone, $views, $acid, $ispc,$authoritycontrol);
+                $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
+                $this->message('文章修改成功！', 'article-' . $tid);
             }
         } else {
-        	
-         if ($this->user['uid']==0||$this->user['uid']==null) {
-           $this->message('您还没有登录！', 'user/login');
-        }
-       
-         
-         $tagmodel=$_ENV['topic_tag']->get_by_aid($topic['id']);
-         
-        
-         $topic['topic_tag']=implode(',', $tagmodel);
-        
-           $_SESSION["userid"]= getRandChar(56);
-          $catmodel=$_ENV['category']->get($topic['articleclassid']);
-               $categoryjs = $_ENV['category']->get_js();
-           include template('editxinzhi');
-        }
-    	
-    }
- function onregtip() {
-     
-	 include template('regtip');
 
-     }
-    function onregister() {
+            if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+                $this->message('您还没有登录！', 'user/login');
+            }
+
+
+            $tagmodel = $_ENV['topic_tag']->get_by_aid($topic['id']);
+
+
+            $topic['topic_tag'] = implode(',', $tagmodel);
+
+            $_SESSION["userid"] = getRandChar(56);
+            $catmodel = $_ENV['category']->get($topic['articleclassid']);
+            $categoryjs = $_ENV['category']->get_js();
+            include template('editxinzhi');
+        }
+
+    }
+
+    function onregtip()
+    {
+
+        include template('regtip');
+
+    }
+
+    function onregister()
+    {
         if ($this->user['uid']) {
             header("Location:" . SITE_URL);
         }
-       	$useragent = $_SERVER['HTTP_USER_AGENT']; 
-        if (strstr($useragent, 'MicroMessenger')) { 
-        	$wxbrower=true;
+        $useragent = $_SERVER['HTTP_USER_AGENT'];
+        if (strstr($useragent, 'MicroMessenger')) {
+            $wxbrower = true;
         }
         $navtitle = '注册新用户';
         if (!$this->setting['allow_register']) {
@@ -394,8 +427,8 @@ var $whitelist;
             exit;
         }
         $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
-        
-     
+
+
         $this->setting['passport_open'] && !$this->setting['passport_type'] && $_ENV['user']->passport_client(); //通行证处理
 //        if (isset($this->post['submit'])) {
 //         
@@ -434,27 +467,27 @@ var $whitelist;
 //            sendmail($this->user, $subject, $message);
 //            $this->message('恭喜，注册成功！');
 //        }
-        
-    
-    
-	 include template('register');
+
+
+        include template('register');
 
     }
 
-    function onlogin() {
-    	
-    	
+    function onlogin()
+    {
+
+
         if ($this->user['uid']) {
-        	
+
             header("Location:" . SITE_URL);
         }
-        
-    	$useragent = $_SERVER['HTTP_USER_AGENT']; 
-        if (strstr($useragent, 'MicroMessenger')) { 
-        	$wxbrower=true;
+
+        $useragent = $_SERVER['HTTP_USER_AGENT'];
+        if (strstr($useragent, 'MicroMessenger')) {
+            $wxbrower = true;
         }
         $navtitle = '用户登录';
-      //  $this->setting['passport_open'] && !$this->setting['passport_type'] && $_ENV['user']->passport_client(); //通行证处理
+        //  $this->setting['passport_open'] && !$this->setting['passport_type'] && $_ENV['user']->passport_client(); //通行证处理
 //        if (isset($this->post['submit'])) {
 //        
 //        	
@@ -484,39 +517,40 @@ var $whitelist;
 //                $this->message('用户名或密码错误！', 'user/login');
 //            }
 //        } else {
-        	
-       
-            $forward = isset($_SERVER['HTTP_REFERER'])  ? $_SERVER['HTTP_REFERER'] : SITE_URL;
-            include template('login');
+
+
+        $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+        include template('login');
         //}
     }
 
     /* 用于ajax登录 */
 
-    function onajaxlogin() {
-    	
+    function onajaxlogin()
+    {
+
         session_start();
-   
+
         $username = $this->post['username'];
         if (ASK2_CHARSET == 'GBK') {
             require_once(ASK2_ROOT . '/lib/iconv.func.php');
             $username = utf8_to_gbk($username);
         }
         $password = md5($this->post['password']);
-    //ucenter登录成功，则不会继续执行后面的代码。
-            if ($this->setting["ucenter_open"]) {
-                $this->load('ucenter');
-                $_ENV['ucenter']->login($username, $password);
-            }
-            
+        //ucenter登录成功，则不会继续执行后面的代码。
+        if ($this->setting["ucenter_open"]) {
+            $this->load('ucenter');
+            $_ENV['ucenter']->login($username, $password);
+        }
+
         $user = $_ENV['user']->get_by_username($username);
-          $cookietime =2592000;
+        $cookietime = 2592000;
         if (is_array($user) && ($password == $user['password'])) {
-        	if($user['isblack']==1){
-        		
-        		  exit('-1');
-        	}
-        	 $_ENV['user']->refresh($user['uid'], 1, $cookietime);
+            if ($user['isblack'] == 1) {
+
+                exit('-1');
+            }
+            $_ENV['user']->refresh($user['uid'], 1, $cookietime);
             exit('1');
         }
         exit('-1');
@@ -524,7 +558,8 @@ var $whitelist;
 
     /* 用于ajax检测用户名是否存在 */
 
-    function onajaxusername() {
+    function onajaxusername()
+    {
         $username = $this->post['username'];
         if (ASK2_CHARSET == 'GBK') {
             require_once(ASK2_ROOT . '/lib/iconv.func.php');
@@ -539,13 +574,15 @@ var $whitelist;
             exit('-2');
         exit('1');
     }
+
     /* 用于ajax检测用户名是否存在 */
 
-    function onajaxupdateusername() {
-    	
-    	if($this->user['uid']==0){
-    		exit('0');
-    	}
+    function onajaxupdateusername()
+    {
+
+        if ($this->user['uid'] == 0) {
+            exit('0');
+        }
         $username = $this->post['username'];
         if (ASK2_CHARSET == 'GBK') {
             require_once(ASK2_ROOT . '/lib/iconv.func.php');
@@ -558,50 +595,48 @@ var $whitelist;
         $usernamecensor = $_ENV['user']->check_usernamecensor($username);
         if (FALSE == $usernamecensor)
             exit('-2');
-      
-        $useremail = $this->post['useremail']; 
-       $emailaccess = $_ENV['user']->check_emailaccess($useremail);
+
+        $useremail = $this->post['useremail'];
+        $emailaccess = $_ENV['user']->check_emailaccess($useremail);
         if (FALSE == $emailaccess
-        ){
-        	exit("-3");
+        ) {
+            exit("-3");
         }
-          $user = $_ENV['user']->get_by_email($useremail);
-        if (is_array($user)){
-        	 exit('-4');
+        $user = $_ENV['user']->get_by_email($useremail);
+        if (is_array($user)) {
+            exit('-4');
         }
-        
-           
+
+
         //更新用户名
-        $_ENV['user']->update_username($this->user['uid'],$username,$useremail);
-        
+        $_ENV['user']->update_username($this->user['uid'], $username, $useremail);
+
         //发送邮件确认
-               $sitename=$this->setting['site_name'];
-    		    $activecode=md5(rand(10000,50000));
-    			      $url=SITE_URL.'index.php?user/checkemail/'.$this->user['uid'].'/'.$activecode;
-    			    $message="这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
-    			    $v=md5("yanzhengask2email");
-    			    $v1=md5("yanzhengask2time");
-    			    setcookie("emailsend");
-    			    setcookie("useremailcheck");
-    			     $expire1 = time() + 20; // 设置1分钟的有效期
-                    setcookie ("emailsend",  $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
-    			    $expire = time() + 86400; // 设置24小时的有效期
-                    setcookie ("useremailcheck",  $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
-                    $_ENV['user']->update_emailandactive($useremail,$activecode,$this->user['uid']);
-    			    $_ENV['user']->refresh($this->user['uid'],1);
-    				sendmailto($useremail, "邮箱验证提醒-$sitename", $message,$this->user['username']);
-    				
-    				
+        $sitename = $this->setting['site_name'];
+        $activecode = md5(rand(10000, 50000));
+        $url = SITE_URL . 'index.php?user/checkemail/' . $this->user['uid'] . '/' . $activecode;
+        $message = "这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
+        $v = md5("yanzhengask2email");
+        $v1 = md5("yanzhengask2time");
+        setcookie("emailsend");
+        setcookie("useremailcheck");
+        $expire1 = time() + 20; // 设置1分钟的有效期
+        setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+        $expire = time() + 86400; // 设置24小时的有效期
+        setcookie("useremailcheck", $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+        $_ENV['user']->update_emailandactive($useremail, $activecode, $this->user['uid']);
+        $_ENV['user']->refresh($this->user['uid'], 1);
+        sendmailto($useremail, "邮箱验证提醒-$sitename", $message, $this->user['username']);
+
+
         exit('1');
     }
-
-    
-
 
 
     /* 用于ajax检测用户名是否存在 */
 
-    function onajaxemail() {
+    function onajaxemail()
+    {
         $email = $this->post['email'];
         $user = $_ENV['user']->get_by_email($email);
         if (is_array($user)
@@ -616,30 +651,34 @@ var $whitelist;
 
     /* 用于ajax检测验证码是否匹配 */
 
-    function onajaxcode() {
+    function onajaxcode()
+    {
         $code = strtolower(trim($this->get[2]));
         if ($code == $_ENV['user']->get_code()) {
             exit('1');
         }
         exit('0');
     }
-      /* 用于ajax设置用户提问金额 */
- function onajaxsetmypay(){
- 	
- 	$uid=$this->user['uid'];
- 	
- 	$mypay=floatval($this->post['mypay']);
- 	if($uid==0){
- 		exit("-1");
- 	}
-     $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `mypay`='$mypay' WHERE `uid`=$uid");
-      exit("1");
- 
- }
- 
+
+    /* 用于ajax设置用户提问金额 */
+    function onajaxsetmypay()
+    {
+
+        $uid = $this->user['uid'];
+
+        $mypay = floatval($this->post['mypay']);
+        if ($uid == 0) {
+            exit("-1");
+        }
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `mypay`='$mypay' WHERE `uid`=$uid");
+        exit("1");
+
+    }
+
     /* 退出系统 */
 
-    function onlogout() {
+    function onlogout()
+    {
         $navtitle = '登出系统';
         //ucenter退出成功，则不会继续执行后面的代码。
         if ($this->setting["ucenter_open"]) {
@@ -650,31 +689,30 @@ var $whitelist;
         $this->setting['passport_open'] && !$this->setting['passport_type'] && $_ENV['user']->passport_client(); //通行证处理
         $_ENV['user']->logout();
         $this->setting['passport_open'] && $this->setting['passport_type'] && $_ENV['user']->passport_server($forward); //通行证处理
-        $this->message('成功退出！',"index");
+        $this->message('成功退出！', "index");
     }
 
     /* 找回密码 */
 
-    function ongetpass() {
+    function ongetpass()
+    {
         $navtitle = '找回密码';
         if (isset($this->post['submit'])) {
             $email = $this->post['email'];
             $name = $this->post['username'];
             //$this->checkcode(); //检查验证码
-           if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-            $this->message($this->post['state']."验证码错误!", 'BACK');
-        }
+            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+            }
             $touser = $_ENV['user']->get_by_name_email($name, $email);
             if ($touser) {
-            	 $activecode=md5(rand(10000,50000));
-    			      $getpassurl=SITE_URL.'index.php?user/resetpass/'.encode($touser['uid']).'/'.$activecode;
-    			  
-    			    
-                    $_ENV['user']->update_emailandactive($email,$activecode,$touser['uid']);
-                    
-              
-            
-               
+                $activecode = md5(rand(10000, 50000));
+                $getpassurl = SITE_URL . 'index.php?user/resetpass/' . encode($touser['uid']) . '/' . $activecode;
+
+
+                $_ENV['user']->update_emailandactive($email, $activecode, $touser['uid']);
+
+
                 $subject = "找回您在" . $this->setting['site_name'] . "的密码";
                 $message = '<p>如果是您在<a swaped="true" target="_blank" href="' . SITE_URL . '">' . $this->setting['site_name'] . '</a>的密码丢失，请点击下面的链接找回：</p><p><a swaped="true" target="_blank" href="' . $getpassurl . '">' . $getpassurl . '</a></p><p>如果直接点击无法打开，请复制链接地址，在新的浏览器窗口里打开。</p>';
                 sendmail($touser, $subject, $message);
@@ -687,26 +725,27 @@ var $whitelist;
 
     /* 重置密码 */
 
-    function onresetpass() {
-    	if($this->user['uid']>0){
-    		 $this->message("您已经登录了!");
-    	}
+    function onresetpass()
+    {
+        if ($this->user['uid'] > 0) {
+            $this->message("您已经登录了!");
+        }
         $navtitle = '重置密码';
-            $uid=intval(decode($this->get[2]));
-    	 	$activecode=strip_tags($this->get[3]);
-    	 	$user= $_ENV['user']->get_by_uid($uid);
-    	      
-    	 	if($user['activecode']==$activecode){
-    	 		$_ENV['user']->update_useractive($uid);
-    	 		 
-    	 	}else{
-    	 		$this->message("非法操作!");
-    	 	}
-    	 	$authcode=$this->get[2];
+        $uid = intval(decode($this->get[2]));
+        $activecode = strip_tags($this->get[3]);
+        $user = $_ENV['user']->get_by_uid($uid);
+
+        if ($user['activecode'] == $activecode) {
+            $_ENV['user']->update_useractive($uid);
+
+        } else {
+            $this->message("非法操作!");
+        }
+        $authcode = $this->get[2];
         if (isset($this->post['submit'])) {
             $password = $this->post['password'];
             $repassword = $this->post['repassword'];
-            $uid=decode($this->post['authcode']);
+            $uid = decode($this->post['authcode']);
             if (strlen($password) < 6) {
                 $this->message("密码长度不能少于6位!", 'BACK');
             }
@@ -720,7 +759,8 @@ var $whitelist;
         include template('resetpass');
     }
 
-    function onask() {
+    function onask()
+    {
         $navtitle = '我的问题';
         $status = intval($this->get[2]);
         @$page = max(1, intval($this->get[3]));
@@ -732,7 +772,8 @@ var $whitelist;
         include template('myask');
     }
 
-    function onrecommend() {
+    function onrecommend()
+    {
         $this->load('message');
         $navtitle = '为我推荐的问题';
         @$page = max(1, intval($this->get[2]));
@@ -746,13 +787,14 @@ var $whitelist;
         include template('myrecommend');
     }
 
-    function onspace_ask() {
-      
+    function onspace_ask()
+    {
+
         $uid = intval($this->get[2]);
         $member = $_ENV['user']->get_by_uid($uid, 0);
-        $navtitle = $member['username'].'的提问';
-       $seo_description= $member['username'].'，'.$member['introduction'].'，'.$member['signature'];
-             $seo_keywords= $member['username'];
+        $navtitle = $member['username'] . '的提问';
+        $seo_description = $member['username'] . '，' . $member['introduction'] . '，' . $member['signature'];
+        $seo_keywords = $member['username'];
         $status = $this->get[3] ? $this->get[3] : 'all';
         //升级进度
         $membergroup = $this->usergroup[$member['groupid']];
@@ -760,14 +802,15 @@ var $whitelist;
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize; //每页面显示$pagesize条
         $questionlist = $_ENV['question']->list_by_uid($uid, $status, $startindex, $pagesize);
-       // print_r($questionlist);
-       // exit();
+        // print_r($questionlist);
+        // exit();
         $questiontotal = $this->db->fetch_total('question', 'authorid=' . $uid . $_ENV['question']->statustable[$status]);
         $departstr = page($questiontotal, $pagesize, $page, "user/space_ask/$uid/$status"); //得到分页字符串
         include template('space_ask');
     }
 
-    function onanswer() {
+    function onanswer()
+    {
         $navtitle = '我的回答';
         $status = intval($this->get[2]);
         @$page = max(1, intval($this->get[3]));
@@ -779,14 +822,15 @@ var $whitelist;
         include template('myanswer');
     }
 
-    function onspace_answer() {
-       
+    function onspace_answer()
+    {
+
         $uid = intval($this->get[2]);
         $status = $this->get[3] ? $this->get[3] : 'all';
         $member = $_ENV['user']->get_by_uid($uid, 0);
-         $navtitle = $member['username'].'的回答';
-          $seo_description= $member['username'].'，'.$member['introduction'].'，'.$member['signature'];
-             $seo_keywords= $member['username'];
+        $navtitle = $member['username'] . '的回答';
+        $seo_description = $member['username'] . '，' . $member['introduction'] . '，' . $member['signature'];
+        $seo_keywords = $member['username'];
         //升级进度
         $membergroup = $this->usergroup[$member['groupid']];
         @$page = max(1, intval($this->get[4]));
@@ -798,7 +842,8 @@ var $whitelist;
         include template('space_answer');
     }
 
-    function onfollower() {
+    function onfollower()
+    {
         $navtitle = '关注者';
         $page = max(1, intval($this->get[2]));
         $pagesize = $this->setting['list_default'];
@@ -808,12 +853,14 @@ var $whitelist;
         $departstr = page($rownum, $pagesize, $page, "user/follower");
         include template("myfollower");
     }
-   function onspacefollower() {
-   	
-       
-        $uid=intval($this->get[2]);
-         $member = $_ENV['user']->get_by_uid($uid, 0);
-          $navtitle =$member['username'].'的粉丝';
+
+    function onspacefollower()
+    {
+
+
+        $uid = intval($this->get[2]);
+        $member = $_ENV['user']->get_by_uid($uid, 0);
+        $navtitle = $member['username'] . '的粉丝';
         $page = max(1, intval($this->get[3]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
@@ -823,7 +870,8 @@ var $whitelist;
         include template("space_follower");
     }
 
-    function onattention() {
+    function onattention()
+    {
         $navtitle = '已关注';
         $attentiontype = ($this->get[2] == 'question') ? 'question' : '';
         if ($attentiontype) {
@@ -845,7 +893,8 @@ var $whitelist;
         }
     }
 
-    function onscore() {
+    function onscore()
+    {
         $navtitle = '我的个人中心';
         if ($this->setting['outextcredits']) {
             $outextcredits = unserialize($this->setting['outextcredits']);
@@ -857,38 +906,39 @@ var $whitelist;
         $credit_detail = $_ENV['user']->credit_detail($this->user['uid']);
         $detail1 = $credit_detail[0];
         $detail2 = $credit_detail[1];
-        
+
         $status = 'all';
         @$page = max(1, intval($this->get[3]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize; //每页面显示$pagesize条
-        $userid=$this->user['uid'];
-          $this->load('doing');
+        $userid = $this->user['uid'];
+        $this->load('doing');
         $doinglist = $_ENV['doing']->list_by_type("my", $userid, $startindex, $pagesize);
-            $rownum = $_ENV['doing']->rownum_by_type("my", $userid);
-            
-         
-              
-            $departstr = page($rownum, $pagesize, $page, "user/score/$userid");
-             	   $answerlist = $_ENV['answer']->list_by_uid($userid, 'all', $startindex, $pagesize);
-             	   $questionlist = $_ENV['question']->list_by_uid($userid, 'all', $startindex, $pagesize);
-             	       $topiclist = $_ENV['topic']->get_list_byuid($userid, $startindex, $pagesize);
-             	    $followerlist = $_ENV['user']->get_follower($userid, $startindex, $pagesize);
-            $attentionlist = $_ENV['user']->get_attention($userid, $startindex, $pagesize);
-           
-       
-         	 include template('myscore');
-         
-       
+        $rownum = $_ENV['doing']->rownum_by_type("my", $userid);
+
+
+        $departstr = page($rownum, $pagesize, $page, "user/score/$userid");
+        $answerlist = $_ENV['answer']->list_by_uid($userid, 'all', $startindex, $pagesize);
+        $questionlist = $_ENV['question']->list_by_uid($userid, 'all', $startindex, $pagesize);
+        $topiclist = $_ENV['topic']->get_list_byuid($userid, $startindex, $pagesize);
+        $followerlist = $_ENV['user']->get_follower($userid, $startindex, $pagesize);
+        $attentionlist = $_ENV['user']->get_attention($userid, $startindex, $pagesize);
+
+
+        include template('myscore');
+
+
     }
 
-    function onlevel() {
+    function onlevel()
+    {
         $navtitle = '我的等级';
         $usergroup = $this->usergroup;
         include template("mylevel");
     }
 
-    function onexchange() {
+    function onexchange()
+    {
         $navtitle = '积分兑换';
         if ($this->setting['outextcredits']) {
             $outextcredits = unserialize($this->setting['outextcredits']);
@@ -927,7 +977,8 @@ var $whitelist;
 
     /* 个人中心修改资料 */
 
-    function onprofile() {
+    function onprofile()
+    {
         $navtitle = '个人资料';
         if (isset($this->post['submit'])) {
             $gender = $this->post['gender'];
@@ -940,13 +991,13 @@ var $whitelist;
             $isnotify = $messagenotify + $mailnotify;
             $introduction = htmlspecialchars($this->post['introduction']);
             $signature = htmlspecialchars($this->post['signature']);
-          $userone=$_ENV['user']->get_by_phone($phone);
-          if(trim($phone)!=''){//是否为空
-           if($userone!=null&&$userone['uid']!=$this->user['uid']){//不为空且不是本人号码
-             $this->message("手机号码已存在!", 'user/profile');
+            $userone = $_ENV['user']->get_by_phone($phone);
+            if (trim($phone) != '') {//是否为空
+                if ($userone != null && $userone['uid'] != $this->user['uid']) {//不为空且不是本人号码
+                    $this->message("手机号码已存在!", 'user/profile');
+                }
             }
-          }
-           
+
             if (($this->post['email'] != $this->user['email']) && (!preg_match("/^[a-z'0-9]+([._-][a-z'0-9]+)*@([a-z0-9]+([._-][a-z0-9]+))+$/", $this->post['email']) || $this->db->fetch_total('user', " email='" . $this->post['email'] . "' "))) {
                 $this->message("邮件格式不正确或已被占用!", 'user/profile');
             }
@@ -957,13 +1008,14 @@ var $whitelist;
         include template('profile');
     }
 
-    function onuppass() {
-       // $this->load("ucenter");
+    function onuppass()
+    {
+        // $this->load("ucenter");
         $navtitle = "修改密码";
         if (isset($this->post['submit'])) {
-        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-            $this->message($this->post['state']."验证码错误!", 'BACK');
-        }
+            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+            }
             if (trim($this->post['newpwd']) == '') {
                 $this->message("新密码不能为空！", 'user/uppass');
             } else if (trim($this->post['newpwd']) != trim($this->post['confirmpwd'])) {
@@ -971,13 +1023,13 @@ var $whitelist;
             } else if (trim($this->post['oldpwd']) == trim($this->post['newpwd'])) {
                 $this->message('新密码不能跟当前密码重复!', 'user/uppass');
             } else if (md5(trim($this->post['oldpwd'])) == $this->user['password']) {
-            	  if ($this->setting["ucenter_open"]) {
-            	  		$this->load("ucenter");
-            	$_ENV['ucenter']->uppass($this->user['username'], $this->post['oldpwd'], $this->post['newpwd'], $this->user['email']);
-                
-            	  }
-            
-            	$_ENV['user']->uppass($this->user['uid'], trim($this->post['newpwd']));
+                if ($this->setting["ucenter_open"]) {
+                    $this->load("ucenter");
+                    $_ENV['ucenter']->uppass($this->user['username'], $this->post['oldpwd'], $this->post['newpwd'], $this->user['email']);
+
+                }
+
+                $_ENV['user']->uppass($this->user['uid'], trim($this->post['newpwd']));
                 $this->message("密码修改成功,请重新登录系统!", 'user/login');
             } else {
                 $this->message("旧密码错误！", 'user/uppass');
@@ -987,7 +1039,8 @@ var $whitelist;
     }
 
     // 1提问  2回答
-    function onspace() {
+    function onspace()
+    {
         $navtitle = "个人空间";
         $userid = intval($this->get[2]);
         $member = $_ENV['user']->get_by_uid($userid, 2);
@@ -1000,21 +1053,21 @@ var $whitelist;
             $startindex = ($page - 1) * $pagesize;
             $doinglist = $_ENV['doing']->list_by_type("my", $userid, $startindex, $pagesize);
             $rownum = $_ENV['doing']->rownum_by_type("my", $userid);
-            
+
             $is_followed = $_ENV['user']->is_followed($member['uid'], $this->user['uid']);
-              
+
             $departstr = page($rownum, $pagesize, $page, "user/space/$userid");
-            
-             
-             	   $answerlist = $_ENV['answer']->list_by_uid($userid, 'all', $startindex, $pagesize);
-             	   $questionlist = $_ENV['question']->list_by_uid($userid, 'all', $startindex, $pagesize);
-             	       $topiclist = $_ENV['topic']->get_list_byuid($userid, $startindex, $pagesize);
-             	    $followerlist = $_ENV['user']->get_follower($userid, $startindex, $pagesize);
+
+
+            $answerlist = $_ENV['answer']->list_by_uid($userid, 'all', $startindex, $pagesize);
+            $questionlist = $_ENV['question']->list_by_uid($userid, 'all', $startindex, $pagesize);
+            $topiclist = $_ENV['topic']->get_list_byuid($userid, $startindex, $pagesize);
+            $followerlist = $_ENV['user']->get_follower($userid, $startindex, $pagesize);
             $attentionlist = $_ENV['user']->get_attention($userid, $startindex, $pagesize);
-          
+
             $navtitle = $member['username'] . $navtitle;
-           $seo_description= $member['username'].'，'.$member['introduction'].'，'.$member['signature'];
-             $seo_keywords= $member['username'];
+            $seo_description = $member['username'] . '，' . $member['introduction'] . '，' . $member['signature'];
+            $seo_keywords = $member['username'];
             include template('space');
         } else {
             $this->message("抱歉，该用户个人空间不存在！", 'BACK');
@@ -1023,19 +1076,21 @@ var $whitelist;
 
     // 0总排行、1上周排行 、2上月排行
     //user/scorelist/1/
-    function onscorelist() {
+    function onscorelist()
+    {
         $navtitle = "乐帮排行榜";
-        $seo_description= "乐帮排行榜展示问答最活跃的用户列表，包括达人财富榜，并推荐最新文章和关注问题排行榜。";
-        $seo_keywords= "活跃用户,达人财富,最新文章推荐,关注问题排行榜";
+        $seo_description = "乐帮排行榜展示问答最活跃的用户列表，包括达人财富榜，并推荐最新文章和关注问题排行榜。";
+        $seo_keywords = "活跃用户,达人财富,最新文章推荐,关注问题排行榜";
         $type = isset($this->get[2]) ? $this->get[2] : 0;
         $userlist = $_ENV['user']->list_by_credit($type, 100);
-        
-         $useractivelistlist = $_ENV['user']->get_active_list(0, 6);
+
+        $useractivelistlist = $_ENV['user']->get_active_list(0, 6);
         $usercount = count($userlist);
         include template('scorelist');
     }
 
-    function onactivelist() {
+    function onactivelist()
+    {
         $page = max(1, intval($this->get[2]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
@@ -1043,211 +1098,335 @@ var $whitelist;
         $answertop = $_ENV['user']->get_answer_top();
         $rownum = $this->db->fetch_total('user', " 1=1 ");
         $departstr = page($rownum, $pagesize, $page, "user/activelist");
-        if($page==1){
-        $navtitle = "站点用户活跃度列表";	
-        }else{
-        	$navtitle = "站点用户列表"."_第".$page."页";
+        if ($page == 1) {
+            $navtitle = "站点用户活跃度列表";
+        } else {
+            $navtitle = "站点用户列表" . "_第" . $page . "页";
         }
-          
-        $seo_description= "站点用户列表，根据用户活跃度展示用户排序。";
-        $seo_keywords= "站点用户列表";
+
+        $seo_description = "站点用户列表，根据用户活跃度展示用户排序。";
+        $seo_keywords = "站点用户列表";
         include template("activelist");
     }
-    function oncheckemail(){
-    	
-    	// if(isset($_COOKIE["useremailcheck"])){
-    	 	
-    	 	$uid=intval($this->get[2]);
-    	 	$activecode=strip_tags($this->get[3]);
-    	 	$user= $_ENV['user']->get_by_uid($uid);
-    	 	if($user['active']==1){
-    	 		 $_ENV['user']->logout();
-    	 		 $this->message("您的邮箱已激活过，请勿重复激活!",'index');
-    	 	}
-    	
-      
-        $_ENV['user']->logout();
-       
 
-    	 	if($user['activecode']==$activecode){
-    	 	  //if ($this->setting["ucenter_open"]) {
-            	  		//$this->load("ucenter");
-            	///$_ENV['ucenter']->uppass($user['username'], $user['password'], $user['password'], $user['email'],1);
-                
-            	  //}
-    	 		$_ENV['user']->update_useractive($uid);
-    	 		 $this->message("邮箱激活成功!",'index');
-    	 	}else{
-    	 		$this->message("邮箱激活失败!",'index');
-    	 	}
-    	// }else{
-    	 //	$this->message("邮箱激活已经过期!");
-    	// }
-    	
+    function oncheckemail()
+    {
+
+        // if(isset($_COOKIE["useremailcheck"])){
+
+        $uid = intval($this->get[2]);
+        $activecode = strip_tags($this->get[3]);
+        $user = $_ENV['user']->get_by_uid($uid);
+        if ($user['active'] == 1) {
+            $_ENV['user']->logout();
+            $this->message("您的邮箱已激活过，请勿重复激活!", 'index');
+        }
+
+
+        $_ENV['user']->logout();
+
+
+        if ($user['activecode'] == $activecode) {
+            //if ($this->setting["ucenter_open"]) {
+            //$this->load("ucenter");
+            ///$_ENV['ucenter']->uppass($user['username'], $user['password'], $user['password'], $user['email'],1);
+
+            //}
+            $_ENV['user']->update_useractive($uid);
+            $this->message("邮箱激活成功!", 'index');
+        } else {
+            $this->message("邮箱激活失败!", 'index');
+        }
+        // }else{
+        //	$this->message("邮箱激活已经过期!");
+        // }
+
     }
+
     //发送邮件验证
-    function  onsendcheckmail() {
-  
-    	if($this->user['uid']>0){
-    		if($this->user['active']==1){
-    			exit("您激活过邮箱了,您是不是想修改邮箱!");
-    		}
-    		if($_COOKIE['emailsend']!=null){
-    			exit("已发送过激活邮箱，请1分钟之后再试，不要恶意发送!");
-    		}
-    		$email=$this->user['email'];
-    		if(isset($this->user['email'])&&$this->user['email']!=""){
-    			$sitename=$this->setting['site_name'];
-    			
-    			
-    			
-    			//if(isset($this->setting['register_on'])&&$this->setting['register_on']=='1'){
-    				
-    			    $activecode=md5(rand(10000,50000));
-    			    $url=SITE_URL.'index.php?user/checkemail/'.$this->user['uid'].'/'.$activecode;
-    			    $message="这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
-    			    $v=md5("yanzhengask2email");
-    			    $v1=md5("yanzhengask2time");
-    			     setcookie("emailsend");
-    			    setcookie("useremailcheck");
-    			    setcookie("emailsend","OKadmin",time()-1);
-setcookie("emailsend","OKadmin",0); //浏览器关闭 是自动失效
-    setcookie("useremailcheck","OKadmin",time()-1);
-setcookie("useremailcheck","OKadmin",0); //浏览器关闭 是自动失效
-    			     $expire1 = time() + 60; // 设置1分钟的有效期
-                    setcookie ("emailsend",  $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
-    			    $expire = time() + 86400; // 设置24小时的有效期
-                    setcookie ("useremailcheck",  $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
-                    $_ENV['user']->update_emailandactive($email,$activecode,$this->user['uid']);
-    			    $_ENV['user']->refresh($this->user['uid'],1);
-    				sendmailto($email, "邮箱验证提醒-$sitename", $message,$this->user['username']);
-    			exit("邮箱验证发送成功，24小时之内请进行邮箱验证，在您没激活邮件之前你不能发布问题和文章等操作！");
-    			
-    			//}else{
-    				//exit("网站还没做邮箱配置或者开启邮箱注册!");
-    			//}
-    		}else{
-    			exit("您还没设置过邮箱，请先使用修改邮箱功能!");
-    		}
-    	}else{
-    		exit("您还没登陆!");
-    	}
-    	
+    function onsendcheckmail()
+    {
+
+        if ($this->user['uid'] > 0) {
+            if ($this->user['active'] == 1) {
+                exit("您激活过邮箱了,您是不是想修改邮箱!");
+            }
+            if ($_COOKIE['emailsend'] != null) {
+                exit("已发送过激活邮箱，请1分钟之后再试，不要恶意发送!");
+            }
+            $email = $this->user['email'];
+            if (isset($this->user['email']) && $this->user['email'] != "") {
+                $sitename = $this->setting['site_name'];
+
+
+                //if(isset($this->setting['register_on'])&&$this->setting['register_on']=='1'){
+
+                $activecode = md5(rand(10000, 50000));
+                $url = SITE_URL . 'index.php?user/checkemail/' . $this->user['uid'] . '/' . $activecode;
+                $message = "这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
+                $v = md5("yanzhengask2email");
+                $v1 = md5("yanzhengask2time");
+                setcookie("emailsend");
+                setcookie("useremailcheck");
+                setcookie("emailsend", "OKadmin", time() - 1);
+                setcookie("emailsend", "OKadmin", 0); //浏览器关闭 是自动失效
+                setcookie("useremailcheck", "OKadmin", time() - 1);
+                setcookie("useremailcheck", "OKadmin", 0); //浏览器关闭 是自动失效
+                $expire1 = time() + 60; // 设置1分钟的有效期
+                setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+                $expire = time() + 86400; // 设置24小时的有效期
+                setcookie("useremailcheck", $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+                $_ENV['user']->update_emailandactive($email, $activecode, $this->user['uid']);
+                $_ENV['user']->refresh($this->user['uid'], 1);
+                sendmailto($email, "邮箱验证提醒-$sitename", $message, $this->user['username']);
+                exit("邮箱验证发送成功，24小时之内请进行邮箱验证，在您没激活邮件之前你不能发布问题和文章等操作！");
+
+                //}else{
+                //exit("网站还没做邮箱配置或者开启邮箱注册!");
+                //}
+            } else {
+                exit("您还没设置过邮箱，请先使用修改邮箱功能!");
+            }
+        } else {
+            exit("您还没登陆!");
+        }
+
     }
-    
+
     //邮箱激活验证
-    function onvertifyemail(){
-    	//验证是否登录
-       if($this->user['uid']==0){
-    		$this->message("您还没登陆！", 'index');
-    	}
-    	//验证是否设置过邮箱
-        if(trim($this->user['email'])==''||!isset($this->user['email'])){
-    		$this->message("您还没设置过邮箱！", 'user/editemail');
-    	}
-    	
-      if($this->user['active']==1){
-    		$this->message("您的邮箱已经激活过！", 'index');
-    	}
-    	
-       if($this->user['activecode']==''||$this->user['activecode']==0||$this->user['activecode']==null){
-    		$sitename=$this->setting['site_name'];
-    	 $email=$this->user['email'];
-    			    $activecode=md5(rand(10000,50000));
-    			      $url=SITE_URL.'index.php?user/checkemail/'.$this->user['uid'].'/'.$activecode;
-    			    $message="这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
-    			    $v=md5("yanzhengask2email");
-    			    $v1=md5("yanzhengask2time");
-    			    setcookie("emailsend");
-    			    setcookie("useremailcheck");
-    			     $expire1 = time() + 60; // 设置1分钟的有效期
-                    setcookie ("emailsend",  $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
-    			    $expire = time() + 86400; // 设置24小时的有效期
-                    setcookie ("useremailcheck",  $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
-                    $_ENV['user']->update_emailandactive($email,$activecode,$this->user['uid']);
-    			    $_ENV['user']->refresh($this->user['uid'],1);
-    				sendmailto($email, "邮箱验证提醒-$sitename", $message,$this->user['username']);
-    			
-    	}
-    	 include template("vertifyemail");
-    	
-    	 
+    function onvertifyemail()
+    {
+        //验证是否登录
+        if ($this->user['uid'] == 0) {
+            $this->message("您还没登陆！", 'index');
+        }
+        //验证是否设置过邮箱
+        if (trim($this->user['email']) == '' || !isset($this->user['email'])) {
+            $this->message("您还没设置过邮箱！", 'user/editemail');
+        }
+
+        if ($this->user['active'] == 1) {
+            $this->message("您的邮箱已经激活过！", 'index');
+        }
+
+        if ($this->user['activecode'] == '' || $this->user['activecode'] == 0 || $this->user['activecode'] == null) {
+            $sitename = $this->setting['site_name'];
+            $email = $this->user['email'];
+            $activecode = md5(rand(10000, 50000));
+            $url = SITE_URL . 'index.php?user/checkemail/' . $this->user['uid'] . '/' . $activecode;
+            $message = "这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
+            $v = md5("yanzhengask2email");
+            $v1 = md5("yanzhengask2time");
+            setcookie("emailsend");
+            setcookie("useremailcheck");
+            $expire1 = time() + 60; // 设置1分钟的有效期
+            setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+            $expire = time() + 86400; // 设置24小时的有效期
+            setcookie("useremailcheck", $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+            $_ENV['user']->update_emailandactive($email, $activecode, $this->user['uid']);
+            $_ENV['user']->refresh($this->user['uid'], 1);
+            sendmailto($email, "邮箱验证提醒-$sitename", $message, $this->user['username']);
+
+        }
+        include template("vertifyemail");
+
+
     }
+
     /*
      * 
      * 修改邮箱
      */
-    function oneditemail() {
-  
-  
-    	if($this->user['uid']==0){
-    		$this->message("您还没登陆！", 'BACK');
-    	}
-    	
-        		
-    	session_start();
-    	if($this->post['submit']){
-    		
-    	      		   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-            $this->message($this->post['state']."验证码错误!", 'BACK');
+    function oneditemail()
+    {
+
+
+        if ($this->user['uid'] == 0) {
+            $this->message("您还没登陆！", 'BACK');
         }
-        			
-        	
-    		$email=trim($this->post['email']);
-    		if(empty($email)){
-    			$this->message("抱歉，邮箱不能为空！", 'BACK');
-    		}
-    		 	 $emailaccess = $_ENV['user']->check_emailaccess($email);
-        if (FALSE == $emailaccess){
-        	 $this->message("邮箱后缀被系统列入黑名单，禁止注册!","BACK");
+
+
+        session_start();
+        if ($this->post['submit']) {
+
+            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+            }
+
+
+            $email = trim($this->post['email']);
+            if (empty($email)) {
+                $this->message("抱歉，邮箱不能为空！", 'BACK');
+            }
+            $emailaccess = $_ENV['user']->check_emailaccess($email);
+            if (FALSE == $emailaccess) {
+                $this->message("邮箱后缀被系统列入黑名单，禁止注册!", "BACK");
+            }
+            $euser = $_ENV['user']->get_by_email($email);
+            if (is_array($euser)
+            ) {
+                $this->message("此邮箱已经被注册了!", "BACK");
+            }
+
+            if ($this->user['email'] != $email) {
+
+                $sitename = $this->setting['site_name'];
+
+
+                if (isset($this->setting['register_on']) && $this->setting['register_on'] == '1') {
+
+                    $activecode = md5(rand(10000, 50000));
+                    $url = SITE_URL . 'index.php?user/checkemail/' . $this->user['uid'] . '/' . $activecode;
+                    $message = "这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
+                    $v = md5("yanzhengask2email");
+                    $v1 = md5("yanzhengask2time");
+                    setcookie("emailsend");
+                    setcookie("useremailcheck");
+                    $expire1 = time() + 60; // 设置1分钟的有效期
+                    setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+                    $expire = time() + 86400; // 设置24小时的有效期
+                    setcookie("useremailcheck", $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+                    $_ENV['user']->update_emailandactive($email, $activecode, $this->user['uid']);
+                    $_ENV['user']->refresh($this->user['uid'], 1);
+                    sendmailto($email, "邮箱验证提醒-$sitename", $message, $this->user['username']);
+
+                    $this->message("邮箱验证发送成功，24小时之内请进行邮箱验证，在您没激活邮件之前你不能发布问题和文章等操作！", 'BACK');
+                } else {
+                    $_ENV['user']->update_email($email, $this->user['uid']);
+                    $_ENV['user']->refresh($this->user['uid'], 1);
+                    $this->message("邮箱修改成功，站长没有配置邮箱验证", 'BACK');
+                }
+
+            }
+
         }
-         $euser = $_ENV['user']->get_by_email($email);
-        if (is_array($euser)
-        ){
-        	 $this->message("此邮箱已经被注册了!","BACK");
-        }
-        
-    		if($this->user['email']!=$email){
-    			
-    			$sitename=$this->setting['site_name'];
-    			
-    			
-    			
-    			if(isset($this->setting['register_on'])&&$this->setting['register_on']=='1'){
-    				
-    			    $activecode=md5(rand(10000,50000));
-    			      $url=SITE_URL.'index.php?user/checkemail/'.$this->user['uid'].'/'.$activecode;
-    			    $message="这是一封来自$sitename邮箱验证，<a target='_blank' href='$url'>请点击此处验证邮箱邮箱账号</a>";
-    			    $v=md5("yanzhengask2email");
-    			    $v1=md5("yanzhengask2time");
-    			    setcookie("emailsend");
-    			    setcookie("useremailcheck");
-    			     $expire1 = time() + 60; // 设置1分钟的有效期
-                    setcookie ("emailsend",  $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
-    			    $expire = time() + 86400; // 设置24小时的有效期
-                    setcookie ("useremailcheck",  $v, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
-                    $_ENV['user']->update_emailandactive($email,$activecode,$this->user['uid']);
-    			    $_ENV['user']->refresh($this->user['uid'],1);
-    				sendmailto($email, "邮箱验证提醒-$sitename", $message,$this->user['username']);
-    			
-    			 $this->message("邮箱验证发送成功，24小时之内请进行邮箱验证，在您没激活邮件之前你不能发布问题和文章等操作！", 'BACK');
-    			}else{
-    				$_ENV['user']->update_email($email,$this->user['uid']);
-    			    $_ENV['user']->refresh($this->user['uid'],1);
-    				$this->message("邮箱修改成功，站长没有配置邮箱验证", 'BACK');
-    			}
-    			
-    		}
-    		
-    	}
-    	$_SESSION["formkey"]= getRandChar(56);
-    	  include template("editemail");
+        $_SESSION["formkey"] = getRandChar(56);
+        include template("editemail");
     }
-    function oneditimg() {
+
+    /*daixy add 修改邮箱*/
+    function onneweditemail()
+    {
+        $uid = $this->user['uid'];
+        if ($uid == 0) {
+            $this->message("您还没登陆！", 'BACK');
+        }
+        if ($this->post['submit']) {
+            $email = trim($this->post['email']);
+            $activecode = trim($this->post['code']);
+            $code = $_COOKIE['useremailcheck'];
+            //已经激活了就不需要激活
+            if ($this->user['active'] == 1 && $this->user['email'] == $email) {
+                $this->message("您激活过该邮箱了,您是不是想修改邮箱!", 'BACK');
+            } else {
+                if ($email == '') {
+                    $this->message("请输入邮箱", 'BACK');
+                } else {
+                    if ($code == $activecode) {
+                        $_ENV['user']->update_emailactive($email, $uid);
+                        $_ENV['user']->refresh($this->user['uid'], 1);
+                        $this->message("邮箱修改成功", 'BACK');
+                    } else {
+                        $this->message("邮箱激活失败，请重新输入验证码!", 'BACK');
+                    }
+                }
+            }
+        }
+    }
+
+    /*daixy add 弹出身份和邮箱验证页面 */
+    function onajaxpopcheck()
+    {
+        $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+        include template("popcheck");
+    }
+
+    /*daixy add 发送邮件验证码*/
+    function onsendemailcode()
+    {
+        if ($this->user['uid'] > 0) {
+            $email = trim($this->post['email']); //邮箱
+            if ($_COOKIE['emailsend'] != null) {
+                exit("已发送过激活邮箱，请1分钟之后再试，不要恶意发送!");
+            }
+            //检查
+            if (empty($email)) {
+                exit("抱歉，邮箱不能为空！");
+            }
+            if ($this->user['active'] == 1 && $this->user['email'] == $email) {
+                exit("您激活过该邮箱了,您是不是想修改邮箱!");
+            }
+            $emailaccess = $_ENV['user']->check_emailaccess($email);
+            if (FALSE == $emailaccess) {
+                exit("邮箱后缀被系统列入黑名单，禁止注册!");
+            }
+            $euser = $_ENV['user']->get_by_emailanduid($email, $this->user['uid']);
+            if (is_array($euser)) {
+                exit("此邮箱已经被他人注册了!");
+            }
+            $sitename = $this->setting['site_name'];
+            $activecode = getfourStr(4);
+            $message = "这是一封邮箱验证激活邮件，24小时之内请进行邮箱验证，您的验证码是$activecode";
+            $state = sendmailto($email, "邮箱验证提醒-$sitename", $message, $this->user['username']);
+            if ($state == TRUE) {
+                $_ENV['user']->update_emailandactive($email, $activecode, $this->user['uid']);
+                $_ENV['user']->refresh($this->user['uid'], 1);
+                $v = md5("yanzhengask2email");
+                $v1 = md5("yanzhengask2time");
+                setcookie("emailsend");
+                setcookie("useremailcheck");
+                setcookie("emailsend", "OKadmin", time() - 1);
+                setcookie("emailsend", "OKadmin", 0); //浏览器关闭 是自动失效
+                setcookie("useremailcheck", "OKadmin", time() - 1);
+                setcookie("useremailcheck", "OKadmin", 0); //浏览器关闭 是自动失效
+                $expire1 = time() + 60; // 设置1分钟的有效期
+                setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+                $expire = time() + 86400; // 设置24小时的有效期
+                setcookie("useremailcheck", $activecode, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+                exit("邮箱验证发送成功，请前往您的邮箱查看验证码！");
+            } else {
+                exit("邮箱验证发送失败，请检查邮箱是否填写正确！");
+            }
+//        }
+        }
+    }
+
+    /*daixy add 进行验证*/
+    function onemailcheck()
+    {
+        $uid = $this->user['uid'];
+        $email = $this->post['email'];
+        $activecode = $this->post['activecode'];
+        $code = $_COOKIE['useremailcheck'];
+        $identity = $this->post['identity'];
+        //$user = $_ENV['user']->get_by_uid($uid);
+        //已经激活了就不需要激活
+        if ($this->user['active'] == 1) {
+            $_ENV['user']->update_identity($identity, $uid);
+            $_ENV['user']->refresh($this->user['uid'], 1);
+            exit("activation successful");
+        } else {
+            if ($activecode == $code) {
+                $_ENV['user']->update_identity($identity, $uid);
+                $_ENV['user']->update_emailactive($email, $uid);
+                $_ENV['user']->refresh($this->user['uid'], 1);
+                exit("activation successful");
+            } else {
+                if (empty($email)) {
+                    exit("抱歉，邮箱不能为空！");
+                } else {
+                    exit("邮箱激活失败，请重新输入验证码!");
+                }
+            }
+        }
+    }
+
+    function oneditimg()
+    {
         if (isset($_FILES["userimage"])) {
             $uid = intval($this->get[2]);
-            
-          
+
+
             $avatardir = "/data/avatar/";
             $extname = extname($_FILES["userimage"]["name"]);
             if (!isimage($extname))
@@ -1268,21 +1447,22 @@ setcookie("useremailcheck","OKadmin",0); //浏览器关闭 是自动失效
                     if (strtolower($extname) != extname($imgfile))
                         unlink($imgfile);
                 }
-               image_resize($upload_tmp_file, ASK2_ROOT . $smallimg, 85, 85,1);
-                   
+                image_resize($upload_tmp_file, ASK2_ROOT . $smallimg, 85, 85, 1);
+
             }
         } else {
             if ($this->setting["ucenter_open"]) {
                 $this->load('ucenter');
                 $imgstr = $_ENV['ucenter']->set_avatar($this->user['uid']);
             }
-           
+
         }
-        
-         include template("editimg");
+
+        include template("editimg");
     }
 
-    function onmycategory() {
+    function onmycategory()
+    {
         $this->load("category");
         $categoryjs = $_ENV['category']->get_js();
         $qqlogin = $_ENV['user']->get_login_auth($this->user['uid'], 'qq');
@@ -1291,13 +1471,15 @@ setcookie("useremailcheck","OKadmin",0); //浏览器关闭 是自动失效
     }
 
     //解除绑定
-    function onunchainauth() {
+    function onunchainauth()
+    {
         $type = ($this->get[2] == 'qq') ? 'qq' : 'sina';
         $_ENV['user']->remove_login_auth($this->user['uid'], $type);
         $this->message($type . "绑定解除成功!", 'user/mycategory');
     }
 
-    function onajaxcategory() {
+    function onajaxcategory()
+    {
         $cid = intval($this->post['cid']);
         if ($cid && $this->user['uid']) {
             foreach ($this->user['category'] as $category) {
@@ -1309,25 +1491,28 @@ setcookie("useremailcheck","OKadmin",0); //浏览器关闭 是自动失效
         }
     }
 
-    function onajaxdeletecategory() {
+    function onajaxdeletecategory()
+    {
         $cid = intval($this->post['cid']);
         if ($cid && $this->user['uid']) {
             $_ENV['user']->remove_category($cid, $this->user['uid']);
         }
     }
 
-    function onajaxpoplogin() {
-    	session_start();
-    	$_SESSION["apikey"]=null;
-    	 $_SESSION["userid"]= getRandChar(56);
-    	  $_SESSION["apikey"]= getRandChar(56);
+    function onajaxpoplogin()
+    {
+        session_start();
+        $_SESSION["apikey"] = null;
+        $_SESSION["userid"] = getRandChar(56);
+        $_SESSION["apikey"] = getRandChar(56);
         $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
         include template("poplogin");
     }
 
     /* 用户查看下详细信息 */
 
-    function onajaxuserinfo() {
+    function onajaxuserinfo()
+    {
         $uid = intval($this->get[2]);
         if ($uid) {
             $userinfo = $_ENV['user']->get_by_uid($uid, 1);
@@ -1337,50 +1522,48 @@ setcookie("useremailcheck","OKadmin",0); //浏览器关闭 是自动失效
         }
     }
 
-    function onajaxloadmessage() {
+    function onajaxloadmessage()
+    {
         $uid = $this->user['uid'];
         if ($uid == 0) {
             return;
         }
-       
+
         $user_categorys = array_per_fields($this->user['category'], 'cid');
         $message = array();
         $this->load('message');
         $message['msg_system'] = $this->db->fetch_total('message', " new=1 AND touid=$uid AND fromuid<>$uid AND fromuid=0 AND status<>2");
         $message['msg_personal'] = $this->db->fetch_total('message', " new=1 AND touid=$uid AND fromuid<>$uid AND fromuid<>0 AND status<>2");
         $message['message_recommand'] = $_ENV['message']->rownum_user_recommend($uid, $user_categorys, 'notread');
-     ob_start() ;
+        ob_start();
         echo tjson_encode($message);
         ob_end_flush();
         exit;
     }
 
-   
 
-    
-  
- 
     //关注用户
-    function onattentto() {
+    function onattentto()
+    {
         $uid = intval($this->post['uid']);
         if (!$uid) {
             exit('error');
         }
-   
+
         $is_followed = $_ENV['user']->is_followed($uid, $this->user['uid']);
         if ($is_followed) {
-        	
+
             $_ENV['user']->unfollow($uid, $this->user['uid'], 'user');
-              $this->load("doing");
-             $_ENV['doing']->deletedoing($this->user['uid'],11,$uid);
+            $this->load("doing");
+            $_ENV['doing']->deletedoing($this->user['uid'], 11, $uid);
         } else {
-             if($uid==$this->user['uid']){
-        	 exit('self');
-        }
+            if ($uid == $this->user['uid']) {
+                exit('self');
+            }
             $_ENV['user']->follow($uid, $this->user['uid'], $this->user['username'], 'user');
-            $quser= $_ENV['user']->get_by_uid($uid);
-                               $this->load("doing");
-               $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
+            $quser = $_ENV['user']->get_by_uid($uid);
+            $this->load("doing");
+            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
             $msgfrom = $this->setting['site_name'] . '管理员';
             $username = addslashes($this->user['username']);
             $this->load("message");

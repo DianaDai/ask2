@@ -54,11 +54,20 @@ var $whitelist;
           // }
  
 foreach ($topiclist as $key=>$val){
-	
 
-	   $taglist = $_ENV['topic_tag']->get_by_aid($val['id']);
 
-	$topiclist[$key]['tags']=$taglist;
+    $topicsrc=  $_ENV['category']->get_navigation($val['articleclassid'],true);
+    $toptemp =0;
+    $count = count($topicsrc);
+    for ($i = 0; $i < $count; $i++)
+    {
+        $toptemp.=$topicsrc[$i]['name'].'/';
+    }
+    $toptemp= substr($toptemp,1,strlen($toptemp)-1);
+    $taglist = $_ENV['topic_tag']->get_by_aid($val['id']);
+
+    $topiclist[$key]['tags']=$taglist;
+    $topiclist[$key]['srcs']=$toptemp;
         
 	
 }
@@ -355,7 +364,17 @@ foreach ($topiclist as $key=>$val){
      $topicid=intval($this->get[2]);
     	$topicone = $_ENV['topic']->get($topicid);
     	$topicone['describtion']=checkwordsglobal($topicone['describtion']);
-    	$cat_model=$_ENV['category']->get($topicone['articleclassid']);
+    	//$cat_model=$_ENV['category']->get($topicone['articleclassid']);
+        $nav_article = $_ENV['category']->get_navigation($topicone['articleclassid'],true); //获取文章分类列表
+
+        $toptemp =0;
+        $count = count($nav_article);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $toptemp.=$nav_article[$i]['name'].'/';
+        }
+        $toptemp= substr($toptemp,1,strlen($toptemp)-1);
+        $nav_article=$toptemp;
      $taglist = $_ENV['topic_tag']->get_by_aid($topicone['id']);
      $cid=$topicone['articleclassid'];
      $category = $this->category[$cid]; //得到分类信息
@@ -365,7 +384,7 @@ foreach ($topiclist as $key=>$val){
         $questionlist = $_ENV['question']->list_by_cfield_cvalue_status($cfield, $cid, 'all', 0, 8); //问题列表数据
            $topicone['tags']=$taglist;
     	$topicone['views']=$topicone['views']+1;
-    	 $_ENV['topic']->updatetopic($topicone['id'], $topicone['title'], $topicone['describtion'],$topicone['image'],$topicone['isphone'],$topicone['views'],$topicone['articleclassid'],$topicone['ispc']);
+    	 $_ENV['topic']->updatetopic($topicone['id'], $topicone['title'], $topicone['describtion'],$topicone['image'],$topicone['isphone'],$topicone['views'],$topicone['articleclassid'],$topicone['ispc'],$topicone['authoritycontrol']);
     	 $navtitle = $topicone['title'];
     	    $this->load("favorite");
    	    $followerlist=$_ENV['favorite']->get_list_bytid($topicid);//收藏的人

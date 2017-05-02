@@ -56,14 +56,16 @@
           </div>
         </div>
           <div class="form-group">
-            <div class="col-md-12 ">
+            <div class="col-md-9 ">
           
             <span id="selectedcate" class="selectedcate label"></span>
                         <span><a class="btn btn-default" data-toggle="modal" data-target="#myLgModal" id="changecategory" href="javascript:void(0)">选择分类</a>
           </div>
-          <div class="col-md-10 ">
-          
-             <span>积分悬赏&nbsp;<select name="givescore" id="scorelist"><option selected="selected" value="0">0</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="30">30</option><option value="50">50</option><option value="80">80</option><option value="100">100</option></select></span>
+
+          <div class="col-md-11">
+              <span><input class="normal_checkbox" id="duinei" type="checkbox" value="1" checked name="duinei" />对内&nbsp;&nbsp;</span>
+              <span><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" checked name="duiwai" />对外</span>
+             <span style="margin-left: 7px;">积分悬赏&nbsp;<select name="givescore" id="scorelist"><option selected="selected" value="0">0</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="30">30</option><option value="50">50</option><option value="80">80</option><option value="100">100</option></select></span>
                         <!--{if $user['uid']}-->
                         <span><input type="checkbox" name="hidanswer" id="hidanswer" value="1" />&nbsp;匿名</span>
                         <!--{/if}-->
@@ -126,6 +128,26 @@
                      $('#myLgModal').modal('show');
                              return false;
                      }
+
+                     //检查问题权限是否设置
+                    var duinei = $("#duinei").is(':checked');
+                    var duiwai =$("#duiwai").is(':checked');
+                    var duineiValue = $("#duinei").val();
+                    var duiwaiValue = $("#duiwai").val();
+                    if(duiwai == false && duinei == false){
+                        $("#duinei").focus();
+                        new $.zui.Messager("请选择问题权限!", {
+                            close: true,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+                        return false;
+                    }
+                    var authoritycontrol = 0;
+                    if(duiwai == true){
+                        authoritycontrol = duiwaiValue;
+                    }else if(duinei == true){
+                        authoritycontrol = duineiValue;
+                    }
                      {if $user['uid']}
                      //检查财富值是否够用
                      var offerscore = 0;
@@ -165,7 +187,8 @@
                 			  hidanswer:_hidanswer,
                 			  askfromuid:$("#askfromuid").val(),
                   			  jine:_money,
-                  			code:$("#code").val()
+                  			code:$("#code").val(),
+                          authoritycontrol:authoritycontrol
                   	}
                 	    <!--{else}-->
                 		var data={
@@ -178,8 +201,8 @@
                     			  jine:_money,
                     			  givescore:$("#scorelist").val(),
                     			  hidanswer:_hidanswer,
-                    			  askfromuid:$("#askfromuid").val()
-                      			
+                    			  askfromuid:$("#askfromuid").val(),
+                            authoritycontrol:authoritycontrol
                       			
                     			
                     	}

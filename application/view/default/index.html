@@ -10,6 +10,16 @@
 </div>
    <!--{/if}-->
    <!--{/if}-->
+<div id="NavTop">
+    <div id="NavCon">
+        <ul>
+            <li><a href="http://221.6.15.178:8580/NewContact.aspx" target="_blank">WEB型管</a></li>
+            <li><a href="ftp://221.6.15.178:4002/" target="_blank">E10 FTP</a></li>
+            <li><a href="http://221.6.15.178:8081/AppStore.aspx" target="_blank">E10应用商店</a></li>
+            <li><a href="{url gift/default}" target="_blank">奖品商城</a></li>
+        </ul>
+    </div>
+</div>
 <div class="container index slideInDown animated">
 
     <div class="row">
@@ -128,3 +138,41 @@
 
     </div>
 <!--{template footer}-->
+
+<style type="text/css">
+    *{margin:0px; padding:0px; }
+    #NavTop{
+        width:140px;
+        border-radius: 10px;
+        background-color: #f7f7f7;
+        height:200px;
+        position:fixed;
+        left:0px;top:150px;        /*固定位置,右浮动，距上150px*/
+    }
+    #NavTop #NavCon{
+        width:140px;
+        height:200px;
+        position:relative;
+    }
+
+    #NavTop #NavCon ul{
+        margin-top:25px;
+        padding-left: 10px;
+    }
+    #NavTop #NavCon ul li a{
+        text-decoration:none;
+        color:#555;
+        width:105px;
+        height:30px;
+        background:#fff;
+        display:block;
+        margin-top:10px;
+        line-height:30px;
+        text-align:center;
+        font-family:"微软雅黑";
+        font-size:14px;
+    }
+    /*#NavTop #NavCon ul li a:hover{*/
+        /*background:red;*/
+    /*}*/
+</style>

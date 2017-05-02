@@ -66,7 +66,14 @@ $code=$this->setting['hct_logincode']!=null? $this->setting['hct_logincode']:ran
 			echo '文章已存在，发布时间为'.$article['viewtime'];
 			exit();
 		}else{
-				
+            $authoritycontrol = 0;
+            if(isset($this->post['duiwai'])){
+                $authoritycontrol = $this->post['duiwai'];
+            }else{
+                if(isset($this->post['duinei'])){
+                    $authoritycontrol = $this->post['duinei'];
+                }
+            }
     //   $content=$this->removeLinks($this->post['content']);
  
     $content=preg_replace("#<a[^>]*>(.*?)</a>#is", "$1", $content);
@@ -103,7 +110,7 @@ $code=$this->setting['hct_logincode']!=null? $this->setting['hct_logincode']:ran
 	 $content=filter_outer($content);
 }
 if(trim($content)!=''){
-	$aid=$_ENV['topic']->addtopic($title,$content,$img_url,$username,$uid,rand(1, 30),$classid);
+	$aid=$_ENV['topic']->addtopic($title,$content,$img_url,$username,$uid,rand(1, 30),$classid,$authoritycontrol);
 if($aid>0){
 	 //$this->load("topic_tag");
 	 // $tagarr= dz_segment($this->post['title'],$this->post['content']);

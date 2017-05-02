@@ -16,8 +16,7 @@
                                  <script type="text/javascript">  
             var editor = UE.getEditor('description',{  
                 //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个  
-                toolbars:[['Undo', 'Redo','bold']],
-               
+                toolbars:[['Undo', 'Redo','bold','simpleupload']],
                
                 //关闭字数统计  
                 wordCount:false,  
@@ -57,6 +56,8 @@
             </div>
         </div>
                   <div class="ui-form-item ui-form-item-r ui-border-b">
+                      <span><input class="normal_checkbox" id="duinei" type="checkbox" value="1" checked name="duinei" />对内&nbsp;&nbsp;</span>
+                      <span><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" checked name="duiwai" />对外</span>
             <label>悬赏</label>
             <div class="ui-select">
                 <select name="givescore" id="scorelist">
@@ -166,6 +167,25 @@ function tijiao(){
         $("#qtitle").focus();
         return false;
     }
+    //检查问题权限是否设置
+    var duinei = $("#duinei").is(':checked');
+    var duiwai =$("#duiwai").is(':checked');
+    var duineiValue = $("#duinei").val();
+    var duiwaiValue = $("#duiwai").val();
+    if(duiwai == false && duinei == false){
+        $("#duinei").focus();
+        new $.zui.Messager("请选择问题权限!", {
+            close: true,
+            placement: 'center' // 定义显示位置
+        }).show();
+        return false;
+    }
+    var authoritycontrol = 0;
+    if(duiwai == true){
+        authoritycontrol = duiwaiValue;
+    }else if(duinei == true){
+        authoritycontrol = duineiValue;
+    }
 
     {if $user['uid']}
     //检查财富值是否够用
@@ -207,7 +227,8 @@ function tijiao(){
 			  hidanswer:_hidanswer,
 			  askfromuid:$("#askfromuid").val(),
 			  jine:_money,
- 			code:$("#seccode_verify").val()
+ 			code:$("#seccode_verify").val(),
+          authoritycontrol:authoritycontrol
  	}
 	    <!--{else}-->
 		var data={
@@ -220,8 +241,8 @@ function tijiao(){
    			  givescore:$("#scorelist").val(),
    			  hidanswer:_hidanswer,
    			jine:_money,
-   			  askfromuid:$("#askfromuid").val()
-     			
+   			  askfromuid:$("#askfromuid").val(),
+            authoritycontrol:authoritycontrol
      			
    			
    	}

@@ -82,7 +82,7 @@ $header .= "Cc: ".$cc."\r\n";
 
 }
 
-$header .= "From: $from<".$from.">\r\n";
+$header .= "From: $from\r\n";
 
 $header .= "Subject: ".$subject."\r\n";
 

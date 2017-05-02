@@ -117,6 +117,12 @@
    </div> 
         </div>
         </div>
+     <div class="form-group">
+         <div class=" col-md-20">
+             <span><input class="normal_checkbox" id="duinei" type="checkbox" <!--{if 1==$topic['authoritycontrol']}-->checked<!--{/if}--> value="1" name="duinei" />对内&nbsp;&nbsp;</span>
+             <span><input class="normal_checkbox" id="duiwai" type="checkbox" <!--{if 2==$topic['authoritycontrol']}-->checked<!--{/if}--> value="2" name="duiwai" />对外</span>
+         </div>
+     </div>
         <!-- -待续 -->
         
           <div class="form-group">
@@ -264,6 +270,15 @@ $("#article_btn").click(function(){
 		// alert("请选择文章封面图");
 		// return false;
 	 //}
+    var duinei = $("#duinei").is(':checked');
+    var duiwai =$("#duiwai").is(':checked');
+//    var duineiValue = $("#duinei").val();
+//    var duiwaiValue = $("#duiwai").val();
+    if(duiwai == false && duinei == false){
+        $("#duinei").focus();
+        alert("请选择文章权限");
+        return false;
+    }
 })
  
  function checkarticle(){

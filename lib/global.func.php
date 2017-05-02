@@ -38,7 +38,25 @@ function juhecurl($url,$params=false,$ispost=0){
     curl_close( $ch );
     return $response;
 }
+/*daixy add 获取随机码*/
+function getfourStr($len){
+    $chars_array = array(
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+        "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+        "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G",
+        "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+        "S", "T", "U", "V", "W", "X", "Y", "Z",
+    );
+    $charsLen = count($chars_array) - 1;
 
+    $outputstr = "";
+    for ($i=0; $i<$len; $i++)
+    {
+        $outputstr .= $chars_array[mt_rand(0, $charsLen)];
+    }
+    return $outputstr;
+}
 function sendsms($key,$mobile,$tpl_id,$tpl_value){
 	$sendUrl = 'http://v.juhe.cn/sms/send'; //短信接口的URL
  $message[]=array();
@@ -1152,7 +1170,7 @@ EOT;
 	$mailcontent = $message;//邮件内容
 	$mailtype = "HTML";//邮件格式（HTML/TXT）,TXT为文本邮件
 	//************************ 配置信息 ****************************
-	$smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证.
+	$smtp = new smtp($smtpserver,$smtpserverport,false,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证.
 	$smtp->debug = false;//是否显示发送的调试信息
 	$state = $smtp->sendmail($smtpemailto, $smtpusermail, $mailtitle, $mailcontent, $mailtype);
             
@@ -1193,7 +1211,7 @@ EOT;
 	$mailcontent = $message;//邮件内容
 	$mailtype = "HTML";//邮件格式（HTML/TXT）,TXT为文本邮件
 	//************************ 配置信息 ****************************
-	$smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证.
+	$smtp = new smtp($smtpserver,$smtpserverport,false,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证.
 	$smtp->debug = false;//是否显示发送的调试信息
 	$state = $smtp->sendmail($smtpemailto, $smtpusermail, $mailtitle, $mailcontent, $mailtype);
     return    $state;     

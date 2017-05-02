@@ -24,7 +24,22 @@ class usermodel {
              
         }
     }
-
+    /*daixy修改邮箱并修改激活为1 */
+    function update_emailactive($email, $uid)
+    {
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `active`=1,`email`='$email' WHERE `uid`=$uid");
+    }
+    /*daixy修改用户身份*/
+    function update_identity($identity, $uid)
+    {
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `identity`='$identity' WHERE `uid`=$uid");
+    }
+    /*daixy查找邮箱是否已经被注册*/
+    function get_by_emailanduid($email,$uid)
+    {
+        $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE email='$email' and uid!='$uid'");
+        return $user;
+    }
     function get_by_uid($uid, $loginstatus = 1) {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE uid='$uid'");
         $user['avatar'] = get_avatar_dir($uid);
