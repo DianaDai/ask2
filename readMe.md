@@ -1,11 +1,28 @@
-﻿daixy修改首页
+﻿daixy
 主要修改的文件已经大概内容：
-1、application/view/zui/ 文件夹中的
-   header.html:
-   banner:html:删除内容
-   index.html:
-   topic.html:删除文章板块下面弹出的我要提问
-   footer.html:修改页面底部 删除相关标签，友情链接，关键词搜索
 
-2、/data/attach/banner文件夹中
-   新增图片bk.png和Ewen.png
+1、权限系统和邮件认证发送：
+
+    application/control/api/user.php
+    application/control/pccaiji/catgory.php  
+    application/control/topic.php  
+    application/control/question.php
+    application/control/user.php
+    application/model/topic.class.php
+    application/model/question.class.php
+    application/model/user.class.php
+    application/model/base.class.php
+    application/view/default/ask.html
+    application/view/default/editquestion.html
+    application/view/default/editxinzhi.html
+    application/view/default/addxinzhi.html
+    application/view/default/editemail.html
+    application/view/default/popcheck.html
+    application/view/default/login.html
+    application/view/default/poplogin.html
+    application/view/default/index.html
+    application/view/default/header.html
+    application/view/fronzewap/ask.html
+    application/view/fronzewap/editquestion.html
+    lib/global.func.php
+    lib/email.class.php
