@@ -56,8 +56,8 @@
             </div>
         </div>
                   <div class="ui-form-item ui-form-item-r ui-border-b">
-                      <span><input class="normal_checkbox" id="duinei" type="checkbox" value="1" checked name="duinei" />对内&nbsp;&nbsp;</span>
-                      <span><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" checked name="duiwai" />对外</span>
+                      <span><input class="normal_checkbox" id="duinei" type="checkbox" value="1" checked name="duinei" />产中&nbsp;&nbsp;</span>
+                      <span><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" checked name="duiwai" />非产中</span>
             <label>悬赏</label>
             <div class="ui-select">
                 <select name="givescore" id="scorelist">
@@ -174,7 +174,7 @@ function tijiao(){
     var duiwaiValue = $("#duiwai").val();
     if(duiwai == false && duinei == false){
         $("#duinei").focus();
-        new $.zui.Messager("请选择问题权限!", {
+        new $.zui.Messager("请指定有权限阅读的人员!", {
             close: true,
             placement: 'center' // 定义显示位置
         }).show();
