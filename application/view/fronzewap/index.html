@@ -47,7 +47,7 @@
                
             </div>
             </div>
-            <a class="title" target="_blank"  {if $question['articleclassid']!=null} href="{url topic/getone/$question['id']}"  {else}  href="{url question/view/$question['id']}" {/if} >{$question['title']}</a>
+            <a class="title" target="_blank"  {if $question['articleclassid']!=null} href="{url topic/getone/$question['id']}"  {else}  href="{url question/view/$question['id']}" {/if} > {$question['title']}<h5>{$question['srcs']}</h5></a>
           
            <div class="meta">
            

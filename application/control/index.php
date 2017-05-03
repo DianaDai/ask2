@@ -14,10 +14,11 @@ var $whitelist;
     function ondefault() {
        
     	$this->load('setting');
+        $this->load('category');
 
     	// if(!is_mobile()){
     	 	$tnosolvelist=$this->fromcache('nosolvelist');
-
+          
     	// }else{
     	 	//$nosolvelist=$this->fromcache('nosolvelist');
     	// }
@@ -30,7 +31,19 @@ var $whitelist;
 
     	$nosolvelist=$this->getnewlist_bytime($nosolvelist);
     	// }
-    	
+        
+        foreach ($nosolvelist as $key=> $value)
+        {
+            if (array_key_exists('cid', $value)) //null  false
+            { 
+            	$navtemp=$this-> getnavtitle($value['cid']); //调用方法要$this-> 坑死
+            }else
+            {
+            	$navtemp=$this->getnavtitle($value['articleclassid']);
+            }
+            $nosolvelist[$key]['srcs']=$navtemp;
+        }
+       
 
 //    	foreach ($nosolvelist as $key=>$val){
 //    		
@@ -56,6 +69,22 @@ var $whitelist;
     
     }
   
+    
+    
+    
+    function getnavtitle($cid){
+        $topicsrc=  $_ENV['category']->get_navigation($cid,true);
+        $toptemp =0;
+        $count = count($topicsrc);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $toptemp.=$topicsrc[$i]['name'].'/';
+        }
+        $toptemp= substr($toptemp,1,strlen($toptemp)-1);
+        return $toptemp;
+    }
+    
+    
     function getnewlist_bytime($arr){
     	
     	$i=0;
