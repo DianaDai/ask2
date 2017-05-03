@@ -22,6 +22,13 @@ var $whitelist;
          
         $type="topic";
         $word =urldecode($this->get[2]);
+        
+        if ($this->post['word']) {
+            header("Location:" . SITE_URL . '?topictag-' . urlencode($this->post['word']));
+            exit();
+        }
+        
+        
         $word = str_replace(array("\\","'"," ","/","&"),"", $word);
         $word = strip_tags($word);
         $word = htmlspecialchars($word);
