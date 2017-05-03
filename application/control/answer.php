@@ -27,11 +27,11 @@ class answercontrol extends base {
         }
         $viewurl = urlmap('question/view/' . $qid, 2);
         if (isset($this->post['submit'])) {
-        	if($this->user['grouptype']!=1){
-        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()&&$this->setting['jingyan']<=0) {
-            $this->message($this->post['state']."验证码错误!", 'BACK');
-        }
-        				}
+//        	if($this->user['grouptype']!=1){
+//        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()&&$this->setting['jingyan']<=0) {
+//            $this->message($this->post['state']."验证码错误!", 'BACK');
+//        }
+//        				}
             $_ENV['answer']->append($answer['id'], $this->user['username'], $this->user['uid'], $this->post['content']);
             if ($answer['authorid'] == $this->user['uid']) {//继续回答
                 $_ENV['message']->add($this->user['username'], $this->user['uid'], $question['authorid'], $this->user['username'] . '继续回答了您的问题:' . $question['title'], $this->post['content'] . '<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看</a>');

@@ -60,14 +60,14 @@ class questioncontrol extends base
         $useragent = $_SERVER['HTTP_USER_AGENT'];
 
 
-        if (!strstr($useragent, 'MicroMessenger') && isset($this->setting['code_ask']) && $this->setting['code_ask'] == '1' && $this->user['credit1'] < $this->setting['jingyan'] && $this->user['grouptype'] != 1) {
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-
-                $message['message'] = "验证码错误!";
-                echo json_encode($message);
-                exit();
-            }
-        }
+//        if (!strstr($useragent, 'MicroMessenger') && isset($this->setting['code_ask']) && $this->setting['code_ask'] == '1' && $this->user['credit1'] < $this->setting['jingyan'] && $this->user['grouptype'] != 1) {
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//
+//                $message['message'] = "验证码错误!";
+//                echo json_encode($message);
+//                exit();
+//            }
+//        }
 
         if (isset($this->setting['register_on']) && $this->setting['register_on'] == '1') {
             if ($this->user['active'] != 1 && $this->user['groupid'] != 1) {
@@ -306,16 +306,16 @@ class questioncontrol extends base
             }
         }
 
-        if (!$iswxbrower) {
-            if (isset($this->setting['code_ask']) && $this->setting['code_ask'] == '1' && $this->user['credit1'] < $this->setting['jingyan']) {
-                if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-
-                    $message['message'] = "验证码错误!";
-                    echo json_encode($message);
-                    exit();
-                }
-            }
-        }
+//        if (!$iswxbrower) {
+//            if (isset($this->setting['code_ask']) && $this->setting['code_ask'] == '1' && $this->user['credit1'] < $this->setting['jingyan']) {
+//                if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//
+//                    $message['message'] = "验证码错误!";
+//                    echo json_encode($message);
+//                    exit();
+//                }
+//            }
+//        }
 
 
         //老子故意让你这种发广告的验证完所有信息，最后告诉你丫的进入网站黑名单不能提问
@@ -981,11 +981,11 @@ class questioncontrol extends base
         }
         $navlist = $_ENV['category']->get_navigation($question['cid'], true);
         if (isset($this->post['submit'])) {
-            if ($this->user['grouptype'] != 1) {
-                if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-                    $this->message($this->post['state'] . "验证码错误!", 'BACK');
-                }
-            }
+//            if ($this->user['grouptype'] != 1) {
+//                if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//                    $this->message($this->post['state'] . "验证码错误!", 'BACK');
+//                }
+//            }
             $content = $this->post['content'];
             //检查审核和内容外部URL过滤
             $status = intval(1 != (1 & $this->setting['verify_question']));
@@ -1051,15 +1051,15 @@ class questioncontrol extends base
         }
 
 
-        if ($this->user['grouptype'] != 1) {
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code() && $this->user['credit1'] < $this->setting['jingyan']) {
-
-
-                $message['message'] = "验证码错误!";
-                echo json_encode($message);
-                exit();
-            }
-        }
+//        if ($this->user['grouptype'] != 1) {
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code() && $this->user['credit1'] < $this->setting['jingyan']) {
+//
+//
+//                $message['message'] = "验证码错误!";
+//                echo json_encode($message);
+//                exit();
+//            }
+//        }
         $content = $this->post['content'];
         //检查审核和内容外部URL过滤
         $status = intval(1 != (1 & $this->setting['verify_question']));
@@ -1227,7 +1227,7 @@ class questioncontrol extends base
         $question = $_ENV['question']->get($answer['qid']);
         $navlist = $_ENV['category']->get_navigation($question['cid'], true);
         if (isset($this->post['submit'])) {
-            if ($this->user['grouptype'] != 1) {
+            /*if ($this->user['grouptype'] != 1) {
                 if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code() && $this->user['credit1'] < $this->setting['jingyan']) {
 
 
@@ -1236,7 +1236,7 @@ class questioncontrol extends base
                     exit();
 
                 }
-            }
+            }*/
             $content = $this->post['content'];
             $viewurl = urlmap('question/view/' . $question['id'], 2);
 
@@ -1653,11 +1653,11 @@ class questioncontrol extends base
         $question = $_ENV['question']->get($qid);
         if (!$question)
             $this->message("问题不存在或已被删除!", "STOP");
-        if ($this->user['grouptype'] != 1) {
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-                $this->message($this->post['state'] . "验证码错误!", 'BACK');
-            }
-        }
+//        if ($this->user['grouptype'] != 1) {
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+//            }
+//        }
         if (isset($this->setting['register_on']) && $this->setting['register_on'] == '1') {
             if ($this->user['active'] != 1) {
 
@@ -1691,14 +1691,14 @@ class questioncontrol extends base
         }
 
 
-        if ($this->user['grouptype'] != 1) {
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-
-                $message['message'] = "验证码错误!";
-                echo json_encode($message);
-                exit();
-            }
-        }
+//        if ($this->user['grouptype'] != 1) {
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//
+//                $message['message'] = "验证码错误!";
+//                echo json_encode($message);
+//                exit();
+//            }
+//        }
         if (isset($this->setting['register_on']) && $this->setting['register_on'] == '1') {
             if ($this->user['active'] != 1) {
 

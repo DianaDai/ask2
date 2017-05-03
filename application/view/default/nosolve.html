@@ -132,8 +132,8 @@ $(".question-des").find("img").attr("data-caption","{$question['title']}");
 <div class="score_tip">
  <!--{if 0==$user['uid']}-->
  <a class="text-success mar-ly-05" href="{url user/login}">登录</a>
-   或者
-      <a class="text-danger mar-ly-05" href="{url user/register}">注册</a>
+   <!--或者-->
+      <!--<a class="text-danger mar-ly-05" href="{url user/register}">注册</a>-->
          <!--{/if}-->
 
 回答该问题即可获得 <b class="text-danger">{$setting['credit1_answer']}</b> 经验值{if $setting['credit2_answer']} + <b class="text-danger">{$setting['credit2_answer']}</b> 财富值{/if}，问题被采纳即可获得 <b class="text-danger">{$setting['credit1_adopt']}</b> 经验值{if $setting['credit2_adopt'] || $question['price']} + <b class="text-danger">{eval echo ($setting['credit2_adopt']+$question['price'])}</b> 财富值{/if}！</div>
@@ -188,7 +188,7 @@ $(".question-des").find("img").attr("data-caption","{$question['title']}");
   
         <div class="row">
             <div class="col-sm-10">
-              <!--{if $setting['code_ask']}-->
+              <!--{if $setting['code_ask']}
                 <div class="row">
                     <div class="col-sm-4">
                         <span class="">验证码</span>
@@ -201,7 +201,7 @@ $(".question-des").find("img").attr("data-caption","{$question['title']}");
                         <span id="codetip" class="input_error alert alert-warning hide"></span>
                     </div>
                 </div>
-                   <!--{/if}-->
+                   {/if}-->
             </div>
             <div class="col-sm-2">
              <input type="hidden" value="{$question['id']}" name="qid">

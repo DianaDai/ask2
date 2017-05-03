@@ -48,10 +48,10 @@ class notecontrol extends base {
     function onaddcomment() {
         if (isset($this->post['submit'])) {
 
-      
-        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()&&$this->user['credit1']<$this->setting['jingyan']) {
-            $this->message($this->post['state']."验证码错误!", 'BACK');
-        }
+//
+//        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()&&$this->user['credit1']<$this->setting['jingyan']) {
+//            $this->message($this->post['state']."验证码错误!", 'BACK');
+//        }
         	if($this->user['isblack']==1){
         $this->message('黑名单用户无法评论！', 'BACK');
         	}

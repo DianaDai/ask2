@@ -36,15 +36,15 @@
           </div>
         </div>
             
-                <!--{if $user['grouptype']!=1&&$setting['code_ask']&&$user['credit1']<$setting['jingyan']}-->
-                  <!--{template code}-->
-          <!--{/if}-->
+                <!--if $user['grouptype']!=1&&$setting['code_ask']&&$user['credit1']<$setting['jingyan']-->
+                  <!--取消验证码template code-->
+              <!--/if-->
           
          <div class="form-group">
            <div class="ui-btn-wrap">
         
                     <input type="hidden" value="{$aid}" id="buchong_aid" name="aid"/>
-             <button type="button" id="submit" name="submit" class="ui-btn ui-btn-primary"  data-loading="稍候...">保存</button> 
+             <button type="button" id="submit" name="submit" class="ui-btn ui-btn-primary"  data-loading="稍候...">提交</button>
             <a class="ui-btn" onclick="window.history.go(-1)">返回</a>
           </div>
         </div>

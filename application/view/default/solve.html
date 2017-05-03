@@ -135,16 +135,16 @@
  <img src="{$user['avatar']}">
  </a> <textarea placeholder="写下你的评论..." onkeydown="return keydownlistener(event)"  id="anscontent" name="content" oninput="listertext()" onpropertychange="listertext()"></textarea>
   <div class="write-function-block">
-  <div class="hint">Ctrl+Return 发表</div> 
+  <div class="hint">Ctrl+Enter 提交</div>
   
   <div class="emoji-modal-wrap">
 
 </div>
-  <a class="btn btn-send" id="ajaxsubmitasnwer">发送</a> 
+  <a class="btn btn-send" id="ajaxsubmitasnwer">提交</a>
 </div>
      <div class="write-function-block code_hint">
       <!--{if $setting['code_ask']&&$user['credit1']<$setting['jingyan']}-->
- {template code}
+         <!--取消验证码template code-->
    <!--{/if}-->
  </div>
   </form>

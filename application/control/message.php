@@ -54,11 +54,11 @@ class messagecontrol extends base {
         $navtitle = '发站内消息';
         $sendto = $_ENV['user']->get_by_uid(intval($this->get[2]));
         if (isset($this->post['submit'])) {
-           if(isset($this->setting['code_message'])&&$this->setting['code_message']=='1'){
-        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-            $this->message($this->post['state']."验证码错误!", 'BACK');
-        }
-        				}
+//           if(isset($this->setting['code_message'])&&$this->setting['code_message']=='1'){
+//        				   if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//            $this->message($this->post['state']."验证码错误!", 'BACK');
+//        }
+//        				}
             $touser = $_ENV['user']->get_by_username($this->post['username']);
             (!$touser) && $this->message('该用户不存在!', "message/send");
             ($touser['uid'] == $this->user['uid']) && $this->message("不能给自己发消息!", "message/send");

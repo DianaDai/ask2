@@ -372,9 +372,13 @@ class api_usercontrol extends base
                 $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
                 $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                 //exit('login_ok');//登录成功
-                if ($user['identity'] == 0 || $user['active'] != 1) {
-                    exit('login_check');//身份邮箱验证
-                } else {
+                if($user['username']!='admin') {
+                    if ($user['identity'] == 0 || $user['active'] != 1) {
+                        exit('login_check');//身份邮箱验证
+                    } else {
+                        exit('login_ok');//登录成功
+                    }
+                }else{
                     exit('login_ok');//登录成功
                 }
             } else {
@@ -397,9 +401,13 @@ class api_usercontrol extends base
                 $_ENV['user']->refresh($user['uid'], 1, $cookietime);
 
                 //exit('login_ok');//登录成功
-                if ($user['identity'] == 0 || $user['active'] != 1) {
-                    exit('login_check');//身份邮箱验证
-                } else {
+                if($user['username']!='admin') {
+                    if ($user['identity'] == 0 || $user['active'] != 1) {
+                        exit('login_check');//身份邮箱验证
+                    } else {
+                        exit('login_ok');//登录成功
+                    }
+                }else{
                     exit('login_ok');//登录成功
                 }
             }
@@ -421,9 +429,13 @@ class api_usercontrol extends base
                 $user = $_ENV['user']->get_by_username($username);
                 $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
                 //exit('login_ok');//登录成功
-                if ($user['identity'] == 0 || $user['active'] != 1) {
-                    exit('login_check');//身份邮箱验证
-                } else {
+                if($user['username']!='admin') {
+                    if ($user['identity'] == 0 || $user['active'] != 1) {
+                        exit('login_check');//身份邮箱验证
+                    } else {
+                        exit('login_ok');//登录成功
+                    }
+                }else{
                     exit('login_ok');//登录成功
                 }
             }
@@ -433,9 +445,13 @@ class api_usercontrol extends base
             $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
             $_ENV['user']->refresh($user['uid'], 1, $cookietime);
             //exit('login_ok');//登录成功
-            if ($user['identity'] == 0 || $user['active'] != 1) {
-                exit('login_check');//身份邮箱验证
-            } else {
+            if($user['username']!='admin') {
+                if ($user['identity'] == 0 || $user['active'] != 1) {
+                    exit('login_check');//身份邮箱验证
+                } else {
+                    exit('login_ok');//登录成功
+                }
+            }else{
                 exit('login_ok');//登录成功
             }
         }

@@ -701,9 +701,9 @@ class usercontrol extends base
             $email = $this->post['email'];
             $name = $this->post['username'];
             //$this->checkcode(); //检查验证码
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-                $this->message($this->post['state'] . "验证码错误!", 'BACK');
-            }
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+//            }
             $touser = $_ENV['user']->get_by_name_email($name, $email);
             if ($touser) {
                 $activecode = md5(rand(10000, 50000));
@@ -1013,9 +1013,9 @@ class usercontrol extends base
         // $this->load("ucenter");
         $navtitle = "修改密码";
         if (isset($this->post['submit'])) {
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-                $this->message($this->post['state'] . "验证码错误!", 'BACK');
-            }
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+//            }
             if (trim($this->post['newpwd']) == '') {
                 $this->message("新密码不能为空！", 'user/uppass');
             } else if (trim($this->post['newpwd']) != trim($this->post['confirmpwd'])) {
@@ -1249,9 +1249,9 @@ class usercontrol extends base
         session_start();
         if ($this->post['submit']) {
 
-            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-                $this->message($this->post['state'] . "验证码错误!", 'BACK');
-            }
+//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
+//                $this->message($this->post['state'] . "验证码错误!", 'BACK');
+//            }
 
 
             $email = trim($this->post['email']);
