@@ -562,6 +562,7 @@ class questioncontrol extends base
         //  exit();
         $_ENV['question']->add_views($qid); //更新问题浏览次数
         $question = $_ENV['question']->get($qid);
+
         $topiclist = $_ENV['topic']->get_bycatid($question['cid'], 0, 8);
         empty($question) && $this->message('问题已经被删除！');
         (0 == $question['status']) && $this->message('问题正在审核中,请耐心等待！');
@@ -621,6 +622,20 @@ class questioncontrol extends base
         $solvelist = $_ENV['question']->list_by_cfield_cvalue_status('cid', $question['cid'], 2);
         $nosolvelist = $_ENV['question']->list_by_cfield_cvalue_status('cid', $question['cid'], 1);
 
+        
+        $nav_ques = $_ENV['category']->get_navigation($question['cid'],true); //获取问题分类列表
+
+        $quetemp =0;
+        $count = count($nav_ques);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $quetemp.=$nav_ques[$i]['name'].'/';
+        }
+        $quetemp= substr($quetemp,1,strlen($quetemp)-1);
+        $nav_ques=$quetemp;
+        
+        
+        
         // $this->load('paylog');
 
         foreach ($answerlist as $k => $v) {
@@ -1563,8 +1578,23 @@ class questioncontrol extends base
 
 
         //}
+        
         $questionlist = $questionlist1;//array_merge($questionlist1,$questionlist2);
         $rownum = count($questionlist);
+        foreach ($questionlist as $key=>$value)
+        {
+            $quesrc=  $_ENV['category']->get_navigation($value['cid'],true);
+            $quetemp =0;
+            $count = count($quesrc);
+            for ($i = 0; $i < $count; $i++)
+            {
+                $quetemp.=$quesrc[$i]['name'].'/';
+            }
+            $quetemp= substr($quetemp,1,strlen($quetemp)-1);
+            
+            $questionlist[$key]['srcs']=$quetemp;
+        }
+
         if ($rownum == 0) {
             $seo_keywords = "";
             $navtitle = '暂无搜索相关信息';
