@@ -38,8 +38,8 @@
  <img src=" {$question['avatar']}">
  </a> <div class="name"><a href="{url user/space/$question['authorid']}">{$question['author']}</a> <span class="time">
             {$question['format_time']}
-          </span></div></div> <a href="{url question/view/$question['id']}" target="_blank" class="title">
-{$question['title']}
+          </span></div></div>  <a href="{url question/view/$question['id']}" target="_blank" class="title"><h3>
+{$question['title']}<small>{$question['srcs']}</small> </h3>
           </a> 
           <p class="abstract">
           {$question['description']}
