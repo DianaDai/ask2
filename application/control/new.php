@@ -11,6 +11,7 @@ class newcontrol extends base {
     }
     function ondefault() {
     	 $this->load('question');
+         $this->load('category');
     	  $navtitle ="最近更新_";
     	  $seo_description=$this->setting['site_name']. '最近更新相关内容。';
              $seo_keywords= '最近更新';
@@ -27,6 +28,18 @@ class newcontrol extends base {
 foreach ($questionlist as $key=>$val){
 	
 
+    
+    $quesrc=  $_ENV['category']->get_navigation($val['cid'],true);
+    $quetemp =0;
+    $count = count($quesrc);
+    for ($i = 0; $i < $count; $i++)
+    {
+        $quetemp.=$quesrc[$i]['name'].'/';
+    }
+    $quesrc= substr($quetemp,1,strlen($quetemp)-1);
+    
+    
+    $questionlist[$key]["srcs"]=$quesrc;
 	   $taglist = $_ENV['tag']->get_by_qid($val['id']);
 	
 	$questionlist[$key]['tags']=$taglist;

@@ -54,10 +54,11 @@ var $whitelist;
            // $topiclist = $_ENV['topic']->list_by_tag($word, $startindex, $pagesize);
           // if($topiclist==null){
            	
-           	
-           $rownum=$_ENV['topic']->rownum_by_title($word);
+
         
             $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize);
+            
+            $rownum=$_ENV['topic']->rownum_by_title($word);
           // }
  
 foreach ($topiclist as $key=>$val){
@@ -219,10 +220,17 @@ foreach ($topiclist as $key=>$val){
         $pages = @ceil($rownum / $pagesize);
         $topiclist = $_ENV['topic']->get_list(2, $startindex, $pagesize);
     foreach ($topiclist as $key=>$val){
-	
+        $topicsrc=  $_ENV['category']->get_navigation($val['articleclassid'],true);
+        $toptemp =0;
+        $count = count($topicsrc);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $toptemp.=$topicsrc[$i]['name'].'/';
+        }
+        $toptemp= substr($toptemp,1,strlen($toptemp)-1);
 
 	   $taglist = $_ENV['topic_tag']->get_by_aid($val['id']);
-
+       $topiclist[$key]['srcs']=$toptemp;
 	$topiclist[$key]['tags']=$taglist;
         
 	

@@ -42,7 +42,7 @@
                 <span class="time" data-shared-at="{$topic['format_time']}">{$topic['format_time']}</span>
             </div>
             </div>
-            <a class="title" target="_blank"   href="{url topic/getone/$topic['id']}"  >{$topic['title']}</a>
+            <a class="title" target="_blank"   href="{url topic/getone/$topic['id']}"  > <h3>  {$topic['title']} <small>{$topic['srcs']}</small></h3> </a>
             <p class="abstract">
                 {eval echo strip_tags($topic['describtion']);}
                 
