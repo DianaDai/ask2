@@ -23,14 +23,50 @@ margin-left:5px;
 .loginicon .fa{
 	margin-right:10px;
 }
-</style>
 
+/* daixy add*/
+*{margin:0;padding:0;list-style-type:none;}
+a,img{border:0;}
+/*按钮样式*/
+#ClickMe {
+    width: 200px;
+    height: 30px;
+    border: 1px solid #C40000;
+    background-color: #000;
+    color: #FFF;
+    margin:0 auto;
+}
+#goodcover {
+    display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 133%;
+    background-color: black;
+    z-index: 1001;
+    -moz-opacity: 0.8;
+    opacity: 0.50;
+    filter: alpha(opacity=80);
+}
+#code {
+    width: 300px;
+    height: 350px;
+    background-color: #fff;
+    padding: 10px;
+    position: absolute;
+    display: none;
+    /*left: 45%;*/
+    z-index: 1002;
+}
+</style>
+<link href="{SITE_URL}static/css/dist/css/zui.min.css" rel="stylesheet">
 <section class="ui-container mar-t-01">
     <div class="ui-form ui-border-t">
         <form id="login_form">
         <input type="hidden"  id="forward" name="return_url" value="{$forward}">
             <div class="ui-form-item ui-form-item-pure ui-border-b">
-                <input id="xm-login-user-name" name="user_name" type="text" placeholder="注册时候的账号">
+                <input id="xm-login-user-name" name="user_name" type="text" placeholder="账号密码同EFGP">
                 <a href="#" class="ui-icon-close"></a>
             </div>
             <div class="ui-form-item ui-form-item-pure ui-border-b">
@@ -54,17 +90,6 @@ margin-left:5px;
             </div>
         </form>
     </div>
-   <ul class="ui-row mar-t-05">
-    <li class="ui-col ui-col-67">
-    <a class="mar-lr-05" href="{url user/register}">立即注册</a>
-    </li>
-    <li class="ui-col ui-col-33">
-
-<div class="ui-flex ui-flex-pack-end">
-    <div><a class="mar-lr-05" href="{url user/getpass}">忘记密码</a></div>
-</div>
-   </li>
-    </ul>
     <div class="ui-flex ui-flex-pack-start">
      <!--{if $setting['sinalogin_open']}-->
        <a href="{SITE_URL}plugin/sinalogin/index.php"> 
@@ -112,6 +137,165 @@ margin-left:5px;
     </div>
 
 </section>
+<div id="goodcover"></div>
+
+<div id="code">
+    <div class="goodtxt">
+        <div class="poploginform">
+
+            <div id="user_error" class="alert alert-danger hide">
+
+            </div>
+            <form  class="form-horizontal" name="loginform"   method="post"    >
+
+                <div class="form-group" style="padding-left: 10px;">
+                    <label class="control-label">身份确认</label>
+                    <div>
+                        <label>
+                            <input type="radio" id="chanzhong" class="normal_radio" name="shenfen" value="1" <!--{if (1 == $user['identity'])}--> checked <!--{/if}--> />
+                            产中
+                        </label>
+                        <label>
+                            <input type="radio" id="guwen" class="normal_radio" name="shenfen" value="2" <!--{if (2 == $user['identity'])}--> checked <!--{/if}--> />
+                            非产中
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" style="padding-left: 10px;margin-top: -10px;">
+                    <label class="control-label">邮箱认证</label>
+
+                        <input  type="email"  id="popemail" name="popemail" value="{$user['email']}" placeholder="输入邮箱账号" class="form-control">
+                        <div class="text-danger font-18 bold" style="font-size: 14px;">
+                            {if $user['active']==0}
+                            请激活邮箱
+                            {else}
+                            邮箱已经激活,可不验证
+                            {/if}
+                        </div>
+                        <input type="button" id="submitCode" onclick="sendcode();" class="btn btn-danger width-120" value="发送验证码">
+                </div>
+
+                <div class="form-group" style="padding-left: 10px;">
+                    <label class="control-label">输入验证码</label>
+                    <div>
+                        <input type="text"  id="emailcode" name="emailcode"  value="" class="form-control">
+
+                    </div>
+
+                </div>
+
+                <div class="form-group" style="padding-left: 10px;">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="button" onclick="checkform();" id="submit" class="btn btn-danger width-120" value="认证" data-loading="稍候...">
+                        <input type="hidden" id="popforward" name="forward" value="{$forward}"/>
+                    </div>
+                </div>
+            </form>
+
+            <script type="text/javascript">
+                function sendcode() {
+                    var popemail = $("#popemail").val();
+
+                    if ($.trim(popemail) === '') {
+                        el2=$.tips({
+                            content:'请输入您的邮箱',
+                            stayTime:3000,
+                            type:"info"
+                        });
+
+                        $("#popemail").focus();
+                        return false;
+                    }
+                    $("#submitCode").val("正在发送");
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        cache: false,
+
+                        //提交的网址
+                        url:"{SITE_URL}/?user/sendemailcode",
+                        //提交的数据
+                        data:{email:$.trim(popemail)},
+                        //返回数据的格式
+                        datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+
+                        success: function(data) {
+                            data=$.trim(data);
+                            el2=$.tips({
+                                content:data,
+                                stayTime:3000,
+                                type:"info"
+                            });
+                            $("#submitCode").val("重新发送验证码");
+                        }
+                    });
+                    return false;
+                    if (!$("#user_error").hasClass("hide")) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+                function checkform() {
+                    var chanzhong = $("#chanzhong").is(':checked');
+                    var guwen = $("#guwen").is(':checked');
+                    var popemail = $("#popemail").val();
+                    var emailcode = $("#emailcode").val();
+                    var _forward = $("#popforward").val();
+
+                    if (chanzhong === false && guwen === false) {
+                        el2=$.tips({
+                            content:'请选择您的身份',
+                            stayTime:3000,
+                            type:"info"
+                        });
+                        $("#chanzhong").focus();
+                        return false;
+                    }
+                    $("#user_error").html("").addClass("hide");
+                    var identity = 0;
+                    if (chanzhong == true) {
+                        identity = 1;
+                    }
+                    if (guwen == true) {
+                        identity = 2;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        cache: false,
+                        //提交的网址
+                        url: "{SITE_URL}/?user/emailcheck",
+                        //提交的数据
+                        data: {email: $.trim(popemail), activecode: $.trim(emailcode), identity: identity},
+                        //返回数据的格式
+                        datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+                        success: function (data) {
+                            data = $.trim(data);
+                            if (data == 'activation successful') {
+                                window.location.href = _forward;
+                            } else {
+                                el2=$.tips({
+                                    content:data,
+                                    stayTime:3000,
+                                    type:"info"
+                                });
+                                return false;
+                            }
+                        }
+                    })
+                    if (!$("#user_error").hasClass("hide")) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+            </script>
+
+        </div>
+    </div>
+</div>
  <script>
  var uname_tmp=window.localStorage.getItem("username");
  var upwd_tmp=window.localStorage.getItem("userpwd");
@@ -174,7 +358,11 @@ $("#login_submit").bind("click",function(event){
             	
             	
             
-            }else{
+            }else if(data=='login_check'){
+                center();
+                $('#goodcover').show();
+                //$('#code').fadeIn();
+            } else{
             	  switch(data){
             	  case 'login_null':
             		 
@@ -217,7 +405,54 @@ el2=$.tips({
     event.stopPropagation();    //  阻止事件冒泡
     return false;
 });
+ function center(loaded) {
+     var obj = $('#code');
+     body_width = parseInt($(window).width());
+     body_height = parseInt($(window).height());
+     block_width = parseInt(obj.width());
+     block_height = parseInt(obj.height());
+     if(block_width ==0){
+         block_width =300;
+     }
+     left_position = parseInt((body_width / 2) - (block_width / 2) + $(window).scrollLeft());
+     if (body_width < block_width) {
+         left_position = 0 + $(window).scrollLeft();
+     };
 
+     top_position = parseInt((body_height / 2) - (block_height / 2) + $(window).scrollTop());
+     if (body_height < block_height) {
+         top_position = 0 + $(window).scrollTop();
+     };
+
+     if (!loaded) {
+
+         obj.css({
+             'position': 'absolute'
+         });
+         obj.css({
+             'display': 'block'
+         });
+         obj.css({
+             'top': ($(window).height() - $('#code').height()) * 0.5,
+             'left': left_position
+         });
+         $(window).bind('resize', function() {
+            center(!loaded);
+         });
+         $(window).bind('scroll', function() {
+             center(!loaded);
+         });
+
+     } else {
+         //obj.stop();
+         obj.css({
+             'position': 'absolute'
+         });
+//         obj.animate({
+//             'top': top_position
+//         }, 200, 'linear');
+     }
+ }
 
 </script>
 <!--{template footer}-->

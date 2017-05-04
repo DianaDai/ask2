@@ -1411,6 +1411,9 @@ class usercontrol extends base
             $_ENV['user']->refresh($this->user['uid'], 1);
             exit("activation successful");
         } else {
+            if (empty($email)) {
+                exit("抱歉，邮箱不能为空！");
+            }
             if(empty($code)){
                 exit("验证码已过期，请重新发送验证码!");
             }
@@ -1420,11 +1423,7 @@ class usercontrol extends base
                 $_ENV['user']->refresh($this->user['uid'], 1);
                 exit("activation successful");
             } else {
-                if (empty($email)) {
-                    exit("抱歉，邮箱不能为空！");
-                } else {
-                    exit("邮箱激活失败，请重新输入验证码!");
-                }
+                exit("邮箱激活失败，请重新输入验证码!");
             }
         }
     }
