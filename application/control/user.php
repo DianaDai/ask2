@@ -1315,6 +1315,7 @@ class usercontrol extends base
             $email = trim($this->post['email']);
             $activecode = trim($this->post['code']);
             $code = $_COOKIE['useremailcheck'];
+            $user = $_ENV['user']->get_by_uid($uid);
             //已经激活了就不需要激活
             if ($this->user['active'] == 1 && $this->user['email'] == $email) {
                 $this->message("您激活过该邮箱了,您是不是想修改邮箱!", 'BACK');
@@ -1322,12 +1323,16 @@ class usercontrol extends base
                 if ($email == '') {
                     $this->message("请输入邮箱", 'BACK');
                 } else {
-                    if ($code == $activecode) {
-                        $_ENV['user']->update_emailactive($email, $uid);
-                        $_ENV['user']->refresh($this->user['uid'], 1);
-                        $this->message("邮箱修改成功", 'BACK');
-                    } else {
-                        $this->message("邮箱激活失败，请重新输入验证码!", 'BACK');
+                    if(empty($code)){
+                        $this->message("验证码已过期，请重新发送验证码!");
+                    }else {
+                        if ($user['activecode'] == $activecode) {
+                            $_ENV['user']->update_emailactive($email, $uid);
+                            $_ENV['user']->refresh($this->user['uid'], 1);
+                            $this->message("邮箱修改成功", 'BACK');
+                        } else {
+                            $this->message("邮箱激活失败，请重新输入验证码!", 'BACK');
+                        }
                     }
                 }
             }
@@ -1371,14 +1376,14 @@ class usercontrol extends base
             if ($state == TRUE) {
                 $_ENV['user']->update_emailandactive($email, $activecode, $this->user['uid']);
                 $_ENV['user']->refresh($this->user['uid'], 1);
-                $v = md5("yanzhengask2email");
+                //$v = md5("yanzhengask2email");
                 $v1 = md5("yanzhengask2time");
-                setcookie("emailsend");
-                setcookie("useremailcheck");
-                setcookie("emailsend", "OKadmin", time() - 1);
-                setcookie("emailsend", "OKadmin", 0); //浏览器关闭 是自动失效
-                setcookie("useremailcheck", "OKadmin", time() - 1);
-                setcookie("useremailcheck", "OKadmin", 0); //浏览器关闭 是自动失效
+//                setcookie("emailsend");
+//                setcookie("useremailcheck");
+//                setcookie("emailsend", "OKadmin", time() - 1);
+//                setcookie("emailsend", "OKadmin", 0); //浏览器关闭 是自动失效
+//                setcookie("useremailcheck", "OKadmin", time() - 1);
+//                setcookie("useremailcheck", "OKadmin", 0); //浏览器关闭 是自动失效
                 $expire1 = time() + 60; // 设置1分钟的有效期
                 setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
                 $expire = time() + 86400; // 设置24小时的有效期
@@ -1399,14 +1404,17 @@ class usercontrol extends base
         $activecode = $this->post['activecode'];
         $code = $_COOKIE['useremailcheck'];
         $identity = $this->post['identity'];
-        //$user = $_ENV['user']->get_by_uid($uid);
+        $user = $_ENV['user']->get_by_uid($uid);
         //已经激活了就不需要激活
         if ($this->user['active'] == 1) {
             $_ENV['user']->update_identity($identity, $uid);
             $_ENV['user']->refresh($this->user['uid'], 1);
             exit("activation successful");
         } else {
-            if ($activecode == $code) {
+            if(empty($code)){
+                exit("验证码已过期，请重新发送验证码!");
+            }
+            if ($activecode == $user['activecode']) {
                 $_ENV['user']->update_identity($identity, $uid);
                 $_ENV['user']->update_emailactive($email, $uid);
                 $_ENV['user']->refresh($this->user['uid'], 1);

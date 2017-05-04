@@ -18,7 +18,7 @@
           <div class="col-md-2">
               <label>
                   <input type="radio" id="guwen" class="normal_radio" name="shenfen" value="2" <!--{if (2 == $user['identity'])}--> checked <!--{/if}--> />
-                 顾问
+                 非产中
               </label>
           </div>
         </div>
@@ -73,8 +73,9 @@
 //            }
 //        }
         function sendcode() {
-            $("#emailtip").html("").removeClass("hide");
-            $("#emailtip").html("").addClass("hide");
+//            $("#emailtip").html("").removeClass("hide");
+//            $("#emailtip").html("").addClass("hide");
+            $("#emailtip").empty();
             var popemail = $("#popemail").val();
             if ($.trim(popemail) === '') {
                 new $.zui.Messager("请输入您的邮箱", {
