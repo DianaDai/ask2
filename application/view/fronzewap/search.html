@@ -3,8 +3,9 @@
 <!--{template searchinput}-->
     <section class="sec-result">
       <ul class="ui-tab-nav ui-border-b">
-        <li class="current">  <a href="{url question/search/$word}">问题</a></li>
-        <li > <a href="{url topictag-$word}">文章</a></li>
+         <li > <a href="{url topictag-$word}">文章</a></li>
+        <li class="current">  <a href="{url question/search/$word}">问题  <span class="ui-badge"> {$rownum}</span> </a></li>
+    
       
     </ul>
      <!--{if $questionlist}-->
