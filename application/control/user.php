@@ -1314,7 +1314,7 @@ class usercontrol extends base
         if ($this->post['submit']) {
             $email = trim($this->post['email']);
             $activecode = trim($this->post['code']);
-            $code = $_COOKIE['useremailcheck'];
+            //$code = $_COOKIE['useremailcheck'];
             $user = $_ENV['user']->get_by_uid($uid);
             //已经激活了就不需要激活
             if ($this->user['active'] == 1 && $this->user['email'] == $email) {
@@ -1323,17 +1323,17 @@ class usercontrol extends base
                 if ($email == '') {
                     $this->message("请输入邮箱", 'BACK');
                 } else {
-                    if(empty($code)){
-                        $this->message("验证码已过期，请重新发送验证码!");
-                    }else {
-                        if ($user['activecode'] == $activecode) {
-                            $_ENV['user']->update_emailactive($email, $uid);
-                            $_ENV['user']->refresh($this->user['uid'], 1);
-                            $this->message("邮箱修改成功", 'BACK');
-                        } else {
-                            $this->message("邮箱激活失败，请重新输入验证码!", 'BACK');
-                        }
+//                    if(empty($code)){
+//                        $this->message("验证码已过期，请重新发送验证码!");
+//                    }else {
+                    if ($user['activecode'] == $activecode) {
+                        $_ENV['user']->update_emailactive($email, $uid);
+                        $_ENV['user']->refresh($this->user['uid'], 1);
+                        $this->message("邮箱修改成功", 'BACK');
+                    } else {
+                        $this->message("邮箱激活失败，请重新输入验证码!", 'BACK');
                     }
+//                    }
                 }
             }
         }
@@ -1402,7 +1402,7 @@ class usercontrol extends base
         $uid = $this->user['uid'];
         $email = $this->post['email'];
         $activecode = $this->post['activecode'];
-        $code = $_COOKIE['useremailcheck'];
+        //$code = $_COOKIE['useremailcheck'];
         $identity = $this->post['identity'];
         $user = $_ENV['user']->get_by_uid($uid);
         //已经激活了就不需要激活
@@ -1414,9 +1414,9 @@ class usercontrol extends base
             if (empty($email)) {
                 exit("抱歉，邮箱不能为空！");
             }
-            if(empty($code)){
-                exit("验证码已过期，请重新发送验证码!");
-            }
+//            if(empty($code)){
+//                exit("验证码已过期，请重新发送验证码!");
+//            }
             if ($activecode == $user['activecode']) {
                 $_ENV['user']->update_identity($identity, $uid);
                 $_ENV['user']->update_emailactive($email, $uid);
