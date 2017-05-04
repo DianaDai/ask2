@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -418,7 +419,6 @@
     <Compile Include="application\view\zui\viewanswer.html" />
     <Compile Include="application\view\zui\viewmessage.html" />
     <Compile Include="application\view\zui\zui.php" />
-    <Compile Include="ask2\ask2.sln" />
     <Compile Include="data\attach\1703\3J2I0uMw.jpg" />
     <Compile Include="data\attach\1703\6XpZh8tg.jpg" />
     <Compile Include="data\attach\1703\fmveFBSQ.jpg" />
@@ -2617,7 +2617,6 @@
     <Compile Include="data\tmp\user_avatar_48.png" />
     <Compile Include="data\tmp\user_avatar_53.jpg" />
     <Compile Include="data\install.lock" />
-    <Compile Include="ewen\ewen.sln" />
     <Compile Include="install\images\bg_footer.gif" />
     <Compile Include="install\images\bg_repno.gif" />
     <Compile Include="install\images\bg_repx.gif" />
@@ -3954,7 +3953,6 @@
     <Folder Include="application\view\zui" />
     <Folder Include="application\view" />
     <Folder Include="application" />
-    <Folder Include="ask2" />
     <Folder Include="data\attach\1703" />
     <Folder Include="data\attach\banner" />
     <Folder Include="data\attach\giftimg" />
@@ -4027,7 +4025,6 @@
     <Folder Include="data\designerResoures" />
     <Folder Include="data\tmp" />
     <Folder Include="data" />
-    <Folder Include="ewen" />
     <Folder Include="install\images" />
     <Folder Include="install" />
     <Folder Include="lib\alipay" />

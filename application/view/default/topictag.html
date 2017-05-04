@@ -38,8 +38,8 @@
  <img src=" {$topic['avatar']}">
  </a> <div class="name"><a href="{url user/space/$topic['authorid']}">{$topic['author']}</a> <span class="time">
             {$topic['format_time']}
-          </span></div></div> <a href="{url topic/getone/$topic['id']}" target="_blank" class="title">
-{$topic['title']}
+          </span></div></div> <a href="{url topic/getone/$topic['id']}" target="_blank" class="title"><h3>
+{$topic['title']} <small >{$topic['srcs']}</small></h3>
           </a> 
           <p class="abstract">
           {$topic['describtion']}

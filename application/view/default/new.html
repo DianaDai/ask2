@@ -47,7 +47,7 @@
                 <span class="time" data-shared-at="{$question['format_time']}">{$question['format_time']}</span>
             </div>
             </div>
-            <a class="title" target="_blank"  {if $question['articleclassid']!=null} href="{url topic/getone/$question['id']}"  {else}  href="{url question/view/$question['id']}" {/if} >{$question['title']}</a>
+            <a class="title" target="_blank"  {if $question['articleclassid']!=null} href="{url topic/getone/$question['id']}"  {else}  href="{url question/view/$question['id']}" {/if} ><h3>  {$question['title']}  <small>{$question['srcs']}</small> </h3> </a>
             <p class="abstract">
                 {eval echo strip_tags($question['description']);}
                 
