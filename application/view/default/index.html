@@ -25,6 +25,17 @@
         <li><a href="http://221.6.15.178:8081/AppStore.aspx" target="_blank">E10应用商店</a></li>
         <li><a href="{url gift/default}" target="_blank">奖品商城</a></li>
     </ul>
+
+    <ul >
+        <li>
+            <div id="dimcard">
+            <img src="{SITE_URL}static/css/bianping/images/cli_300_2px.png"   class="img-rounded" />
+
+            </div>
+        </li>
+
+    </ul>
+
 </div>
 <div class="container index slideInDown animated">
 
@@ -159,6 +170,27 @@
         margin: 0px;
         padding: 0px;
     }
+
+    /* 二维嘛  */
+
+      #dimcard {
+            transition: All 0.4s ease-in-out;
+            -webkit-transition: All 0.4s ease-in-out;
+            -moz-transition: All 0.4s ease-in-out;
+            -o-transition: All 0.4s ease-in-out;
+        }
+
+        #dimcard:hover {
+            transform: rotate(360deg) scale(1.2);
+            -webkit-transform: rotate(360deg) scale(1.2);
+            -moz-transform: rotate(360deg) scale(1.2);
+            -o-transform: rotate(360deg) scale(1.2);
+            -ms-transform: rotate(360deg) scale(1.2);
+        }
+
+
+
+
 
     #NavTop {
         width: 140px;
