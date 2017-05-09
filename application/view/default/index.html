@@ -48,7 +48,7 @@
                 <!--{loop $categorylist  $category1}-->
 
 
-                <a class="collection" target="_blank" href="{url category/view/$category1['id']}">
+                <a class="collection" target="_blank" href="{url topic/catlist/$category1['id']}">
                     <img src="$category1['image']" alt="195" style="height:32px;width:32px;">
                     <div class="name">{$category1['name']}</div>
                 </a>
@@ -199,7 +199,7 @@
         /*height: 280px;*/
         position: fixed;
         left: 0px;
-        top: 150px; /*固定位置,右浮动，距上150px*/
+        top: 120px; /*固定位置,右浮动，距上150px*/
     }
 
     #NavTop ul {
