@@ -54,10 +54,10 @@ var $whitelist;
            // $topiclist = $_ENV['topic']->list_by_tag($word, $startindex, $pagesize);
           // if($topiclist==null){
            	
-
+   
         
             $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize);
-            
+
             $rownum=$_ENV['topic']->rownum_by_title($word);
           // }
  

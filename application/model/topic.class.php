@@ -75,17 +75,18 @@ class topicmodel
                         $topic['author'] = $doc->author;
                         $topic['authorid'] = $doc->authorid;
                         $topic['image'] = $topic->image;
-
                         $topic['title'] = $this->search->highlight($doc->title);
                         $topic['describtion'] = $this->search->highlight($doc->describtion);
                         $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
                         $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-                        $topic['format_time'] = tdate($topic['viewtime']);
+                        
                         $topic['avatar'] = get_avatar_dir($topic['authorid']);
                         $topic['views'] = $doc->views;
                         $topic['articles'] = $doc->articles;
                         $topic['likes'] = $doc->likes;
+                        $topic['format_time'] =tdate($doc->viewtime);
                         $topic['viewtime'] = tdate($doc->viewtime);
+                   
                         $topiclist[] = $topic;
                     }
                 }else{
@@ -102,12 +103,15 @@ class topicmodel
                     $topic['describtion'] = $this->search->highlight($doc->describtion);
                     $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
                     $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-                    $topic['format_time'] = tdate($topic['viewtime']);
+               
                     $topic['avatar'] = get_avatar_dir($topic['authorid']);
                     $topic['views'] = $doc->views;
                     $topic['articles'] = $doc->articles;
                     $topic['likes'] = $doc->likes;
+                    $topic['format_time'] = tdate($doc->viewtime);
                     $topic['viewtime'] = tdate($doc->viewtime);
+
+                   
                     $topiclist[] = $topic;
                 }
             }
@@ -145,6 +149,7 @@ class topicmodel
 
     function get_by_likename($word, $start = 0, $limit = 6)
     {
+
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
@@ -161,6 +166,8 @@ class topicmodel
 
             $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
+
+            
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['avatar'] = get_avatar_dir($topic['authorid']);
             $topic['viewtime'] = tdate($topic['viewtime']);
