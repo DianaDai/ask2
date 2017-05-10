@@ -64,10 +64,19 @@
                 </select>
             </div>
         </div>
+
             <div style="margin-left: 15px">
                 <span><input class="normal_checkbox" id="duinei" type="checkbox" value="1" checked name="duinei" />产中&nbsp;&nbsp;</span>
                 <span><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" checked name="duiwai" />非产中</span>
             </div>
+
+
+            <div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-tooltips-cnt-link ui-border-b" id="tipmsg">
+        <i class="ui-icon-talk"></i><h5>若允许非产中人员查看内容.请勾选产中&非产中</h5>
+    </div>
+          </div>
+
          <!--{if $user['uid']}-->
 <!--            <div class="ui-form-item ui-form-item-switch ui-border-b">
                 <p>
@@ -152,6 +161,11 @@ $("#srchcategory").change(function(){
 	getcat();
 
 })
+
+$("#tipmsg").tap(function(){
+    $(this).hide();
+});
+
 $("#asksubmit").tap(function(){
 	tijiao();
 	return false;
