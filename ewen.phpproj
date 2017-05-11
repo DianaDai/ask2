@@ -15,6 +15,7 @@
     <PHPDevPort>60147</PHPDevPort>
     <PHPDevHostName>localhost</PHPDevHostName>
     <IISProjectUrl>http://localhost:60147/</IISProjectUrl>
+    <PublishBeforeDebugProfile>test</PublishBeforeDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
@@ -4251,5 +4252,6 @@
   <ItemGroup>
     <Content Include="static\css\bianping\images\cli_300_2px.png" />
     <Content Include="static\css\bianping\js\navstatus.js" />
+    <Content Include="static\css\images\load.gif" />
   </ItemGroup>
 </Project>

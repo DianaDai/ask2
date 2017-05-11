@@ -57,7 +57,8 @@ var $whitelist;
    
         
             $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize);
-
+            echo  var_dump($topiclist);
+            exit();
             $rownum=$_ENV['topic']->rownum_by_title($word);
           // }
  
@@ -243,8 +244,9 @@ foreach ($topiclist as $key=>$val){
         include template('topic');
     }
     function oncatlist(){
-    
+
     	$catid=$this->get[2];
+  
     	     $is_followed = $_ENV['category']->is_followed($catid, $this->user['uid']);
     	      $followerlist=$_ENV['category']->get_followers($catid,0,8); //获取导航
     	 @$page = max(1, intval($this->get[3]));
@@ -361,7 +363,7 @@ foreach ($topiclist as $key=>$val){
             $seo_keywords = str_replace("{wzmc}", $this->setting['site_name'], $this->setting['seo_category_keywords']);
             $seo_keywords = str_replace("{flmc}", $navtitle, $seo_keywords);
         }
-        	
+
         
         include template('catlist');
     

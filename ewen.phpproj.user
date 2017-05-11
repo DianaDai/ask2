@@ -7,5 +7,6 @@
     <PHPDebugging>True</PHPDebugging>
     <JsDebugging>False</JsDebugging>
     <SilverlightDebugging>False</SilverlightDebugging>
+    <NameOfLastUsedPHPPublishProfile>test</NameOfLastUsedPHPPublishProfile>
   </PropertyGroup>
 </Project>
