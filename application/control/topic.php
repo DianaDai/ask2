@@ -57,8 +57,7 @@ var $whitelist;
    
         
             $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize);
-            echo  var_dump($topiclist);
-            exit();
+
             $rownum=$_ENV['topic']->rownum_by_title($word);
           // }
  
