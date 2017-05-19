@@ -653,7 +653,7 @@ class topicmodel
 
 
     }
-
+    /* 没有发现哪边用到？可能是备份*/
     function updatetopicbk($id, $title, $desrc, $filepath = '', $isphone = '', $views = '', $cid)
     {
         $creattime = $this->base->time;
@@ -677,12 +677,15 @@ class topicmodel
 
     }
 
-    function updatetopic($id, $title, $desrc, $filepath = '', $isphone = '', $views = '', $cid, $ispc = 0,$authoritycontrol)
+   /*  更新文章多处用到        */
+    function updatetopic($id, $title, $desrc, $filepath = '', $isphone = '', $views = '', $cid, $ispc = 0,$authoritycontrol,$cid1=0,$cid2=0,$cid3=0)
     {
         if ($filepath)
-            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc' , `image`='$filepath', `isphone`='$isphone', `ispc`='$ispc', `views`='$views',`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid' WHERE `id`=$id");
+            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc' , `image`='$filepath', 
+            `isphone`='$isphone', `ispc`='$ispc', `views`='$views',`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid',`cid1`='$cid1',`cid2`='$cid2',`cid3`='$cid3' WHERE `id`=$id");
         else
-            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc',`isphone`='$isphone', `ispc`='$ispc', `views`='$views' ,`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid' WHERE `id`=$id");
+            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc',`isphone`='$isphone', 
+            `ispc`='$ispc', `views`='$views' ,`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid' ,`cid1`='$cid1',`cid2`='$cid2',`cid3`='$cid3' WHERE `id`=$id");
 
         if ($this->base->setting['xunsearch_open']) {
             $topic = array();
@@ -690,6 +693,9 @@ class topicmodel
             $topic['views'] = $views;
             $topic['articleclassid'] = $cid;
             $topic['authoritycontrol'] = $authoritycontrol;
+            $topic['cid1']=$cid1;
+            $topic['cid2']=$cid2;
+            $topic['cid3']=$cid3;
             if ($filepath) {
                 $topic['image'] = $filepath;
             }
@@ -711,13 +717,15 @@ class topicmodel
 
     /* 后台添加专题 */
 
-    function add($title, $desc, $image, $isphone = '0', $views = '1', $cid = 1)
+    function add($title, $desc, $image, $isphone = '0', $views = '1', $cid = 1,$cid1=0,$cid2=0,$cid3=0)
     {
         $creattime = $this->base->time;
         $author = $this->base->user['username'];
         $authorid = $this->base->user['uid'];
         //exit("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,`isphone`) VALUES ('$title','$desc','$image','$isphone')");
-        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,,`author`,`authorid`,`isphone`,`views`,`articleclassid`) VALUES ('$title','$desc','$image','$author','$authorid','$isphone','$views','$cid')");
+        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,,`author`,`authorid`,`isphone`,`views`,`articleclassid`,`cid1`,
+        `cid2`,`cid3`
+        ) VALUES ('$title','$desc','$image','$author','$authorid','$isphone','$views','$cid','$cid1','$cid2','$cid3')");
         $aid = $this->db->insert_id();
         if ($this->base->setting['xunsearch_open'] && $aid) {
             $topic = array();
@@ -726,6 +734,9 @@ class topicmodel
             $topic['articles'] = 0;
             $topic['likes'] = 0;
             $topic['articleclassid'] = $cid;
+            $topic['cid1']=$cid1;
+            $topic['cid2']=$cid2;
+            $topic['cid3']=$cid3;
             $topic['title'] = checkwordsglobal($title);
             $topic['describtion'] = checkwordsglobal($desc);
             $topic['author'] = $author;
@@ -739,10 +750,11 @@ class topicmodel
         return $aid;
     }
 
-    function addtopic($title, $desc, $image, $author, $authorid, $views, $articleclassid,$authoritycontrol)
+    function addtopic($title, $desc, $image, $author, $authorid, $views, $articleclassid,$authoritycontrol,$cid1,$cid2,$cid3)
     {
         $creattime = $this->base->time;
-        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,`author`,`authorid`,`views`,`articleclassid`,`authoritycontrol`,`viewtime`) VALUES ('$title','$desc','$image','$author','$authorid','$views','$articleclassid','$authoritycontrol','$creattime')");
+        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,`author`,`authorid`,`views`,`articleclassid`,`authoritycontrol`,`viewtime`,`cid1`,`cid2`,`cid3`)
+        VALUES ('$title','$desc','$image','$author','$authorid','$views','$articleclassid','$authoritycontrol','$creattime','$cid1','$cid2','$cid3')");
         $aid = $this->db->insert_id();
         if ($this->base->setting['xunsearch_open'] && $aid) {
             $topic = array();
@@ -757,11 +769,18 @@ class topicmodel
             $topic['author'] = $author;
             $topic['authorid'] = $authorid;
             $topic['viewtime'] = $creattime;
+            $topic['cid1']=$cid1;
+            $topic['cid2']=$cid2;
+            $topic['cid3']=$cid3;
 
             $doc = new XSDocument;
             $doc->setFields($topic);
             $this->index->add($doc);
         }
+        $cid1 = intval($cid1);
+        $cid2 = intval($cid2);
+        $cid3 = intval($cid3);
+        $this->db->query("UPDATE " . DB_TABLEPRE . "category SET topics=topics+1 WHERE  id IN ($cid1,$cid2,$cid3) ");
         return $aid;
     }
 

@@ -462,7 +462,8 @@ foreach ($topiclist as $key=>$val){
         $questionlist = $_ENV['question']->list_by_cfield_cvalue_status($cfield, $cid, 'all', 0, 8); //问题列表数据
            $topicone['tags']=$taglist;
     	$topicone['views']=$topicone['views']+1;
-    	 $_ENV['topic']->updatetopic($topicone['id'], $topicone['title'], $topicone['describtion'],$topicone['image'],$topicone['isphone'],$topicone['views'],$topicone['articleclassid'],$topicone['ispc'],$topicone['authoritycontrol']);
+        //这个地方也要更新
+    	 $_ENV['topic']->updatetopic($topicone['id'], $topicone['title'], $topicone['describtion'],$topicone['image'],$topicone['isphone'],$topicone['views'],$topicone['articleclassid'],$topicone['ispc'],$topicone['authoritycontrol'],$topicone['cid1'],$topicone['cid2'],$topicone['cid3']);
     	 $navtitle = $topicone['title'];
     	    $this->load("favorite");
    	    $followerlist=$_ENV['favorite']->get_list_bytid($topicid);//收藏的人

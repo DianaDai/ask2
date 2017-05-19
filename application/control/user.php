@@ -169,6 +169,9 @@ class usercontrol extends base
             $outimgurl = $this->post['outimgurl'];
             // $tagarr= dz_segment($title,$desrc);
             $acid = $this->post['topicclass'];
+            $cid1= $this->post['cid1'];
+            $cid2=$this->post['cid2'];
+            $cid3=$this->post['cid3'];
             // if($ataglist!=null){
             //	$tagarr=array_merge($ataglist,$tagarr);
             //}
@@ -240,7 +243,7 @@ class usercontrol extends base
             if (trim($outimgurl) != '') {
                 $filepath = $outimgurl;
             }
-            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['username'], $this->user['uid'], 1, $acid,$authoritycontrol);
+            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['username'], $this->user['uid'], 1, $acid,$authoritycontrol,$cid1,$cid2,$cid3);
 //$tag=implode(',',$tagarr);
             // $taglist = explode(",", $tag);
             $_ENV['userlog']->add('topic');
@@ -312,6 +315,9 @@ class usercontrol extends base
                 $isphone = 0;
             }
             $acid = $this->post['topicclass'];
+            $cid1 =$this->post['cid1'];
+            $cid2=$this->post['cid2'];
+            $cid3=$this->post['cid3'];
             // $tagarr= dz_segment($title,$desrc);
 
             // if($taglist!=null){
@@ -367,7 +373,7 @@ class usercontrol extends base
 //                	print $e->getMessage();  
 //                }
                     $ispc = $topic['ispc'];
-                    $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath, $isphone, $views, $acid, $ispc,$authoritycontrol);
+                    $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
                     $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                     $this->message('文章修改成功！', 'article-' . $tid);
                 } else {
@@ -378,7 +384,7 @@ class usercontrol extends base
                     $upimg = $outimgurl;
                 }
                 $ispc = $topic['ispc'];
-                $_ENV['topic']->updatetopic($tid, $title, $desrc, $upimg, $isphone, $views, $acid, $ispc,$authoritycontrol);
+                $_ENV['topic']->updatetopic($tid, $title, $desrc, $upimg, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
                 $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                 $this->message('文章修改成功！', 'article-' . $tid);
             }

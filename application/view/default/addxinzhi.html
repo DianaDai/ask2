@@ -16,6 +16,9 @@
                          <hr>
                       
                        <input type="hidden" name="topicclass" value="{$topic['articleclassid']}" id="topicclass"/>
+                       <input type ="hidden" name="cid1" value="0" id="cid1" />
+                         <input type="hidden" name="cid2" value="0" id="cid2" />
+                         <input type="hidden" name ="cid3" value="0" id="cid3" />
        <input type="hidden" name="upimg" id="upimg" value="{$topic['image']}"/>
              <input type="hidden" name="views" value="{$topic['views']}"/>
      {if isset($topic['id'])}
@@ -227,16 +230,18 @@ function getimg(){
             if (category1 > 0) {
                 selectedcatestr = $("#category1 option:selected").html();
                 $("#topicclass").val(category1);
-               
+                $("#cid1").val(category1);
             }
             if (category2 > 0) {
                 selectedcatestr += " > " + $("#category2 option:selected").html();
                 $("#topicclass").val(category2);
+                $("#cid2").val(category2);
                
             }
             if (category3 > 0) {
                 selectedcatestr += " > " + $("#category3 option:selected").html();
                 $("#topicclass").val(category3);
+                $("#cid3").val(category3);
               
             }
             $("#selectedcate").html(selectedcatestr);
