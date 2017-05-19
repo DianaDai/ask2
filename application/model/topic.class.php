@@ -257,7 +257,7 @@ class topicmodel
         ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid";
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
 
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  $condition authoritycontrol = 2   order by id desc LIMIT $start,$limit");
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  $condition and authoritycontrol = 2   order by id desc LIMIT $start,$limit");
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic $condition order by id desc LIMIT $start,$limit");
         }
