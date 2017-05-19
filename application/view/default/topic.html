@@ -4,11 +4,43 @@
 <script src="{SITE_URL}static/css/bianping/js/navstatus.js"></script>
 <div class="container index">
     <div class="row">
-    <div class="col-xs-16 main">
-    <div class="recommend-collection">
-             最新文章
-          </div>
-    <div class="split-line"></div>
+    <div class="col-xs-16 main" style ="padding-top:10px">
+    <!--文章分类-->
+    <ol class="breadcrumb">
+        <li class="frist"><a href="{url topic/default/all}">全部分类</a></li>
+        <!--{loop $navlist $nav}-->
+        <li ><a href="{url topic/default/$nav['id']}">{$nav['name']}</a></li>
+        <!--{/loop}-->
+        <!--{if $cid!='all'}--> <li class="active">{$category['name']}</li><!--{/if}-->
+
+    </ol>
+
+            <ul class="nav navbar-nav clearfix">
+                <!--{loop $sublist $index $sub}-->
+                <!--{if $sub['id']==$cid}-->
+                <li>
+                <a  title="{$sub['name']}"  href="{url topic/default/$sub['id']}">
+                 <span class="text-danger bold"> {eval echo cutstr($sub['name'],20,'');}</span>
+
+                <span class="label  label-danger">{$sub['topics']}</span>
+                
+                </a>
+               </li>
+                <!--{else}-->
+                <li><a title="{$sub['name']}"  href="{url topic/default/$sub['id']}">
+                {eval echo cutstr($sub['name'],20,'');} <span class="label  ">{$sub['topics']}</span></a>
+         
+                 
+                </li>
+                <!--{/if}-->
+                <!--{/loop}-->
+            </ul>  
+
+
+         
+     
+
+    <div class="split-line" style="clear:left" ></div>
     <div id="list-container">
      <!--{if $topiclist==null}-->
      <div class="text"><span>目前还没有发布过文章</span> </div>

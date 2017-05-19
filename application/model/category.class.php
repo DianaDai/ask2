@@ -168,10 +168,10 @@ class categorymodel {
 
     function list_by_cid_pid($cid, $pid) {
         $sublist = array();
-        $query = $this->db->query("select id,name,questions,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
         $subcount = $this->db->affected_rows();
         if ($subcount <= 0) {
-            $query = $this->db->query("select id,name,questions,grade,alias from " . DB_TABLEPRE . "category where pid=$pid order by displayorder asc,id asc");
+            $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$pid order by displayorder asc,id asc");
         }
         while ($category = $this->db->fetch_array($query)) {
         	$category['image']=get_cid_dir($category['id'],'big');

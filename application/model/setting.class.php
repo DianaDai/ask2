@@ -86,8 +86,20 @@ class settingmodel {
             $q3=$this->db->fetch_total('question','cid3='.$category['id']);
             $questions=$q1+$q2+$q3;
             $this->db->query("UPDATE ".DB_TABLEPRE."category set questions=$questions where id=".$category['id']);
+            $t1=$this->db->fetch_total('topic','cid1='.$category['id']);
+            $t2=$this->db->fetch_total('topic','cid2='.$category['id']);
+            $t3=$this->db->fetch_total('topic','cid3='.$category['id']);
+            $topics=$t1+$t2+$t3;
+            $this->db->query("update ".DB_TABLEPRE."category set topics=$topics where id =".$category['id']);
+
         }
+
+        
     }
+ 
+    
+    
+    
     /**
      * 问题回答数数目校正
      */

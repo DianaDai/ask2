@@ -5,13 +5,42 @@
 
   <div class="row" style="padding-top:0px;margin-top:0px">
     <div class="col-xs-24 col-sm-16 main" style="padding-top:10px;">
-<!--  <div class="recommend-collection">
-             最新问题
-          </div>
-    <div class="split-line"></div>-->
+   <ol class="breadcrumb">
+  <li> <a class="first" href="{url new/default/all}">全部分类</a></li>
+  
+   <!--{loop $navlist $nav}-->
+    <li> <a href="{url new/default/$nav['id']}">{$nav['name']}</a> </li>
+    
+    <!--{/loop}-->
+    <!--{if $cid!='all'}--><li class="active">{$category['name']}</li> <!--{/if}-->
+  </ol>
 
-               
-      <ul class="trigger-menu" data-pjax-container="#list-container">
+          <ul class="nav navbar-nav clearfix">
+                <!--{loop $sublist $index $sub}-->
+                <!--{if $sub['id']==$cid}-->
+                <li>
+                <a  title="{$sub['name']}"  href="{url new/default/$sub['id']}">
+                 <span class="text-danger bold"> {eval echo cutstr($sub['name'],20,'');}</span>
+
+                <span class="label  label-danger">{$sub['questions']}</span>
+                
+                </a>
+               </li>
+                <!--{else}-->
+                <li><a title="{$sub['name']}"  href="{url new/default/$sub['id']}">
+                {eval echo cutstr($sub['name'],20,'');} <span class="label  ">{$sub['questions']}</span></a>
+         
+                 
+                </li>
+                <!--{/if}-->
+                <!--{/loop}-->
+            </ul>  
+
+
+
+
+
+      <ul class="trigger-menu" data-pjax-container="#list-container" style="clear:left">
 <!--       <li >
       <a href="{url topic/catlist/$cid}"><i class="fa fa-sticky-note-o"></i> 相关文章</a>
       </li>-->

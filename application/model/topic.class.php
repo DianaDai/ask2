@@ -230,6 +230,60 @@ class topicmodel
         return $modellist;
 
     }
+    
+    /* 获取分类下文章数量  */
+    function rownum_by_topic_articleid($cfield='cid1',  $cid=0){
+        $condition='1=1';
+        if($this->base->user['indentity']!=1&&$this->base->user['username']!='admin'){
+            $condition.=" AND authoritycontrol=2"; 
+        }
+        ($cfield && $cid != 'all') && $condition .= " AND $cfield=$cid ";
+  
+        return $this->db->fetch_total('topic',$condition);
+        
+    }
+    /**
+     *  文章专题 分类查询
+     *  
+     * @param mixed $aid 
+     * @param mixed $start 
+     * @param mixed $limit 
+     * @return array
+     */
+    function get_topic_byarticle($cfield='cid1' ,$cid=0, $start = 0, $limit = 6){
+    
+        $topiclist= array();
+        $condition='where 1=1';
+        ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid";
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  $condition authoritycontrol = 2   order by id desc LIMIT $start,$limit");
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic $condition order by id desc LIMIT $start,$limit");
+        }
+        while ($topic =$this->db->fetch_array($query))
+        {
+            $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
+            $topic['sortime'] = $topic['viewtime'];//用于排序
+            $topic['format_time'] = tdate($topic['viewtime']);
+            $topic['viewtime'] = tdate($topic['viewtime']);
+
+            $topic['title'] = checkwordsglobal($topic['title']);
+            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
+            $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
+            $topic['answers'] = $topic['articles'];
+            $topic['attentions'] = $topic['likes'];
+            $topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topiclist[] = $topic;
+        }
+        return $topiclist;
+        
+
+        
+    }
+    
+    
 
     /* 是否关注问题 */
 
@@ -758,6 +812,9 @@ class topicmodel
                 $data['articles'] = $topic['articles'];
                 $data['likes'] = $topic['likes'];
                 $data['viewtime'] = $topic['viewtime'];
+                $data['cid1']=$topic['cid1'];
+                $data['cid2']=$topic['cid2'];
+                $data['cid3']=$topic['cid3'];
 
                 $data['title'] = $topic['title'];
                 $data['describtion'] = $topic['describtion'];

@@ -103,8 +103,28 @@ foreach ($questionlist as $key=>$val){
         $departstr = page($rownum, $pagesize, $page, "category/view/$cid/$status"); //得到分页字符串
         $navlist = $_ENV['category']->get_navigation($cid); //获取导航
         $sublist = $_ENV['category']->list_by_cid_pid($cid, $category['pid']); //获取子分类
-  
-        
+        $this->load('tag');
+        foreach ($questionlist as $key=>$val){
+            
+
+            
+            $quesrc=  $_ENV['category']->get_navigation($val['cid'],true);
+            $quetemp =0;
+            $count = count($quesrc);
+            for ($i = 0; $i < $count; $i++)
+            {
+                $quetemp.=$quesrc[$i]['name'].'/';
+            }
+            $quesrc= substr($quetemp,1,strlen($quetemp)-1);
+            
+            
+            $questionlist[$key]["srcs"]=$quesrc;
+            $taglist = $_ENV['tag']->get_by_qid($val['id']);
+            
+            $questionlist[$key]['tags']=$taglist;
+            
+            
+        }
        // $trownum = $this->db->fetch_total('topic',"articleclassid in($cid)");
         $seo_description="";
         $seo_keywords="";

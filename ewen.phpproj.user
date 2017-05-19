@@ -7,6 +7,6 @@
     <PHPDebugging>True</PHPDebugging>
     <JsDebugging>False</JsDebugging>
     <SilverlightDebugging>False</SilverlightDebugging>
-    <NameOfLastUsedPHPPublishProfile>test</NameOfLastUsedPHPPublishProfile>
+    <NameOfLastUsedPHPPublishProfile>local</NameOfLastUsedPHPPublishProfile>
   </PropertyGroup>
 </Project>
