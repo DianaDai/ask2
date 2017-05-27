@@ -43,7 +43,8 @@ var $whitelist;
        }
         }
          $navtitle = $word ;
-        @$page = max(1, intval($this->get[3]));
+           $cid = intval($this->get[3])?$this->get[3]:'all';
+        @$page = max(1, intval($this->get[4]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
           $seo_description=$word;
@@ -54,13 +55,37 @@ var $whitelist;
            // $topiclist = $_ENV['topic']->list_by_tag($word, $startindex, $pagesize);
           // if($topiclist==null){
            	
-   
+        if ($cid != 'all') {
+            $category = $this->category[$cid]; //得到分类信息
+            $cfield = 'cid' . $category['grade'];
+        } else {
+            $category = $this->category;
+            $cfield = '';
+            $category['pid'] = 0;
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
         
-            $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize);
 
-            $rownum=$_ENV['topic']->rownum_by_title($word);
+            $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize,$cfield,$cid);
+          
+            $rownum=$_ENV['topic']->rownum_by_title($word,$cfield,$cid);
+            
+       
+
           // }
- 
+           
+            $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
+            
+            foreach ($sublist as $key => $val)
+            {
+            	$relrownum= $_ENV['topic']->rownum_by_title($word,'cid'.$val['grade'],$val['id']);
+                $sublist[$key]['topics']=$relrownum;
+            }
+            
+
+          
 foreach ($topiclist as $key=>$val){
 
 
@@ -80,9 +105,16 @@ foreach ($topiclist as $key=>$val){
 	
 }
 
-        $departstr = page($rownum, $pagesize, $page, "topictag-$word");
+        $departstr = page($rownum, $pagesize, $page, "topictag-$word/$cid");
         include template('topictag');
     }
+    
+    
+    
+    
+    
+    
+    
     function oncancelhot(){
     	
     	$id=intval($this->get[2]);
