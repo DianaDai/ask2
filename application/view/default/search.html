@@ -14,7 +14,27 @@
 <a href="{url question/search/$word}"><div class="setting-icon">
 <i class="fa fa-question-circle-o"></i></div>
  <span>问题<span class="badge">{$rownum}</span></span>
+
  </a>
+        <ul class="submenu">
+         <!--{loop $sublist $sub}-->
+          <!--{if $sub['topics']>0}-->
+         <li>
+             <a href="{url question/search/$word/$status/$sub['id']}">
+                 <div class ="setting-icon">
+                     <i class="fa fa-rss-square"></i>
+                 </div>
+                <span>
+                      {eval echo cutstr($sub['name'],20,'');}
+                    <span class="badge">{$sub['topics']}</span>
+                </span>
+         
+                      </a>
+         </li>
+         <!--{/if}-->
+         <!--{/loop}-->
+
+     </ul>
  </li>
 
 <!-- <li class="">
