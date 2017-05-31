@@ -91,7 +91,7 @@
     <div class="meta-bottom">
       <div class="like"><div class="btn like-group"><div class="btn-like"><a href="{url favorite/topicadd/$topicone['id']}"><i class="fa fa-heart-o"></i>喜欢</a></div> <div class="modal-wrap"><a> {$topicone['likes']}</a></div></div> <!----></div>
       <div class="share-group">
-        <a class="share-circle share-weixin" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
+        <!--<a class="share-circle share-weixin" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
           <i class="fa fa-wechat"></i>
         </a>
         <a class="share-circle" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f='http://v.t.sina.com.cn/share/share.php?appkey=1515056452',u=z||d.location,p=['&amp;url=',e(u),'&amp;title=',e(t||d.title),'&amp;source=',e(r),'&amp;sourceUrl=',e(l),'&amp;content=',c||'gb2312','&amp;pic=',e(p||'')].join('');function%20a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width-440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,'','','{$topicone['image']}', '推荐 {$topicone['author']} 的文章《{$topicone['title']}》（ 分享自 @Ask2问答平台创始人）','{url topic/getone/$topicone['id']}','页面编码gb2312|utf-8默认gb2312'));" data-original-title="分享到微博">
@@ -102,7 +102,7 @@
          
   
   <script type="text/javascript">document.write(['<a class="share-circle" data-toggle="tooltip"  target="_blank" data-original-title="分享到qq空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=',encodeURIComponent(location.href),'&title=',encodeURIComponent(document.title),'" target="_blank"   title="分享到QQ空间"> <i class="fa fa-qq"></i><\/a>'].join(''));</script>
-    
+-->    
       </div>
     </div>
 
@@ -185,6 +185,25 @@
     </li>
     
       <li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="收藏文章"><a href="{url favorite/topicadd/$topicone['id']}" class="function-button"><i class="fa fa-star"></i></a></li>
+     <!-- <script type="text/javascript">
+          document.write(['<li data-placement="left" data-toggle="tooltip" data-container="body" target="_blank" data-original-title="分享到qq空间"> <a href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=', encodeURIComponent(location.href), '&title=', encodeURIComponent(document.title), '" target="_blank"   title="分享到QQ空间" class="function-button" > <i class="fa fa-qq"></i></a></li>'].join(''));</script>
+     -->
+     <script type="text/javascript">
+         (function() { var p = { url: location.href, /*获取URL，可加上来自分享到QQ标识，方便统计*/desc: '', /*分享理由(风格应模拟用户对话),支持多分享语随机展现（使用|分隔）*/title: document.title, /*分享标题(可选)*/summary: '', /*分享摘要(可选)*/pics: '', /*分享图片(可选)*/flash: '', /*视频地址(可选)*/site: '', /*分享来源(可选) 如：QQ分享*/style: '101', width: 96, height: 24 }; var s = []; for (var i in p) { s.push(i + '=' + encodeURIComponent(p[i] || '')); } document.write(['<li data-placement="left" data-toggle="tooltip" data-container="body" target="_blank" data-original-title="分享到QQ"><a href="http://connect.qq.com/widget/shareqq/index.html?', s.join('&'), '" target="_blank" title="分享到QQ" class="function-button" > <i class="fa fa-qq"></i></a></li>'].join('')); })();</script>
+    <script src="http://connect.qq.com/widget/loader/loader.js" widget="shareqq" charset="utf-8"></script>
+   
+      <li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="分享到微信" class="share-circle share-weixin"><a data-action="weixin-share"  class="function-button"><i class="fa fa-wechat"></i></a></li>
+      <li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="复制地址"><a href="JavaScript: copyUrl()" class="function-button"><i class="fa fa-copy"></i></a></li>
+       <script type="text/javascript">
+           document.write(['<li data-placement="left" data-toggle="tooltip" data-container="body" target="_blank" data-original-title="分享到邮件"> <a href="mailto:?subject=', encodeURIComponent(document.title), '&body=', encodeURIComponent(location.href), encodeURIComponent(document.title), '" target="_blank"   title="分享到邮件" class="function-button" > <i class="fa fa-envelope-square"></i></a></li>'].join(''));</script>
+      <script type="text/javascript">
+          var Url = document.URL;
+          function copyUrl() {
+              window.clipboardData.setData("Text", Url);
+              alert("复制成功！文章地址：" + Url);
+          } </script>
+      
+      
       </ul></div>
 </div>
    </div>
