@@ -57,14 +57,16 @@ class topicmodel
         return $topic;
     }
 
-    function get_bylikename($word, $start = 0, $limit = 6)
+    /*要进行修改  */
+    function get_bylikename($word, $start = 0, $limit = 6 ,$cfield='cid1',  $cid=0)
     {
         $topiclist = array();
         if ($this->base->setting['xunsearch_open']) {
-
-            $result = $this->search->setQuery($word)->setLimit($limit, $start)->search();
+           
+            $result = $this->search->setQuery($word) ->setLimit($limit, $start)->search();
             foreach ($result as $doc) {
                 //用户是顾问则只查询 authoritycontrol = 2
+
                 if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
                     if($doc->authoritycontrol ==2) {
                         $topic = array();
@@ -86,8 +88,8 @@ class topicmodel
                         $topic['likes'] = $doc->likes;
                         $topic['format_time'] =tdate($doc->viewtime);
                         $topic['viewtime'] = tdate($doc->viewtime);
-                   
                         $topiclist[] = $topic;
+                      
                     }
                 }else{
                     $topic = array();
@@ -110,22 +112,30 @@ class topicmodel
                     $topic['likes'] = $doc->likes;
                     $topic['format_time'] = tdate($doc->viewtime);
                     $topic['viewtime'] = tdate($doc->viewtime);
+                    $topiclist[] = $topic;
+                    
 
                    
-                    $topiclist[] = $topic;
                 }
             }
             if (count($topiclist) == 0) {
+
                 $topiclist = $this->get_by_likename($word, $start, $limit);
             }
 
 
         } else {
+            
+            ($cid!='all')&&  $condition=" and $cfield='$cid' ";
             //用户是顾问则只查询 authoritycontrol = 2
-            if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' AND authoritycontrol = 2 order by id desc LIMIT $start,$limit");
-            } else {
-                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
+            if ($this->base->user['identity'] == 2 ) {
+               
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 2   $condition order by id desc LIMIT $start,$limit");
+            } else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
+            }else {
+                //未登录用户
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 0   $condition order by id desc LIMIT $start,$limit");
             }
             //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
 
@@ -391,14 +401,28 @@ class topicmodel
         $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND t.name='$name' ORDER BY q.views DESC");
         return $this->db->num_rows($query);
     }
-
-    function rownum_by_title($word)
+    /* 搜索数量   */
+    function rownum_by_title($word ,$cfield='cid1',  $cid=0)
     {
         if ($this->base->setting['xunsearch_open']) {
             $rownum = $this->search->getLastCount();
         } else {
+            $condition='1=1';
+            ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid ";
+            
+            if ($this->base->user['identity']==2) //用户是顾问则只查询 authoritycontrol = 2
+            {
+                $rownum = $this->db->fetch_total('topic', " $condition and authoritycontrol=2  and (title like '%$word%' or describtion like '%$word%') ");
 
-            $rownum = $this->db->fetch_total('topic', " title like '%$word%' or describtion like '%$word%' ");
+            }else if($this->base->user['identity']==1||$this->base->user['username']=='admin')
+            {
+                $rownum = $this->db->fetch_total('topic', " $condition and    (title like '%$word%' or describtion like '%$word%') ");
+            }else{ //如果用户没有登录 查询authoritycontrol=0
+                $rownum = $this->db->fetch_total('topic', " $condition and  authoritycontrol=0 and  (title like '%$word%' or describtion like '%$word%') ");
+            }
+            
+
+           
 
         }
         return $rownum;
@@ -821,6 +845,7 @@ class topicmodel
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic ");
             while ($topic = $this->db->fetch_array($query)) {
                 $data = array();
+              
                 $data['id'] = $topic['id'];
                 $data['articleclassid'] = $topic['articleclassid'];
                 $data['image'] = $topic['image'];
@@ -831,15 +856,18 @@ class topicmodel
                 $data['articles'] = $topic['articles'];
                 $data['likes'] = $topic['likes'];
                 $data['viewtime'] = $topic['viewtime'];
-                $data['cid1']=$topic['cid1'];
-                $data['cid2']=$topic['cid2'];
-                $data['cid3']=$topic['cid3'];
+           
+                $data['cid1']= $topic['cid1'];
+                $data['cid2']= $topic['cid2'];
+                $data['cid3']= $topic['cid3'];
 
                 $data['title'] = $topic['title'];
                 $data['describtion'] = $topic['describtion'];
                 $doc = new XSDocument;
+             
                 $doc->setFields($data);
                 $this->index->add($doc);
+           
             }
         }
     }

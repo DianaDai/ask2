@@ -1555,7 +1555,21 @@ class questioncontrol extends base
             $navtitle = $word;
         }
         $seo_keywords = $word;
-        @$page = max(1, intval($this->get[4]));
+        $cid = intval($this->get[4])?$this->get[4]:'all';
+        if ($cid != 'all') {
+            $category = $this->category[$cid]; //得到分类信息
+            $cfield = 'cid' . $category['grade'];
+        } else {
+            $category = $this->category;
+            $cfield = '';
+            $category['pid'] = 0;
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
+        
+        
+        @$page = max(1, intval($this->get[5]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
         if (preg_match("/^tag:(.+)/", $word, $tagarr)) {
@@ -1563,9 +1577,20 @@ class questioncontrol extends base
             $rownum = $_ENV['question']->rownum_by_tag($tag, $qstatus);
             $questionlist1 = $_ENV['question']->list_by_tag($tag, $qstatus, $startindex, $pagesize);
         } else {
-            $questionlist1 = $_ENV['question']->search_title($word, $qstatus, 0, $startindex, $pagesize);
-            $rownum = $_ENV['question']->search_title_num($word, $qstatus);
+            $questionlist1 = $_ENV['question']->search_title($word, $qstatus, 0, $startindex, $pagesize,$cfield,$cid);
+            $rownum = $_ENV['question']->search_title_num($word, $qstatus,$cfield,$cid);
         }
+        
+        $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
+        
+        foreach ($sublist as $key => $val)
+        {
+            $relrownum= $_ENV['question']->search_title_num($word,$qstatus,'cid'.$val['grade'],$val['id']);
+            $sublist[$key]['topics']=$relrownum;
+        }
+        
+        
+        
         //if(count($questionlist)==0){
 //				$tagarr=dz_segment($word);
 //			//	print_r($tagarr);
@@ -1579,8 +1604,8 @@ class questioncontrol extends base
 
         //}
         
-        $questionlist = $questionlist1;//array_merge($questionlist1,$questionlist2);
-        $rownum = count($questionlist);
+        $questionlist = $questionlist1;//array_merge($questionlist1,$questionlist2); //应该保证搜索的数量和文章的数量一致；
+        //$qrownum = count($questionlist);
         foreach ($questionlist as $key=>$value)
         {
             $quesrc=  $_ENV['category']->get_navigation($value['cid'],true);
@@ -1606,7 +1631,7 @@ class questioncontrol extends base
         $related_words = $_ENV['question']->get_related_words();
         $hot_words = $_ENV['question']->get_hot_words();
         $corrected_words = $_ENV['question']->get_corrected_word($word);
-        $departstr = page($rownum, $pagesize, $page, "question/search/$word/$status");
+        $departstr = page($rownum, $pagesize, $page, "question/search/$word/$status/$cid");
         include template('search');
     }
 

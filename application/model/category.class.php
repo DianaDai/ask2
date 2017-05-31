@@ -151,11 +151,19 @@ class categorymodel {
       
         return $user;
     }
-    /* 根据分类名检索 */
+    
+    
+    
+    
+    
+    
+    /* 根据分类名检索 加入cid */
 
-    function list_by_name($name, $start = 0, $limit = 10) {
+    function list_by_name($name, $start = 0, $limit = 10 ,$cid=0) {
         $categorylist = array();
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%' ORDER BY followers DESC LIMIT $limit");
+        $condition = " ";
+        ($cid!='all')&&$condition.=" AND pid =$cid ";
+        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY followers DESC LIMIT $limit");
         while ($category = $this->db->fetch_array($query)) {
         	  $category['follow'] = $this->is_followed($category['id'], $this->base->user['uid']);
         	$category['image']=get_cid_dir($category['id'],'big');
@@ -179,6 +187,40 @@ class categorymodel {
         }
         return $sublist;
     }
+    
+    /*       query_list_by_cid_pid   搜索分类浏览 显示子分类           */
+    
+    function query_list_by_cid_pid($cid){
+    
+        $sublist = array();
+        $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        $subcount= $this->db->affected_rows();
+        if ($subcount<=0)
+        {
+            ($cid=='all')&&$cid=0;
+            if ($cid==0)
+            {
+                $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+            }else
+            {
+                $query= $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where id=$cid order by displayorder asc,id asc "); //获取当前分类
+
+            }
+            
+            
+        }
+        while($category = $this->db->fetch_array($query)){
+            $category['image']=get_cid_dir($category['id'],'big');
+            $sublist[] = $category;
+            
+        }
+        return $sublist;
+        
+        
+    }
+
+    
+    
 
     /* 用于提问时候分类的选择 */
 

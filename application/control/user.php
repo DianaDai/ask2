@@ -1442,6 +1442,7 @@ class usercontrol extends base
 
             $avatardir = "/data/avatar/";
             $extname = extname($_FILES["userimage"]["name"]);
+
             if (!isimage($extname))
                 $this->message("图片扩展名不正确!", 'user/editimg');
             $upload_tmp_file = ASK2_ROOT . '/data/tmp/user_avatar_' . $uid . '.' . $extname;

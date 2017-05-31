@@ -4250,6 +4250,9 @@
     <Folder Include="static" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="application\view\default\sider_alluser.html" />
+    <Content Include="static\css\bianping\css\credit.css" />
+    <Content Include="static\css\bianping\css\images\nums_ic.png" />
     <Content Include="static\css\bianping\images\cli_300_2px.png" />
     <Content Include="static\css\bianping\js\navstatus.js" />
     <Content Include="static\css\images\load.gif" />

@@ -15,21 +15,36 @@
  </div>
     <form  class="form-horizontal" name="loginform"   method="post"    >
 
-         <div class="form-group">
+         <div class="form-group" style ="margin-bottom:0px">
           <label class="col-md-2 control-label">身份确认</label>
-          <div class="col-md-2">
-              <label>
-             <input type="radio" id="chanzhong" class="normal_radio" name="shenfen" value="1" <!--{if (1 == $user['identity'])}--> checked <!--{/if}--> />
-              产中
+                     <!--身份认证栏位设置-->
+            <div class="col-md-8">
+                     <label>
+               <input type="radio" id="chanzhong" class="normal_radio" name="shenfen" value="1" <!--{if (1 == $user['identity'])}--> checked <!--{/if}--> />
+              产中(E产品中心所有部门，量产、平台、工具)
               </label>
-          </div>
-          <div class="col-md-2">
-              <label>
-                  <input type="radio" id="guwen" class="normal_radio" name="shenfen" value="2" <!--{if (2 == $user['identity'])}--> checked <!--{/if}--> />
-                 非产中
-              </label>
-          </div>
+            </div>
+
         </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label"></label>
+            <div class="col-md-8">
+             
+                       <label>
+                  <input type="radio" id="guwen" class="normal_radio" name="shenfen" value="2" <!--{if (2 == $user['identity'])}--> checked <!--{/if}--> />
+                 非产中(顾问、CC、销售等)
+              </label>
+   
+       
+            </div>
+
+        </div>
+
+
+
+
+
+
            <div class="form-group">
           <label class="col-md-2 control-label">邮箱认证</label>
           <div class="col-md-5">

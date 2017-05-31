@@ -8,8 +8,32 @@
  <a href="{url topictag-$word}">
  <div class="setting-icon">
  <i class="fa fa-rss-square"></i>
- </div> <span>文章<span class="badge">{$rownum}</span> </span>
- </a></li>
+ </div> 
+
+     <span>文章<span class="badge">{$rownum}</span> </span>
+ </a>
+     <ul class="submenu">
+         <!--{loop $sublist $sub}-->
+          <!--{if $sub['topics']>0}-->
+         <li>
+             <a href="{url topictag-$word/$sub['id']}">
+                 <div class ="setting-icon">
+                     <i class="fa fa-rss-square"></i>
+                 </div>
+                <span>
+                      {eval echo cutstr($sub['name'],20,'');}
+                    <span class="badge">{$sub['topics']}</span>
+                </span>
+         
+                      </a>
+         </li>
+         <!--{/if}-->
+         <!--{/loop}-->
+
+     </ul>
+
+
+ </li>
 <li class="">
 <a href="{url question/search/$word}"><div class="setting-icon">
 <i class="fa fa-question-circle-o"></i></div>
@@ -33,7 +57,8 @@
  
   <!--{if $topiclist}-->
    <ul class="note-list">
-      <!--{loop $topiclist $index $topic}-->     
+      <!--{loop $topiclist $index $topic}-->   
+      
  <li><div class="content"><div class="author"><a href="{url user/space/$topic['authorid']}" target="_blank" class="avatar">
  <img src=" {$topic['avatar']}">
  </a> <div class="name"><a href="{url user/space/$topic['authorid']}">{$topic['author']}</a> <span class="time">
@@ -47,6 +72,7 @@
         </a> <a href="{url topic/getone/$topic['id']}#comments" target="_blank"><i class="fa fa-comment-o"></i>  {$topic['articles']}
         </a> <span><i class=" fa fa-heart-o"></i> {$topic['likes']}
         </span> <!----></div></div></li>
+       
           <!--{/loop}-->
   
         </ul> 
