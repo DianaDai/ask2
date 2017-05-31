@@ -302,6 +302,7 @@ function initcategory(category1) {
     }
 
 }
+
 var ctrdown=false;
 var returndown=false;
 function keydownlistener(){
@@ -512,6 +513,7 @@ function fillcategory(category2, value1, cateid) {
     }
     $("#" + cateid).html(optionhtml);
 }
+
 setTimeout(function(){
 	$(".fixedbottom").removeClass("hide").addClass("slideInUp animated ");
 	
@@ -589,6 +591,66 @@ $(function(){
         $("#jiantou2").show();
         $("#category3").show();
     });
+    
+    
+    
+    
+    
+    
+    
+    $("#category1").change(function() {
+        fillcategorytiwen(category22, $("#category1 option:selected").val(), "category2");
+        $("#jiantou1").show();
+        $("#category2").show();
+    });
+    
+    
+    
+function fillcategorytiwen(category2, value1, cateid) {
+    var optionhtml = '<option value="0">不选择</option>';
+    var selectedcid = 0;
+    if (cateid === "category2") {
+        selectedcid = $("#selectcid2").val();
+        for (var i = 0; i < category2.length; i++) {
+        if(category2[i][2]!="E10开发-FAQ"&&category2[i][2]!="E10服务-FAQ"&&category2[i][2]!="易飞服务-FAQ"){
+        }else{
+        if (value1 === category2[i][0]) {
+            var selected = '';
+//            if (selectedcid === category2[i][1]) {
+//                selected = ' selected';
+//                $("#" + cateid).show();
+//            }
+            optionhtml += "<option value='" + category2[i][1] + "' " + selected + ">" + category2[i][2] + "</option>";
+        }
+        }
+        
+    }
+    } 
+    $("#" + cateid).html("");
+    
+    $("#" + cateid).html(optionhtml);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	$("#comfirm_pay").click(function(){
 		 var _chakanjine=$("#chakanjine").val();
 		 if(_chakanjine!=0){
