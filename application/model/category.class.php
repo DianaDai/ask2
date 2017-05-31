@@ -151,11 +151,19 @@ class categorymodel {
       
         return $user;
     }
-    /* 根据分类名检索 */
+    
+    
+    
+    
+    
+    
+    /* 根据分类名检索 加入cid */
 
-    function list_by_name($name, $start = 0, $limit = 10) {
+    function list_by_name($name, $start = 0, $limit = 10 ,$cid=0) {
         $categorylist = array();
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%' ORDER BY followers DESC LIMIT $limit");
+        $condition = " ";
+        ($cid!='all')&&$condition.=" AND pid =$cid ";
+        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY followers DESC LIMIT $limit");
         while ($category = $this->db->fetch_array($query)) {
         	  $category['follow'] = $this->is_followed($category['id'], $this->base->user['uid']);
         	$category['image']=get_cid_dir($category['id'],'big');
@@ -210,7 +218,7 @@ class categorymodel {
         
         
     }
-    
+
     
     
 

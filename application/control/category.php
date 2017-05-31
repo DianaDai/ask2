@@ -101,15 +101,46 @@ var $whitelist;
         $word = taddslashes($word, 1);
         (!$word) && $this->message("搜索关键词不能为空!", 'BACK');
         $navtitle = $word ;
-        @$page = max(1, intval($this->get[3]));
+        $cid = intval($this->get[3])?$this->get[3]:'all';
+        if ($cid != 'all') {
+            $category = $this->category[$cid]; //得到分类信息
+            $cfield = 'cid' . $category['grade'];
+        } else {
+            $category = $this->category;
+            $cfield = '';
+            $category['pid'] = 0;
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
+        
+        
+        
+        @$page = max(1, intval($this->get[4]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
           $seo_description=$word;
      $seo_keywords= $word;
-             $rownum = $this->db->fetch_total('category', " `name` like '%$word%' ");
-         $catlist = $_ENV['category']->list_by_name($word, $startindex, $pagesize);
-     
-         $departstr = page($rownum, $pagesize, $page, "category/search/$word");
+     $condition =" ";
+     ($cid!='all')&&$condition.="  AND pid =$cid ";
+     $rownum = $this->db->fetch_total('category', " `name` like '%$word%' $condition  ");
+         $catlist = $_ENV['category']->list_by_name($word, $startindex, $pagesize,$cid);
+           $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
+           foreach ($sublist as $key=> $val)
+           {
+               $relrownum = $this->db->fetch_total('category'," `name` like '%$word%' and `pid`=".$val['id']); //特殊处理下如果按照分类获取不到 总数
+               if ($relrownum<=0)
+               {
+               	$relrownum= $this->db->fetch_total('category'," `name like '%$word%' and `id` =".$val['id']);
+               }
+               
+               $sublist[$key]['relrownum']=$relrownum;
+           	
+           }
+           
+           
+           
+         $departstr = page($rownum, $pagesize, $page, "category/search/$word/$cid");
         include template('serach_category');
     }
     function onlist() {

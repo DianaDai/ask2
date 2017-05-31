@@ -26,6 +26,27 @@
  <a href="{url category/search/$word}">
  <div class="setting-icon"><i class="fa fa-tag"></i></div> <span>专题 <span class="badge">{$rownum}</span></span>
  </a>
+
+          <ul class="submenu">
+         <!--{loop $sublist $sub}-->
+          <!--{if $sub['relrownum']>0}-->
+         <li>
+             <a href="{url category/search/$word/$sub['id']}">
+                 <div class ="setting-icon">
+                     <i class="fa fa-rss-square"></i>
+                 </div>
+                <span>
+                      {eval echo cutstr($sub['name'],20,'');}
+                    <span class="badge">{$sub['relrownum']}</span>
+                </span>
+         
+                      </a>
+         </li>
+         <!--{/if}-->
+         <!--{/loop}-->
+
+     </ul>
+
  </li>
  </ul>
  </div> <div class="col-xs-16 col-xs-offset-8 main">
