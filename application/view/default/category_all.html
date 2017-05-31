@@ -18,13 +18,18 @@
   
     <!--{loop $catlist  $category1}-->
             
-                
-            
+         
               <div class="col-xs-8">
+                         
+           <!--{eval  $temp= $_ENV['category']->get_topnav($category1['id']);}-->
+                                   <span  style ="float:right;margin-top: 80px;" class="label label-danger">{$temp['name']}</span>   
+
   <div class="collection-wrap">
     <a class="avatar-collection" target="_blank" href="{url  topic/catlist/$category1['id']}">
       <img src="{$category1['bigimage']}" alt="180">
-</a>    <h4><a target="_blank" href="{url topic/catlist/$category1['id']}">{$category1['name']}</a></h4>
+</a>  
+         
+       <h4><a target="_blank" href="{url topic/catlist/$category1['id']}">{$category1['name']}</a></h4>
     <p class="collection-description">
 {$category1['miaosu']}
 </p>

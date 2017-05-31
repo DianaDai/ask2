@@ -109,8 +109,8 @@ class base {
                 break;
             case 'categorylist'://首页左侧分类列表
                 $this->load('category');
-                $cachedata = $_ENV['category']->list_by_grade();
-                //echo var_dump($cachedata);
+               // $cachedata = $_ENV['category']->list_by_grade();
+                $cachedata =$_ENV['category']->list_by_gradetop();
                 break;
             case 'notelist'://首页右侧公告列表
                 $this->load('note');
