@@ -55,12 +55,12 @@
   <!--{if $catlist}-->
    <ul class="user-list">
        <!--{loop $catlist $cat}-->
- <li><a href="{url category/view/$cat['id']}" target="_blank" class="avatar-collection">
+ <li><a href="{url topic/catlist/$cat['id']}" target="_blank" class="avatar-collection">
  <img src=" {$cat['image']}">
- </a> <div class="info"><a href="{url category/view/$cat['id']}" target="_blank" class="name">
+ </a> <div class="info"><a href="{url topic/catlist/$cat['id']}" target="_blank" class="name">
         {$cat['name']}
       </a> <div class="meta"><span>
-          收录了{$cat['questions']}个问题 · {$cat['followers']}人关注
+          收录了·{$cat['topics']}篇文章·{$cat['questions']}个问题 · {$cat['followers']}人关注
         </span></div></div> 
         {if $cat['follow']}
  <a class="btn btn-default following" id="attenttouser_{$cat['id']}" onclick="attentto_cat($cat['id'])"><i class="fa fa-check"></i><span>已关注</span></a>
