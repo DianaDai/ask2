@@ -94,7 +94,7 @@ class questioncontrol extends base
             exit();
 
         }
-        //老子故意让你这种发广告的验证完所有信息，最后告诉你丫的进入网站黑名单不能回答
+      
         if ($this->user['isblack'] == 1) {
 
             $message['message'] = "黑名单用户无法回答问题!";
@@ -903,33 +903,33 @@ class questioncontrol extends base
         $touid = $answer['authorid'];
         $quid = $question['authorid'];
 
+        // 付费问答  
+        //$cash_fee = intval($question['shangjin']) * 100;
+        //$adoptmoeny = $question['shangjin'];
+        //$time = time();
+        //$this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
+        ////被采纳获得赏金记录
+        //if ($adoptmoeny > 0)
+        //    $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='adoptqid',typeid=$qid,money=$adoptmoeny,openid='',fromuid=$quid,touid=$touid,`time`=$time");
+        ////$this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine-'$cash_fee' WHERE `uid`=$quid");
+        //$this->load('depositmoney');
+        //$_ENV['depositmoney']->update($quid, 'qid', $question['id']);
 
-        $cash_fee = intval($question['shangjin']) * 100;
-        $adoptmoeny = $question['shangjin'];
-        $time = time();
-        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
-        //被采纳获得赏金记录
-        if ($adoptmoeny > 0)
-            $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='adoptqid',typeid=$qid,money=$adoptmoeny,openid='',fromuid=$quid,touid=$touid,`time`=$time");
-        //$this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine-'$cash_fee' WHERE `uid`=$quid");
-        $this->load('depositmoney');
-        $_ENV['depositmoney']->update($quid, 'qid', $question['id']);
 
-
-        $model = $_ENV['depositmoney']->get($quid, 'eqid', $question['id']);
-        if ($model != null) {
-            if ($model['touid'] == $touid) {
-                $cash_fee = intval($model['needpay']) * 100;
-                $needpay = $model['needpay'];
-                $_ENV['depositmoney']->update($quid, 'eqid', $question['id']);
-                $this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
-                //如果专家回答了问题，记录获奖记录
-                if ($needpay > 0)
-                    $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='eqid',typeid=$qid,money=$needpay,openid='',fromuid=$quid,touid=$touid,`time`=$time");
-            } else {
-                $_ENV['depositmoney']->remove($quid, 'eqid', $question['id']);
-            }
-        }
+        //$model = $_ENV['depositmoney']->get($quid, 'eqid', $question['id']);
+        //if ($model != null) {
+        //    if ($model['touid'] == $touid) {
+        //        $cash_fee = intval($model['needpay']) * 100;
+        //        $needpay = $model['needpay'];
+        //        $_ENV['depositmoney']->update($quid, 'eqid', $question['id']);
+        //        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
+        //        //如果专家回答了问题，记录获奖记录
+        //        if ($needpay > 0)
+        //            $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='eqid',typeid=$qid,money=$needpay,openid='',fromuid=$quid,touid=$touid,`time`=$time");
+        //    } else {
+        //        $_ENV['depositmoney']->remove($quid, 'eqid', $question['id']);
+        //    }
+        //}
 
 
         if ($ret) {

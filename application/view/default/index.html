@@ -53,6 +53,9 @@
                 <a class="collection" target="_blank" href="{url topic/catlist/$category1['id']}">
                     <img src="$category1['image']" alt="195" style="height:32px;width:32px;">
                     <div class="name">{$category1['name']}</div>
+                       <!--{eval  $temp= $_ENV['category']->get_topnav($category1['id']);}-->
+                    <span class="label label-danger " style="  ">{$temp['name']}
+</span>
                 </a>
                 <!--{/loop}-->
 
@@ -196,6 +199,18 @@
             -ms-transform: rotate(360deg) scale(1.2);
         }
 
+/*首页专题角标*/
+
+   .main div a.collection span.label{
+       margin-top:15px;
+        margin-right:-10px;
+         float:right;
+         display:inline-block ;
+         -webkit-transform: rotate(-45deg); /* Safari和Chrome */
+           -moz-transform: rotate(-45deg);/* Firefox 旋转属性，参数表示角度(deg表示角度)，负数逆时针，正数顺时针 */
+           -ms-transform: rotate(-45deg);/* IE 9 */
+            -o-transform: rotate(-45deg);/* Opera */
+   }
 
 
 

@@ -270,6 +270,8 @@ foreach ($topiclist as $key=>$val){
      if ($cid != 'all') {
          $category=$_ENV['category']->get($cid);
      }
+
+     
      $rownum =$_ENV['topic']->rownum_by_topic_articleid($cfield,$cid); 
 
      $topiclist= $_ENV['topic']->get_topic_byarticle($cfield,$cid,$startindex,$pagesize);
@@ -290,10 +292,10 @@ foreach ($topiclist as $key=>$val){
          
      }
      
-     
+  
      $navlist = $_ENV['category']->get_navigation($cid); //获取导航
      $sublist = $_ENV['category']->list_by_cid_pid($cid, $category['pid']); //获取子分类
-     
+ 
      $departstr = page($rownum, $pagesize, $page, "topic/default/$cid"); //得到分页字符串
      $metadescription = '精彩推荐列表';
      $art_rownum=$_ENV['topic']->rownum_by_user_article();
@@ -395,7 +397,7 @@ foreach ($topiclist as $key=>$val){
               	   $catlist=	$_ENV['category']->list_by_pid($catmodel['pid']);
             
               
-              	 $catmodel=$_ENV['category']->get($catmodel['pid']);
+                   //$catmodel=$_ENV['category']->get($catmodel['pid']); //不知道为要显示上一级分类
               	 
               	
               }
@@ -405,7 +407,8 @@ foreach ($topiclist as $key=>$val){
     	 }
         
     	
-    	
+         //echo var_dump($catmodel);
+         //exit();
        
          $cid=implode(',', $cids);
        

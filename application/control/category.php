@@ -125,6 +125,24 @@ var $whitelist;
      ($cid!='all')&&$condition.="  AND pid =$cid ";
      $rownum = $this->db->fetch_total('category', " `name` like '%$word%' $condition  ");
          $catlist = $_ENV['category']->list_by_name($word, $startindex, $pagesize,$cid);
+         
+         foreach ($catlist as $key=>$val)
+         {
+             $topicsrc=  $_ENV['category']->get_navigation($val['id'],true);
+             $toptemp =0;
+             $count = count($topicsrc);
+             for ($i = 0; $i < $count; $i++)
+             {
+                 $toptemp.=$topicsrc[$i]['name'].'/';
+             }
+             $toptemp= substr($toptemp,1,strlen($toptemp)-1);
+             $catlist[$key]['srcs']=$toptemp;
+         }
+         
+         
+         
+         
+         
            $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
            foreach ($sublist as $key=> $val)
            {

@@ -244,11 +244,11 @@ class topicmodel
     /* 获取分类下文章数量  */
     function rownum_by_topic_articleid($cfield='cid1',  $cid=0){
         $condition='1=1';
-        if($this->base->user['indentity']!=1&&$this->base->user['username']!='admin'){
+        if($this->base->user['identity']!=1&&$this->base->user['username']!='admin'){
             $condition.=" AND authoritycontrol=2"; 
         }
         ($cfield && $cid != 'all') && $condition .= " AND $cfield=$cid ";
-  
+
         return $this->db->fetch_total('topic',$condition);
         
     }
@@ -265,7 +265,7 @@ class topicmodel
         $topiclist= array();
         $condition='where 1=1';
         ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid";
-        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') { //权限=2的用户查看少数的
 
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  $condition and authoritycontrol = 2   order by id desc LIMIT $start,$limit");
         }else{

@@ -383,11 +383,11 @@ function postask(){
 	 }
 	 
 	   
-		
-	   if(has_submit){
-		   alert("提交中,稍后操作....");
-		   return false;
-	   }
+		// 把 问题提交改成异步的； 之前是同步的，超慢的感觉
+	   //if(has_submit){
+	   //    alert("提交中,稍后操作....");
+	   //    return false;
+	   //}
 	  
 	 var url="/?question/ajaxanswer";
 	$.ajax({
@@ -397,11 +397,15 @@ function postask(){
        url:url,
        //提交的数据
        data:data,
-       async: false,
+       //async: false, 去掉同步提交
        //返回数据的格式
        datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
-       //在请求之前调用的函数
-       beforeSend:function(){has_submit=true; ajaxloading("提交中...");},
+	    //在请求之前调用的函数
+       beforeSend: function () {
+           //has_submit = true;
+           ajaxloading("提交中...");
+       },
+
        //成功返回之后调用的函数             
        success:function(data){
        	var data=eval("("+data+")");
@@ -424,9 +428,9 @@ function postask(){
         
        }   ,
        //调用执行后调用的函数
-       complete: function(XMLHttpRequest, textStatus){
+       complete: function (XMLHttpRequest, textStatus) {
     	   removeajaxloading();
-    	   has_submit=false;
+    	  // has_submit=false;
        },
        //调用出错执行的函数
        error: function(){
