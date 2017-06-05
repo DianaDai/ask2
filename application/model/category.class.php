@@ -181,7 +181,7 @@ class categorymodel {
         $categorylist = array();
         $condition = " ";
         ($cid!='all')&&$condition.=" AND pid =$cid ";
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY followers DESC LIMIT $limit");
+        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY topics DESC LIMIT $limit");
         while ($category = $this->db->fetch_array($query)) {
         	  $category['follow'] = $this->is_followed($category['id'], $this->base->user['uid']);
         	$category['image']=get_cid_dir($category['id'],'big');
