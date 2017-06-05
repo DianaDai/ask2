@@ -63,7 +63,7 @@ class categorymodel {
     function list_by_gradetop(){
     
         $categorylist = array();
-        $query =$this->db->query("select id ,name ,questions,grade ,image ,questions+topics as num from ".DB_TABLEPRE."category  order by num desc limit 0 ,10 ");
+        $query =$this->db->query("select id ,name ,questions,grade ,image ,questions+topics as num from ".DB_TABLEPRE."category  order by id , num desc limit 0 ,10 ");
         while ($category1= $this->db->fetch_array($query))
         {
         	$category1['image']=get_cid_dir($category1['id'],'small');
