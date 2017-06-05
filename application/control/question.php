@@ -1893,6 +1893,30 @@ class questioncontrol extends base
         }
 
     }
+    
+    
+     function onattentto1()
+    {
+        $qid = intval($this->get[2]);
+        if (!$qid) {
+            $this->message("专题不存在!");
+        }
+        if ($this->user['uid'] == 0) {
+            $this->message("游客不能收藏!");
+        }
+        $is_followed = $_ENV['question']->is_followed($qid, $this->user['uid']);
+        if ($is_followed) {
+            $_ENV['user']->unfollow($qid, $this->user['uid']);
+            $_ENV['doing']->deletedoing($this->user['uid'], 4, $qid);
+            $this->message("已取消收藏!");
+        } else {
+            $_ENV['user']->follow($qid, $this->user['uid'], $this->user['username']);
+            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 4, $qid);
+
+            $this->message("专题收藏成功!");
+        }
+
+    }
 
     function onfollow()
     {
