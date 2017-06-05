@@ -397,7 +397,7 @@ foreach ($topiclist as $key=>$val){
               	   $catlist=	$_ENV['category']->list_by_pid($catmodel['pid']);
             
               
-              	 $catmodel=$_ENV['category']->get($catmodel['pid']);
+                   //$catmodel=$_ENV['category']->get($catmodel['pid']); //不知道为要显示上一级分类
               	 
               	
               }
@@ -407,7 +407,8 @@ foreach ($topiclist as $key=>$val){
     	 }
         
     	
-    	
+         //echo var_dump($catmodel);
+         //exit();
        
          $cid=implode(',', $cids);
        
