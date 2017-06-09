@@ -23,6 +23,7 @@ class questioncontrol extends base
         $this->load("userlog");
         $this->load("doing");
         $this->load("topic");
+        $this->load("email");
         $this->serach_num = isset($this->setting['search_shownum']) ? $this->setting['search_shownum'] : '5';
         $this->whitelist = "delete,deleteanswer";
 
@@ -277,7 +278,7 @@ class questioncontrol extends base
 
         }
     }
-
+     
     function onajaxadd()
     {
         $useragent = $_SERVER['HTTP_USER_AGENT'];
@@ -469,17 +470,20 @@ class questioncontrol extends base
             $this->credit($this->user['uid'], $this->setting['credit1_ask'], $this->setting['credit2_ask']);
         }
         $viewurl = urlmap('question/view/' . $qid, 2);
-        /* 如果是向别人提问，则需要发个消息给别人 */
+        /* 如果是向别人提问，这个就是邀请回答 则需要发个消息给别人 */
         if ($askfromuid) {
             $this->load("message");
 
-
+            //尊敬的E问领域专家@zjxm 你好！ @zzxm提了新问题：@wtbt,邀请你回答！马上回答：@url
             $username = addslashes($this->user['username']);
-            $_ENV['message']->add($username, $this->user['uid'], $touser['uid'], '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
+            $msgt='E问待办：有新问题需要你解答！'; //标题
+            $msg ='尊敬的E问领域专家'.$touser['username'].'你好! '.$this->user['username'].'提了新问题:'.$title.'邀请你回答！马上回答：'.'<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>';
+
+            $_ENV['message']->add($username, $this->user['uid'], $touser['uid'], $msgt, $msg );
 
 
             if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
-                sendmail($touser, '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
+                $_ENV['email']->sendmail($touser,$msgt,$msg);
             }
 
         }
@@ -503,17 +507,9 @@ class questioncontrol extends base
         } else {
             $this->load("message");
             $this->load("user");
-            $touser = $_ENV['user']->get_by_uid(1);
 
-            if ($touser) {
-                if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser == 1) {
-                    sendmail($touser, '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
-                }
-            }
+        }
 
-
-            // exit('ddddddddd11dddddd');
-            //$username = addslashes($this->user['username']);
 
 
             //改相关分类专家私信
@@ -527,8 +523,18 @@ class questioncontrol extends base
 
             foreach ($result as $key => $val) {
 
-                if ($this->user['uid'] != $val['uid'])
-                    $_ENV['message']->add($username, $this->user['uid'], $val['uid'], '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
+                if ($this->user['uid'] != $val['uid']){
+                $expertname =$_ENV['user']->get_by_uid($val['uid']);
+                $categoryname=$_ENV['category']->get($val['cid']);
+                $msgt='E问待办：有新问题需要你解答！';
+                $msg ='尊敬的E问领域专家'.$expertname['username'].'你好！你所擅长的领域 '.$categoryname['name']. '有了新问题：<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.$title.', 请协助回答！</a>';
+                $_ENV['message']->add($this->user['username'], $this->user['uid'], $val['uid'], $msgt, $msg);
+                if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
+                  $_ENV['email']->sendmail($expertname['email'],$msgt,$msg);
+
+                }
+                
+                }
 
             }
 

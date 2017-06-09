@@ -1137,6 +1137,8 @@ function topen($url, $timeout = 15, $post = '', $cookie = '', $limit = 0, $ip = 
     }
 }
 
+
+
 /* 发送邮件 */
 function sendmail($touser, $subject, $message, $from = '') {
     global $setting;
