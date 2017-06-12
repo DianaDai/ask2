@@ -165,8 +165,8 @@ class questioncontrol extends base
         //回答问题，添加积分
         $this->credit($this->user['uid'], $this->setting['credit1_answer'], $this->setting['credit2_answer']);
         //给提问者发送通知
-        $this->send($question['authorid'], $question['id'], 0);
-
+        //$this->send($question['authorid'], $question['id'], 0);
+         $this->sendanswer($question['authorid'],$question['id']); 
         $viewurl = urlmap('question/view/' . $qid, 2);
         $_ENV['userlog']->add('answer');
         $_ENV['doing']->add($this->user['uid'], $this->user['username'], 2, $qid, $content);
@@ -197,6 +197,49 @@ class questioncontrol extends base
         }
     }
 
+ 
+
+    
+    /* 回答问题  通知给提问者  关注着    */
+    function sendanswer($uid ,$qid ){
+            $question = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE id='$qid'");
+            $touser = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE uid=" . $uid);
+            $qurl='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
+            //   通知提问题者
+            $mst = 'E问通知：你的问题有人给出答案了！';
+            //'@zzxm 你好！你在E问的问题 @wtbt 有了新的回答，请查看！@url
+            $msg =$touser['username'].'你好！你在E问的问题'.$question['title'].'有了新的回答请查看!'.$qurl;
+            sendmsg($touser,$mst,$msg);
+            
+            //通知关注着
+            $mst='E问通知：你关注的问题有新动态！';
+            //'@gzzxm你好！你在E问关注的问题 @wtbt 有了新的回答，请查看！@url
+            $userlist =$_ENV['favorite']->get_list_byqid_fav($qid);
+            foreach ($userlist as $val)
+            {
+            	$msg = $val['username'].'你好！你在E问关注的问题'.$question['title'].'有了新的回答请查看！'.$qurl;
+                sendmsg($val,$mst,$msg);
+            }
+            
+            
+            
+            
+         
+    }
+    /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+    
+           $time = $this->time;
+           $msgfrom = $this->setting['site_name'] . '管理员';
+           if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['id']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+           }
+           if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+               $_ENV['email']->sendmail($touser['email'],$subject,$content);
+          
+        }
+    }
+    
 
     /* 提交问题 */
 

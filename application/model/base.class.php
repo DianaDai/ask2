@@ -355,7 +355,7 @@ class base {
       2:问题超时自动关闭
       3:回答有新评分
      */
-
+    // 提问人id    ，问题id，类型 ，
     function send($uid, $qid, $type, $aid = 0) {
         $question = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE id='$qid'");
         $msgtpl = unserialize($this->setting['msgtpl']);
@@ -385,20 +385,7 @@ class base {
         }
         //4,5,6,7 允许发手机短信
     }
-    
-    /*   重新定义消息系统*/
-    
-    
-    
-    //$type  动作名称  
-    //     新增
-    //     编辑 (编辑问题、编辑答案、关闭问题、删除问题)
-    
-    function questionsend($type,)
-    
-    
-    
-    
+
     
     
 
