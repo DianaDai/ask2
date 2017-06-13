@@ -102,6 +102,7 @@
     <Compile Include="application\model\ebank.class.php" />
     <Compile Include="application\model\editor.class.php" />
     <Compile Include="application\model\email.class.php" />
+    <Compile Include="application\model\email_msg.class.php" />
     <Compile Include="application\model\expert.class.php" />
     <Compile Include="application\model\expertbk.class.php" />
     <Compile Include="application\model\famous.class.php" />
