@@ -117,6 +117,52 @@ class email_msgmodel
         return $msg;
     }
     
+    /* 采纳问题通知提问者*/
+    function question_adopt($zzxm,$wtbt,$wthd){
+        $msg = $this->get_msg('问题','采纳',2);
+        $msg['content']= str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content']= str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content']= str_replace('{wthd}',$wthd,$msg['content']);
+        return $msg;
+    }
+    
+    /* 采纳问题通知关注者*/
+    
+    function question_adopt_with($gzzxm,$wtbt,$url){
+        $msg =$this->get_msg('问题','采纳',3);
+        $msg['content']= str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content']= str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content']= str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    /* 采纳问题通知回答者*/
+    
+    function question_adopt_ans($plrmc,$wtbt){
+        $msg =$this->get_msg('问题','采纳',4);
+        $msg['content']= str_replace('{plrmc}',$plrmc,$msg['content']);
+        $msg['content']= str_replace('{wtbt}',$wtbt,$msg['content']);
+        return $msg;
+    }
+    
+    
+    function question_atto($zzxm,$wtbt,$gzzxm){
+        $msg = $this->get_msg('问题','关注',2);
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        return $msg;
+    }
+    function question_ok($plrmc,$wtbt){
+        $msg = $this->get_msg('问题','点赞',4);
+        $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content'])   ;
+        return $msg;
+    
+    }
+    
+    
+    
     
     
 }

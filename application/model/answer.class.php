@@ -18,7 +18,7 @@ class answermodel {
         $this->db = $base->db;
     }
 
-    /* 根据aid获取一个答案的内容，暂时无用 */
+    /* 根据aid获取一个答案的内容， */
 
     function get($id) {
         $answer= $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "answer WHERE id='$id'");

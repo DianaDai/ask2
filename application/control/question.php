@@ -25,6 +25,7 @@ class questioncontrol extends base
         $this->load("topic");
         $this->load("email"); 
         $this->load("email_msg");
+        $this->load("favorite");
         $this->serach_num = isset($this->setting['search_shownum']) ? $this->setting['search_shownum'] : '5';
         $this->whitelist = "delete,deleteanswer";
 
@@ -345,7 +346,6 @@ class questioncontrol extends base
 //        }
 
 
-        //老子故意让你这种发广告的验证完所有信息，最后告诉你丫的进入网站黑名单不能提问
         if ($this->user['isblack'] == 1) {
 
             $message['message'] = "黑名单用户无法发布问题!";
@@ -937,61 +937,54 @@ class questioncontrol extends base
         $touid = $answer['authorid'];
         $quid = $question['authorid'];
 
-        // 付费问答  
-        //$cash_fee = intval($question['shangjin']) * 100;
-        //$adoptmoeny = $question['shangjin'];
-        //$time = time();
-        //$this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
-        ////被采纳获得赏金记录
-        //if ($adoptmoeny > 0)
-        //    $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='adoptqid',typeid=$qid,money=$adoptmoeny,openid='',fromuid=$quid,touid=$touid,`time`=$time");
-        ////$this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine-'$cash_fee' WHERE `uid`=$quid");
-        //$this->load('depositmoney');
-        //$_ENV['depositmoney']->update($quid, 'qid', $question['id']);
-
-
-        //$model = $_ENV['depositmoney']->get($quid, 'eqid', $question['id']);
-        //if ($model != null) {
-        //    if ($model['touid'] == $touid) {
-        //        $cash_fee = intval($model['needpay']) * 100;
-        //        $needpay = $model['needpay'];
-        //        $_ENV['depositmoney']->update($quid, 'eqid', $question['id']);
-        //        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
-        //        //如果专家回答了问题，记录获奖记录
-        //        if ($needpay > 0)
-        //            $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='eqid',typeid=$qid,money=$needpay,openid='',fromuid=$quid,touid=$touid,`time`=$time");
-        //    } else {
-        //        $_ENV['depositmoney']->remove($quid, 'eqid', $question['id']);
-        //    }
-        //}
-
-
         if ($ret) {
             $this->load("answer_comment");
             $_ENV['answer_comment']->add($aid, $comment, $question['authorid'], $question['author']);
 
             $this->credit($answer['authorid'], $this->setting['credit1_adopt'], intval($question['price'] + $this->setting['credit2_adopt']), 0, 'adopt');
-
-            $this->send($answer['authorid'], $question['id'], 1);
+            //通知提问者，问题已经被采纳
+            $msginfo =$_ENV['email_msg']->question_adopt($question['author'],$question['title'],$answer['content']);
+            $quser = $_ENV['user']->get_by_uid($quid);
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            //$this->send($answer['authorid'], $question['id'], 1);
             $viewurl = urlmap('question/view/' . $qid, 2);
+            global $setting;
+             $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
             $_ENV['doing']->add($question['authorid'], $question['author'], 8, $qid, $comment, $answer['id'], $answer['authorid'], $answer['content']);
-        }
-        $quser = $_ENV['user']->get_by_uid($answer['authorid']);
-        global $setting;
-        $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
-        //发送邮件通知
-        $subject = "你的问题被采纳(" . $question['title'] . ")！";
-        $emailmessage = $comment . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看详情</a>。</p>';
-        try {
-            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
-                sendmail($quser, $subject, $emailmessage);
+            
+            //通知收藏着  问题已经被采纳
+            $userlist = $_ENV['favorite']->get_list_byqid_fav($question['id']);
+            foreach ($userlist as $val)
+            {
+                $msginfo = $_ENV['email_msg']->question_adopt_with($val['username'],$question['title'],$mpurl);
+                $this->sendmsg($val,$msginfo['title'],$msginfo['content']);
             }
-        } catch (Exception $e) {
-            $message['message'] = 'ok';
-            echo json_encode($message);
-            exit();
-
+            //通知问题回答者
+            
+            $msginfo = $_ENV['email_msg']->question_adopt_with($answer['author'],$question['title']);
+            $quser = $_ENV['user']->get_by_uid($answer['authorid']);
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            
+            
+           
+            
         }
+     
+        //global $setting;
+       
+        ////发送邮件通知
+        //$subject = "你的问题被采纳(" . $question['title'] . ")！";
+        //$emailmessage = $comment . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看详情</a>。</p>';
+        //try {
+        //    if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
+        //        sendmail($quser, $subject, $emailmessage);
+        //    }
+        //} catch (Exception $e) {
+        //    $message['message'] = 'ok';
+        //    echo json_encode($message);
+        //    exit();
+
+        //}
         $message['message'] = 'ok';
         echo json_encode($message);
         exit();
@@ -1920,7 +1913,10 @@ class questioncontrol extends base
             $username = addslashes($this->user['username']);
             $this->load("message");
             $viewurl = url('question/view/' . $qid, 1);
-            $_ENV['message']->add($msgfrom, 0, $question['authorid'], $username . "刚刚关注了您的问题", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您的问题' . $question['title'] . '"<br /> <a href="' . $viewurl . '">点击查看</a>');
+            
+            $msginfo = $_ENV['email_msg']->question_atto($question['author'],$question['title'],$this->user['username']);
+            $this->sendmsg($this->user,$msginfo['title'],$msginfo['content']);
+            //$_ENV['message']->add($msgfrom, 0, $question['authorid'], $username . "刚刚关注了您的问题", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您的问题' . $question['title'] . '"<br /> <a href="' . $viewurl . '">点击查看</a>');
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 4, $qid);
 
             $this->message("问题收藏成功!");

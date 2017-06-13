@@ -13,6 +13,7 @@ class answercontrol extends base {
         $this->load('doing');
         $this->load('email');
         $this->load('email_msg');
+        $this->load('favorite');
     }
 
     /* 追问模块---追问 */
