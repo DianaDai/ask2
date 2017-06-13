@@ -174,6 +174,11 @@ class answercontrol extends base {
         $answer = $_ENV['answer']->get($answerid);
         if ($this->user['uid']) {
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 5, $answer['qid'], '', $answer['id'], $answer['authorid'], $answer['content']);
+            $question =$_ENV['question']->get($answer['qid']);
+            $msginfo = $_ENV['email_msg']->question_ok($answer['author'],$question['titile']);
+            $touser =$_ENV['user']->get_by_uid($answer['authorid']);
+            $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
         }
         exit($answer['supports']);
     }
