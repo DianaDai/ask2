@@ -18,6 +18,19 @@ class answermodel {
         $this->db = $base->db;
     }
 
+    //获取回答用户
+    function getanser_user($qid){
+        $anserlist = array();
+        $query =$this->db->query("SELECT id,qid,title,author,authorid from".DB_TABLEPRE."answer where qid =$qid");
+        while ($anser =$this->db->fetch_array($query))
+        {
+        	$anserlist[] =$anser;
+        }
+        
+        return $anserlist;
+        
+    }
+    
     /* 根据aid获取一个答案的内容， */
 
     function get($id) {

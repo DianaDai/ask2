@@ -190,7 +190,16 @@ class email_msgmodel
         $msg['content'] = str_replace('{time}',$time,$msg['content']);
         return $msg;
     }
+    //删除问题
     
+    function question_del($zzxm,$wtbt,$glymc,$time){
+        $msg =$this->get_msg('问题','删除问题');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        return $msg;
+    }
     
     
     

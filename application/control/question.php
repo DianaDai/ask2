@@ -995,6 +995,21 @@ class questioncontrol extends base
     function onclose()
     {
         $qid = intval($this->get[2]) ? intval($this->get[2]) : $this->post['qid'];
+        //通知信息给作者和回答者
+        $question = $_ENV['question']->get($qid);
+        $touser =$_ENV['user']->get_by_uid($question['authorid']);
+        $msginfo =$_ENV['email_msg']->question_close($question['author'],$question['title'],$this->user['username'],$this->time);
+        $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+        
+        $ansusers = $_ENV['answer']->getanser_user($question['qid']);
+        
+        foreach ($ansusers as $val)
+        {           
+            $touser =$_ENV['user']->get_by_uid($val['authorid']);
+            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+        }
+        
+        
         $_ENV['question']->update_status($qid, 9);
         $viewurl = urlmap('question/view/' . $qid, 2);
         $this->message('关闭问题成功！', $viewurl);
@@ -1313,14 +1328,25 @@ class questioncontrol extends base
             }
             $_ENV['answer']->update_content($aid, $content, $status);
             $quser = $_ENV['user']->get_by_uid($question['authorid']);
+            //编辑问题答案通知作者和评论者
             global $setting;
             $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
-            //发送邮件通知
-            $subject = "问题有新回答！";
-            $emailmessage = $content . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看最新回复</a>。</p>';
-            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
-                sendmail($quser, $subject, $emailmessage);
+            $msginfo =$_ENV['email_msg']->question_edit_ans($answer['author'],$question['title'],$this->user['username'],$this->time,$mpurl);
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            $ansusers = $_ENV['answer']->getanser_user($question['qid']);
+            foreach ($ansusers as $val)
+            {           
+                $touser =$_ENV['user']->get_by_uid($val['authorid']);
+                $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             }
+            //global $setting;
+      
+            ////发送邮件通知
+            //$subject = "问题有新回答！";
+            //$emailmessage = $content . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看最新回复</a>。</p>';
+            //if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
+            //    sendmail($quser, $subject, $emailmessage);
+            //}
             if (0 == $status) {
                 $message['sh'] = 1;
             }
@@ -1702,11 +1728,20 @@ class questioncontrol extends base
         if ($candone == false) {
             $this->message("非法操作,您的ip已被系统记录！", "STOP");
         }
-
+        //通知信息给 提问和回答者
         $touser = $_ENV['user']->get_by_uid($question['authorid']);
-        if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
-            sendmail($touser, '您的问题' . $question['title'] . '已被删除');
+        $msginfo = $_ENV['email_msg']->question_del($question['author'],$question['title'],$this->user['username'],$this->time);
+        $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+        
+        $ansusers = $_ENV['answer']->getanser_user($question['qid']);
+        foreach ($ansusers as $val)
+        {           
+            $touser =$_ENV['user']->get_by_uid($val['authorid']);
+            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
         }
+        //if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
+        //    sendmail($touser, '您的问题' . $question['title'] . '已被删除');
+        //}
         $this->credit($question['authorid'], 0, $question['price'], 0, 'back');
         $_ENV['question']->remove(intval($this->get[2]));
 
@@ -1756,6 +1791,23 @@ class questioncontrol extends base
                 $authoritycontrol = $this->post['authoritycontrol'];
             }
             $_ENV['question']->update_content($qid, $title, $this->post['content'],$authoritycontrol);
+            
+            //编辑问题通知作者和回答者
+            $msginfo =$_ENV['email_msg']->question_edit($question['author'],$question['title'],$this->user['username'],$this->time);
+            $touser =$_ENV['user']->get_by_uid($question['authorid']);
+            $this->sendmsg($touser,$msginfo['titile'],$msginfo['content']);
+            
+            $ansusers = $_ENV['answer']->getanser_user($question['qid']);
+            
+            foreach ($ansusers as $val)
+            {           
+                $touser =$_ENV['user']->get_by_uid($val['authorid']);
+            	$this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            }
+            
+            
+            
+            
             $this->message('问题编辑成功!', $viewurl);
         }
         include template("editquestion");
