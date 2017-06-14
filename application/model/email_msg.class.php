@@ -162,6 +162,35 @@ class email_msgmodel
     }
     
     
+    function question_edit($zzxm,$wtbt,$glymc,$time,$url){
+        $msg =$this->get_msg('问题','编辑问题');
+        $msg['content']= str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$url['content']);
+        return $msg;
+        
+    }
+    //编辑答案
+    function question_edit_ans($plrmc,$wtbt,$glymc,$time,$url){
+        $msg = $this->get_msg('问题','编辑答案');
+        $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content']= str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    //关闭问题
+    
+    function question_close($zzxm,$wtbt,$glymc,$time){
+        $msg = $this->get_msg('问题','关闭问题');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        return $msg;
+    }
+    
     
     
     
