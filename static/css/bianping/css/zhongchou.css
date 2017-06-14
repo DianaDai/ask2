@@ -8859,8 +8859,8 @@ nav .logo {
 }
 
 nav .logo img {
-	width: 55px;
-	height: 26px
+	width: 100px;
+	height: 38px
 }
 
 nav .nav li a {
@@ -8984,8 +8984,9 @@ nav form .search-input {
 	-o-transition: width .5s
 }
 
+/*鼠标放进去 搜索框宽度调整为240-> 200*/
 nav form .search-input:focus {
-	width: 240px;
+	width: 200px;
 	outline: none
 }
 

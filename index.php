@@ -3,7 +3,7 @@
 error_reporting(0);
 
 $mtime = explode(' ', microtime());
-$starttime = $mtime[1] + $mtime[0];
+$starttime = $mtime[1] + $mtime[0]; 
 
 define('IN_ASK2', TRUE);
 define('ASK2_ROOT', dirname(__FILE__));

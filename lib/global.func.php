@@ -1137,6 +1137,8 @@ function topen($url, $timeout = 15, $post = '', $cookie = '', $limit = 0, $ip = 
     }
 }
 
+
+
 /* 发送邮件 */
 function sendmail($touser, $subject, $message, $from = '') {
     global $setting;
@@ -1158,7 +1160,7 @@ function sendmail($touser, $subject, $message, $from = '') {
 		</body>
 		</html>
 EOT;
-  require 'email.class.php';
+    require_once 'email.class.php';
    //******************** 配置信息 ********************************
 	$smtpserver =$setting['mailserver'];// "smtp.163.com";//SMTP服务器
 	$smtpserverport =$setting['mailport'];//SMTP服务器端口

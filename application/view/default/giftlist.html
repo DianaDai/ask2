@@ -1,21 +1,28 @@
 <!--{template header}-->
 
+<style>
+.index .main {
+    padding-top: 15px;
+    padding-right: 0;
+}
+.notepanel{
+	padding:20px;
+    border:solid 1px #777;
+    margin-bottom:20px;
+}
+</style>
 
-<!--内容部分--->
-<div class="content-body">
-<div class="container  ">
-
+<div class="container index   ">
 
 <div class="row">
-<div class="col-sm-8 b-r-line">
-<ol class="breadcrumb">
-  <li><a class="first" href="{SITE_URL}">{$setting['site_name']}</a></li>
+<div class="col-sm-16 main">
 
-  <li class="active">财富商城</li>
-</ol>
+   <div class="recommend-collection">
+           商品列表
+          </div>
+    <div class="split-line"></div>
 
 
-<hr>
 <section class="cards">
   <!--{loop $giftlist $gift}-->
 <div class=" col-sm-4 ">
@@ -42,10 +49,10 @@
 
 <div class="tiplist">
 
-<h3 class="font-18 mar-t-1">
-温馨提示
-</h3>
-<hr>
+ <div class="recommend-collection">
+        温馨提示
+          </div>
+    <div class="split-line"></div>
      <div class="credit_note">
                 <p>为了保证您所兑换的礼品能够及时送到，请您仔细阅读下列内容：</p>
                 <p>1.请您填写详细的联系地址：省、市、区、县、村、路（街道号）、单位，注明您的邮编，真实姓名还有联系方式。</p>
@@ -68,7 +75,7 @@
 </div>
 
 
-<div class="col-sm-4 mar-t-1">
+<div class="col-sm-8 mar-t-1">
 
    <!--{if $user['uid']}-->
     
@@ -78,26 +85,28 @@
                   </div>  
                   <div class="col-sm-10">
                     <h3 class="font-15"><a target="_blank" href="{url user/default}">{$user['username']}</a></h3>
-                    <p>当前财富值:<img src="{SITE_URL}css/default/gold.gif"><font color="#FF6600">{$user['credit2']}</font></p>
+                    <p>当前财富值:<img src="{SITE_URL}static/css/default/gold.gif"><font color="#FF6600">{$user['credit2']}</font></p>
                     <p><a href="{url index/help}#如何获得积分" target="_blank">如何获得财富?</a></p>
                     
                    
                 </div>
             </div>
-       
+         <hr>
         <!--{/if}-->
-        <hr>
-        <div class="panel panel-success">
-        <div class="panel-heading" contenteditable="">礼品公告</div>
-        <div class="panel-body"  contenteditable="">{$setting['gift_note']}</div>
-      </div>
       
+     
+       <div class="recommend-collection">
+       礼品公告
+          </div>
+    <hr>
+      <div class="notepanel">
+      {$setting['gift_note']}
+      </div>
       <div class="creditlist">
-       <h3 class="font-18 mar-t-1">
-                  财富榜
-       </h3>
-       
-       <hr>
+      <div class="recommend-collection">
+        财富榜
+          </div>
+    <hr>
           <ul class="nav" id="alltop">
                 <!--{eval $weekuserlist=$this->fromcache('alluserlist');}-->
                 <!--{loop $weekuserlist $index $alluser}-->
@@ -112,8 +121,12 @@
        </div>
        
        
-          <div class="modbox mt15">
-            <h3 class="font-18 mar-t-05">兑换动态</h3>
+          <div class="modbox mar-t-1">
+          
+               <div class="recommend-collection">
+      兑换动态
+          </div>
+    <hr>
             <div id="exchange_detail" class="exchange">
                 <!--{if $loglist}-->
                 <!--{loop $loglist $giftlog}-->
@@ -144,51 +157,51 @@
      
         
          <div class="form-group">
-          <label class="col-md-2 control-label">真实姓名</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">真实姓名</label>
+          <div class="col-md-14">
              <input type="text" id="realname" name="realname" value="" placeholder="请务必写上真实姓名,此项必填" class="form-control">
           </div>
-           <div class="col-md-3">
+           <div class="col-md-6">
                <i class="text-danger mar-r-05">*</i>请务必填入真实姓名
             </div>
           
         </div>
         
          <div class="form-group">
-          <label class="col-md-2 control-label">电子邮箱</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">电子邮箱</label>
+          <div class="col-md-14">
              <input type="text" id="email" name="email" value="" placeholder="常用邮箱地址,此项必填" class="form-control">
           </div>
-            <div class="col-md-3">
+            <div class="col-md-6">
                <i class="text-danger">*</i> 常用邮箱地址
             </div>
           
         </div>
         
             <div class="form-group">
-          <label class="col-md-2 control-label">手机号码</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">手机号码</label>
+          <div class="col-md-14">
              <input type="text" id="phone" name="phone" value="" placeholder="您的手机号码,此项必填" class="form-control">
           </div>
-           <div class="col-md-3">
+           <div class="col-md-6">
               <i class="text-danger">*</i> 常用手机号码
             </div>
           
         </div>
         
        <div class="form-group">
-          <label class="col-md-2 control-label">邮寄地址</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">邮寄地址</label>
+          <div class="col-md-14">
              <input type="text" id="addr" name="addr"   placeholder="您的联系地址,此项必填" class="form-control">
           </div>
-           <div class="col-md-3">
+           <div class="col-md-6">
                   <i class="text-danger">*</i> 您的联系地址
             </div>
           
         </div>
           <div class="form-group">
-          <label class="col-md-2 control-label">邮政编码</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">邮政编码</label>
+          <div class="col-md-14">
              <input type="text" id="postcode" name="postcode"  placeholder="邮政编码" class="form-control">
           </div>
            
@@ -196,23 +209,23 @@
         </div>
         
             <div class="form-group">
-          <label class="col-md-2 control-label">QQ</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">QQ</label>
+          <div class="col-md-14">
              <input type="text" id="qq" name="qq"  placeholder="qq" class="form-control">
           </div>
            
           
         </div>
       <div class="form-group">
-          <label class="col-md-2 control-label">备注</label>
-          <div class="col-md-7">
+          <label class="col-md-4 control-label">备注</label>
+          <div class="col-md-14">
              <input type="text" id="notes" name="notes"   placeholder="兑换备注" class="form-control">
           </div>
            
           
         </div>
        <div class="form-group">
-          <div class="col-md-offset-2 col-md-10">
+          <div class="col-md-18">
              <input type="submit" id="submit" class="btn btn-danger width-120" value="提&nbsp;交" data-loading="稍候..."> 
           </div>
         </div>
@@ -244,7 +257,7 @@
 </div>
 </div>
 
-</div>
+
 <script type="text/javascript">
     $(document).ready(function(){
         	if($("#exchange_detail").height()>250){

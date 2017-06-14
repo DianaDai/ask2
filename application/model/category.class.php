@@ -57,8 +57,26 @@ class categorymodel {
         }
         return $categorylist;
     }
-    /* 用于在首页左侧显示 */
+    
+    /* 用于首页导航但是获取top10文章和问题最多的分类*/
+    
+    function list_by_gradetop(){
+    
+        $categorylist = array();
+        $query =$this->db->query("select id ,name ,questions,grade ,image ,questions+topics as num from ".DB_TABLEPRE."category where  grade in( 1,2)  order by  num desc limit 0 ,10 ");
+        while ($category1= $this->db->fetch_array($query))
+        {
+        	$category1['image']=get_cid_dir($category1['id'],'small');
+            $category1['bigimage']=get_cid_dir($category1['id'],'big');
+            $categorylist[]= $category1;
+        }
+        return $categorylist;
+        
 
+    }
+    
+    
+    /* 用于在首页左侧显示 */
     function list_by_grade($grade = 1) {
         $categorylist = array();
         $query = $this->db->query("select id,name,questions,grade,image from " . DB_TABLEPRE . "category where grade=1 order by displayorder asc,id asc");
@@ -151,11 +169,19 @@ class categorymodel {
       
         return $user;
     }
-    /* 根据分类名检索 */
+    
+    
+    
+    
+    
+    
+    /* 根据分类名检索 加入cid */
 
-    function list_by_name($name, $start = 0, $limit = 10) {
+    function list_by_name($name, $start = 0, $limit = 10 ,$cid=0) {
         $categorylist = array();
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%' ORDER BY followers DESC LIMIT $limit");
+        $condition = " ";
+        ($cid!='all')&&$condition.=" AND pid =$cid ";
+        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY topics DESC LIMIT $limit");
         while ($category = $this->db->fetch_array($query)) {
         	  $category['follow'] = $this->is_followed($category['id'], $this->base->user['uid']);
         	$category['image']=get_cid_dir($category['id'],'big');
@@ -168,10 +194,10 @@ class categorymodel {
 
     function list_by_cid_pid($cid, $pid) {
         $sublist = array();
-        $query = $this->db->query("select id,name,questions,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
         $subcount = $this->db->affected_rows();
         if ($subcount <= 0) {
-            $query = $this->db->query("select id,name,questions,grade,alias from " . DB_TABLEPRE . "category where pid=$pid order by displayorder asc,id asc");
+            $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$pid order by displayorder asc,id asc");
         }
         while ($category = $this->db->fetch_array($query)) {
         	$category['image']=get_cid_dir($category['id'],'big');
@@ -179,6 +205,40 @@ class categorymodel {
         }
         return $sublist;
     }
+    
+    /*       query_list_by_cid_pid   搜索分类浏览 显示子分类           */
+    
+    function query_list_by_cid_pid($cid){
+    
+        $sublist = array();
+        $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        $subcount= $this->db->affected_rows();
+        if ($subcount<=0)
+        {
+            ($cid=='all')&&$cid=0;
+            if ($cid==0)
+            {
+                $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+            }else
+            {
+                $query= $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where id=$cid order by displayorder asc,id asc "); //获取当前分类
+
+            }
+            
+            
+        }
+        while($category = $this->db->fetch_array($query)){
+            $category['image']=get_cid_dir($category['id'],'big');
+            $sublist[] = $category;
+            
+        }
+        return $sublist;
+        
+        
+    }
+
+    
+    
 
     /* 用于提问时候分类的选择 */
 
@@ -205,6 +265,30 @@ class categorymodel {
         $categoryjs['category3'] = "[" . substr($category3, 0, -1) . "]";
         return $categoryjs;
     }
+    
+    /*   专题页面显示特定分类  */
+    
+    function get_topnav($cid ,$grade=1){
+
+        $relval = '';
+        do
+        {
+            $category = $this->base->category[$cid]; //具体的分类记录
+            if ($category&&$category['grade']==$grade)
+            {
+            	$relval=$category;
+                break;
+            }else if($category)
+            {
+            	$cid = $category['pid']; //准备获取上一个分类
+            }
+            
+        } while($category&&$cid); 
+        return $relval;
+        
+        
+    }
+    
 
     /* 分类显示页面分类导航 */
 

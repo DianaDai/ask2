@@ -43,7 +43,8 @@ var $whitelist;
        }
         }
          $navtitle = $word ;
-        @$page = max(1, intval($this->get[3]));
+           $cid = intval($this->get[3])?$this->get[3]:'all';
+        @$page = max(1, intval($this->get[4]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
           $seo_description=$word;
@@ -54,13 +55,37 @@ var $whitelist;
            // $topiclist = $_ENV['topic']->list_by_tag($word, $startindex, $pagesize);
           // if($topiclist==null){
            	
-
+        if ($cid != 'all') {
+            $category = $this->category[$cid]; //得到分类信息
+            $cfield = 'cid' . $category['grade'];
+        } else {
+            $category = $this->category;
+            $cfield = '';
+            $category['pid'] = 0;
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
         
-            $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize);
+
+            $topiclist = $_ENV['topic']->get_bylikename($word, $startindex, $pagesize,$cfield,$cid);
+          
+            $rownum=$_ENV['topic']->rownum_by_title($word,$cfield,$cid);
             
-            $rownum=$_ENV['topic']->rownum_by_title($word);
+       
+
           // }
- 
+           
+            $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
+            
+            foreach ($sublist as $key => $val)
+            {
+            	$relrownum= $_ENV['topic']->rownum_by_title($word,'cid'.$val['grade'],$val['id']);
+                $sublist[$key]['topics']=$relrownum;
+            }
+            
+
+          
 foreach ($topiclist as $key=>$val){
 
 
@@ -80,9 +105,16 @@ foreach ($topiclist as $key=>$val){
 	
 }
 
-        $departstr = page($rownum, $pagesize, $page, "topictag-$word");
+        $departstr = page($rownum, $pagesize, $page, "topictag-$word/$cid");
         include template('topictag');
     }
+    
+    
+    
+    
+    
+    
+    
     function oncancelhot(){
     	
     	$id=intval($this->get[2]);
@@ -209,7 +241,70 @@ foreach ($topiclist as $key=>$val){
     	exit();
     	
     }
-    function ondefault() {
+ 
+ /**
+  * 支持文章分类的访问方式
+  * 
+  */
+
+ function ondefault(){
+     $cid =intval($this->get[2])?$this->get[2]:'all';
+     @$page =max(1,intval($this->get[3]));
+     $pagesize =$this->setting['list_default'];
+     $startindex=($page-1)*$pagesize;
+     if ($cid!='all')
+     {
+         $category=$this->category[$cid]; //获取分类信息
+         $navtitle= $category['name'];
+         $cfield ='cid'.$category['grade']; //获取当前分类的节点
+         
+     	
+     }else
+     {
+         $category=$this->category;
+         $category['pid']=0;
+         $cfield ='';
+         $navtitle = '文章列表';   
+     }
+     
+     if ($cid != 'all') {
+         $category=$_ENV['category']->get($cid);
+     }
+
+     
+     $rownum =$_ENV['topic']->rownum_by_topic_articleid($cfield,$cid); 
+
+     $topiclist= $_ENV['topic']->get_topic_byarticle($cfield,$cid,$startindex,$pagesize);
+     foreach ($topiclist as $key=>$val){
+         $topicsrc=  $_ENV['category']->get_navigation($val['articleclassid'],true);
+         $toptemp =0;
+         $count = count($topicsrc);
+         for ($i = 0; $i < $count; $i++)
+         {
+             $toptemp.=$topicsrc[$i]['name'].'/';
+         }
+         $toptemp= substr($toptemp,1,strlen($toptemp)-1);
+
+         $taglist = $_ENV['topic_tag']->get_by_aid($val['id']);
+         $topiclist[$key]['srcs']=$toptemp;
+         $topiclist[$key]['tags']=$taglist;
+         
+         
+     }
+     
+  
+     $navlist = $_ENV['category']->get_navigation($cid); //获取导航
+     $sublist = $_ENV['category']->list_by_cid_pid($cid, $category['pid']); //获取子分类
+ 
+     $departstr = page($rownum, $pagesize, $page, "topic/default/$cid"); //得到分页字符串
+     $metadescription = '精彩推荐列表';
+     $art_rownum=$_ENV['topic']->rownum_by_user_article();
+     $userarticle=$_ENV['topic']->get_user_articles(0,5);
+     include template('topic');
+     
+ }
+ 
+    function ondefaulttemp() {
          $navtitle = "最新文章专栏推荐";
         $seo_description= "推荐问答最新文章专栏，热门文章和最新文章推荐。";
         $seo_keywords= "问答文章专栏";
@@ -217,7 +312,7 @@ foreach ($topiclist as $key=>$val){
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
         $rownum = $this->db->fetch_total('topic');
-        $pages = @ceil($rownum / $pagesize);
+        $pages = @ceil($rownum/$pagesize);
         $topiclist = $_ENV['topic']->get_list(2, $startindex, $pagesize);
     foreach ($topiclist as $key=>$val){
         $topicsrc=  $_ENV['category']->get_navigation($val['articleclassid'],true);
@@ -243,8 +338,9 @@ foreach ($topiclist as $key=>$val){
         include template('topic');
     }
     function oncatlist(){
-    
+
     	$catid=$this->get[2];
+  
     	     $is_followed = $_ENV['category']->is_followed($catid, $this->user['uid']);
     	      $followerlist=$_ENV['category']->get_followers($catid,0,8); //获取导航
     	 @$page = max(1, intval($this->get[3]));
@@ -301,7 +397,7 @@ foreach ($topiclist as $key=>$val){
               	   $catlist=	$_ENV['category']->list_by_pid($catmodel['pid']);
             
               
-              	 $catmodel=$_ENV['category']->get($catmodel['pid']);
+                   //$catmodel=$_ENV['category']->get($catmodel['pid']); //不知道为要显示上一级分类
               	 
               	
               }
@@ -311,7 +407,8 @@ foreach ($topiclist as $key=>$val){
     	 }
         
     	
-    	
+         //echo var_dump($catmodel);
+         //exit();
        
          $cid=implode(',', $cids);
        
@@ -361,7 +458,7 @@ foreach ($topiclist as $key=>$val){
             $seo_keywords = str_replace("{wzmc}", $this->setting['site_name'], $this->setting['seo_category_keywords']);
             $seo_keywords = str_replace("{flmc}", $navtitle, $seo_keywords);
         }
-        	
+
         
         include template('catlist');
     
@@ -399,7 +496,8 @@ foreach ($topiclist as $key=>$val){
         $questionlist = $_ENV['question']->list_by_cfield_cvalue_status($cfield, $cid, 'all', 0, 8); //问题列表数据
            $topicone['tags']=$taglist;
     	$topicone['views']=$topicone['views']+1;
-    	 $_ENV['topic']->updatetopic($topicone['id'], $topicone['title'], $topicone['describtion'],$topicone['image'],$topicone['isphone'],$topicone['views'],$topicone['articleclassid'],$topicone['ispc'],$topicone['authoritycontrol']);
+        //这个地方也要更新
+    	 $_ENV['topic']->updatetopic($topicone['id'], $topicone['title'], $topicone['describtion'],$topicone['image'],$topicone['isphone'],$topicone['views'],$topicone['articleclassid'],$topicone['ispc'],$topicone['authoritycontrol'],$topicone['cid1'],$topicone['cid2'],$topicone['cid3']);
     	 $navtitle = $topicone['title'];
     	    $this->load("favorite");
    	    $followerlist=$_ENV['favorite']->get_list_bytid($topicid);//收藏的人

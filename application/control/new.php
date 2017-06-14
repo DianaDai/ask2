@@ -5,11 +5,16 @@
 class newcontrol extends base {
 	
 
-    function topiccontrol(& $get, & $post) {
+    function newcontrol(& $get, & $post) {
         $this->base($get, $post);
-       
+        $this->load('category');
+        $this->load('question');
+        $this->load("topic");
     }
-    function ondefault() {
+    /**
+     * 替换掉之前的查询
+     */
+    function ondefaulttemp() {
     	 $this->load('question');
          $this->load('category');
     	  $navtitle ="最近更新_";
@@ -48,6 +53,88 @@ foreach ($questionlist as $key=>$val){
 }
                // $questionlist = $_ENV['question']->list_by_cfield_cvalue_status('', 0, 1,$startindex, $pagesize);
     	include template('new');
+    }
+    
+    //category/view/1/2/10
+    //cid，status,第几页？
+    function ondefault() {
+        $cid = intval($this->get[2])?$this->get[2]:'all';
+        $status = isset($this->get[3]) ? $this->get[3] : 'all';
+        @$page = max(1, intval($this->get[4]));
+        $pagesize = $this->setting['list_default'];
+        $startindex = ($page - 1) * $pagesize; //每页面显示$pagesize条
+        if ($cid != 'all') {
+            $category = $this->category[$cid]; //得到分类信息
+            $navtitle = $category['name'];
+            $cfield = 'cid' . $category['grade'];
+        } else {
+            $category = $this->category;
+            $navtitle = '问答列表';
+            $cfield = '';
+            $category['pid'] = 0;
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
+        
+        $statusword="";
+        switch ($status){
+        	case '1':
+        		$statusword='待解决';
+        		break;
+            case '2':
+                $statusword='已解决';
+        		break;
+            case '4':
+                $statusword='高悬赏';
+        		break;
+            case '6':
+                $statusword='推荐';
+        		break;
+            case 'all':
+                $statusword='全部';
+                break;
+        }
+        $is_followed = $_ENV['category']->is_followed($cid, $this->user['uid']);
+        $rownum = $_ENV['question']->rownum_by_cfield_cvalue_status($cfield, $cid, $status); //获取总的记录数
+        $questionlist = $_ENV['question']->list_by_cfield_cvalue_status($cfield, $cid, $status, $startindex, $pagesize); //问题列表数据
+        //$topiclist = $_ENV['topic']->get_bycatid($cid, 0, 8);
+        $followerlist=$_ENV['category']->get_followers($cid,0,8); //获取导航
+        $departstr = page($rownum, $pagesize, $page, "category/view/$cid/$status"); //得到分页字符串
+        $navlist = $_ENV['category']->get_navigation($cid); //获取导航
+        $sublist = $_ENV['category']->list_by_cid_pid($cid, $category['pid']); //获取子分类
+        $this->load('tag');
+        foreach ($questionlist as $key=>$val){
+            
+
+            
+            $quesrc=  $_ENV['category']->get_navigation($val['cid'],true);
+            $quetemp =0;
+            $count = count($quesrc);
+            for ($i = 0; $i < $count; $i++)
+            {
+                $quetemp.=$quesrc[$i]['name'].'/';
+            }
+            $quesrc= substr($quetemp,1,strlen($quetemp)-1);
+            
+            
+            $questionlist[$key]["srcs"]=$quesrc;
+            $taglist = $_ENV['tag']->get_by_qid($val['id']);
+            
+            $questionlist[$key]['tags']=$taglist;
+            
+            
+        }
+       // $trownum = $this->db->fetch_total('topic',"articleclassid in($cid)");
+        $seo_description="";
+        $seo_keywords="";
+        
+        if($category['alias']){
+        	$navtitle=$category['alias'];
+        }
+        
+        
+        include template('new');
     }
     
  function onmaketag() {

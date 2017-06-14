@@ -60,6 +60,9 @@ class admin_topiccontrol extends base {
             	$isphone=0;
             }
               $acid = $this->post['topicclass'];
+              $cid1=$this->post['cid1'];
+              $cid2=$this->post['cid2'];
+              $cid3=$this->post['cid3'];
              
                if($acid==null)$acid=1;
             $imgname = strtolower($_FILES['image']['name']);
@@ -143,7 +146,10 @@ $this->ondefault('文章推送成功!');
             	$ispc=0;
             }
              $acid = $this->post['topicclass'];
-             
+             $cid1=$this->post['cid1'];
+             $cid2=$this->post['cid2'];
+             $cid3=$this->post['cid3'];
+             $authorcontrol=$_ENV['topic']->get($tid); //获取文章
                if($acid==null)$acid=1;
             $imgname = strtolower($_FILES['image']['name']);
             if ('' == $title || '' == $desrc) {
@@ -161,7 +167,7 @@ $this->ondefault('文章推送成功!');
                 forcemkdir(ASK2_ROOT . '/data/attach/topic');
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_tmp_file)) {
                     image_resize($upload_tmp_file, ASK2_ROOT . $filepath, 270, 220);
-                    $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath,$isphone,$views,$acid,$ispc);
+                    $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath,$isphone,$views,$acid,$ispc,$authorcontrol['authoritycontrol'],$cid1,$cid2,$cid3);
                     $this->ondefault('专题修改成功！');
                 } else {
                     $this->ondefault('服务器忙，请稍后再试！');
@@ -169,7 +175,7 @@ $this->ondefault('文章推送成功!');
             } else {
             	
                 //$_ENV['topic']->updatetopic($tid, $title, $desrc,$upimg,$isphone,$views,$acid);
-            	 $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath,$isphone,$views,$acid,$ispc);
+            	 $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath,$isphone,$views,$acid,$ispc,$authorcontrol['authoritycontrol'],$cid1,$cid2,$cid3);
  $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                 $this->ondefault('专题修改成功！');
             }

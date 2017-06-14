@@ -7,6 +7,8 @@ class updatecontrol extends base {
     function updatecontrol(& $get, & $post) {
         $this->base($get, $post);
        $this->load('usergroup');
+       $this->load('category');
+       
     }
 
 
@@ -860,6 +862,62 @@ CREATE TABLE IF NOT EXISTS `".DB_TABLEPRE."topicclass` (
 	fclose($fp);
 	exit("重新配置成功");
 }
+    
+    
+    /**
+     * 更新文章分类
+     * 原文章没有分类信息
+     */
+    function ontopiccategory(){
+        header("Content-Type: text/html;charset=utf-8");
+        $query = $this->db->query("select * from ".DB_TABLEPRE."topic");
+        while ($topic =$this->db->fetch_array($query))
+        {
+            $navlist = $_ENV['category']->get_navigation($topic['articleclassid'],true) ;//获取当前分类的 列表
+                 $updatesql= "update ".DB_TABLEPRE."topic set "; //设置更新语句
+                 $result=false;
+              foreach ($navlist as $val) //这边没有考虑  grade不存在的情况
+              {
+                  if ($val['grade']=='3')
+                  {
+                      $result=true;
+                  	  $updatesql.= "cid3=".$val['id'].",";
+                  }else if($val['grade']=='2')
+                  {
+                      $result=true;
+                      $updatesql.=" cid2=".$val['id'].",";
+                  }
+                  else if($val['grade']=='1')
+                  {
+                      $result=true;
+                      $updatesql.=" cid1=".$val['id'].",";
+                  } 
+              	
+              }
+              if (!$result)
+              {
+              	echo"跳过一个更新 id为：".$topic['id'];
+                      continue;
+              }
+              
+             
+              $updatesql= substr($updatesql,0,strlen($updatesql)-1);
+              
+              $updatesql.=" where id= ".$topic['id']; 
+              echo "开始更新文章</br>";
+              echo "sql如下".$updatesql."</br>";
+              $this->db->query($updatesql);   
+                
+        	
+        }
+     
+        echo "更新完成！！！";
+       
+        
+        
+        
+    }
+    
     
 
 }

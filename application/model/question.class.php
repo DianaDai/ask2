@@ -815,16 +815,21 @@ class questionmodel
     }
 
     //根据标题搜索问题的结果数
-    function search_title_num($title, $status = '1,2,6')
+    //修改成根据分类来获取结果数
+    function search_title_num($title, $status = '1,2,6',$cfield='cid1',$cid)
     {
         $questionnum = 0;
         if ($this->base->setting['xunsearch_open']) {
             $questionnum = $this->search->getLastCount();
         } else {
             $condition = " STATUS IN ($status) AND title LIKE '%$title%' ";
+            ($cfield&&$cid!='all')&&$condition.=" AND $cfield = $cid ";
+            
             //用户是顾问则只查询 authoritycontrol = 2
-            if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
+            if ($this->base->user['identity'] == 2) {
                 $condition .= " AND authoritycontrol=2 ";
+            }else if($this->base->user['identity']==0&&$this->base->user['username']!='admin'){ //未认证的用户
+                $condition.= " AND  authoritycontrol=0 ";
             }
             $questionnum = $this->db->fetch_total('question', $condition);
         }
@@ -832,7 +837,8 @@ class questionmodel
     }
 
     //根据标题搜索问题
-    function search_title($title, $status = '1,2,6', $addbestanswer = 0, $start = 0, $limit = 20)
+    // 修改成根据分类来搜索问题
+    function search_title($title, $status = '1,2,6', $addbestanswer = 0, $start = 0, $limit = 20 ,$cfield='cid1',$cid)
     {
         $questionlist = array();
         if ($this->base->setting['xunsearch_open']) {
@@ -895,9 +901,14 @@ class questionmodel
         } else {
 
             $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE STATUS IN ($status) AND title LIKE '%$title%' ";
+            ($cfield&&$cid!='all')&& $sql.=" AND $cfield=$cid ";
+            
             //用户是顾问则只查询 authoritycontrol = 2
-            if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
+            if ($this->base->user['identity'] ==2) {
                 $sql .= " AND authoritycontrol=2 ";
+            }else if($this->base->user['identity']==0&&$this->base->user['username']!='admin'){ //未登录的用户
+            
+                $sql.="  AND authoritycontrol=0 ";
             }
             $sql .= " LIMIT $start,$limit";
             $query = $this->db->query($sql);

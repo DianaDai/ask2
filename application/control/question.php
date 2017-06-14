@@ -23,6 +23,9 @@ class questioncontrol extends base
         $this->load("userlog");
         $this->load("doing");
         $this->load("topic");
+        $this->load("email"); 
+        $this->load("email_msg");
+        $this->load("favorite");
         $this->serach_num = isset($this->setting['search_shownum']) ? $this->setting['search_shownum'] : '5';
         $this->whitelist = "delete,deleteanswer";
 
@@ -94,7 +97,7 @@ class questioncontrol extends base
             exit();
 
         }
-        //老子故意让你这种发广告的验证完所有信息，最后告诉你丫的进入网站黑名单不能回答
+      
         if ($this->user['isblack'] == 1) {
 
             $message['message'] = "黑名单用户无法回答问题!";
@@ -163,10 +166,10 @@ class questioncontrol extends base
         $_ENV['answer']->add($qid, $title, $content, $status, $chakanjine);
         //回答问题，添加积分
         $this->credit($this->user['uid'], $this->setting['credit1_answer'], $this->setting['credit2_answer']);
-        //给提问者发送通知
-        $this->send($question['authorid'], $question['id'], 0);
-
-        $viewurl = urlmap('question/view/' . $qid, 2);
+        //给提问者 关注着发送通知
+        //$this->send($question['authorid'], $question['id'], 0);
+         $this->sendanswer($question['authorid'],$question['id']); 
+      //  $viewurl = urlmap('question/view/' . $qid, 2);
         $_ENV['userlog']->add('answer');
         $_ENV['doing']->add($this->user['uid'], $this->user['username'], 2, $qid, $content);
         if (0 == $status) {
@@ -176,18 +179,6 @@ class questioncontrol extends base
             exit();
 
         } else {
-            $quser = $_ENV['user']->get_by_uid($question['authorid']);
-            global $setting;
-            $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
-            //发送邮件通知
-            $subject = "问题有新回答！";
-            $emailmessage = $content . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看最新回复</a>。</p>';
-            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
-
-                sendmail($quser, $subject, $emailmessage);
-            }
-
-
             $message['emal'] = '1';
             $message['message'] = 'ok';
             echo json_encode($message);
@@ -196,6 +187,43 @@ class questioncontrol extends base
         }
     }
 
+ 
+
+    
+    /* 回答问题  通知给提问者  关注着    */
+    function sendanswer($uid ,$qid ){
+            $question = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE id='$qid'");
+            $touser = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE uid=" . $uid);
+            $qurl='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
+            //   通知提问题者
+            $msginfo= $_ENV['email_msg']->question_answer($touser['username'],$question['title'],$qurl);
+            sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
+            //通知关注着
+
+            $userlist =$_ENV['favorite']->get_list_byqid_fav($qid);
+            foreach ($userlist as $val)
+            {
+                $msginfo =$_ENV['email_msg']->question_answer_with($val['username'],$question['title'],$qurl);
+            	
+                sendmsg($val,$msginfo['title'],$msginfo['content']);
+            }
+           
+    }
+    /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+    
+           $time = $this->time;
+           $msgfrom = $this->setting['site_name'] . '管理员';
+           if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['id']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+           }
+           if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+               $_ENV['email']->sendmail($touser['email'],$subject,$content);
+          
+        }
+    }
+    
 
     /* 提交问题 */
 
@@ -277,7 +305,7 @@ class questioncontrol extends base
 
         }
     }
-
+     
     function onajaxadd()
     {
         $useragent = $_SERVER['HTTP_USER_AGENT'];
@@ -318,7 +346,6 @@ class questioncontrol extends base
 //        }
 
 
-        //老子故意让你这种发广告的验证完所有信息，最后告诉你丫的进入网站黑名单不能提问
         if ($this->user['isblack'] == 1) {
 
             $message['message'] = "黑名单用户无法发布问题!";
@@ -361,7 +388,7 @@ class questioncontrol extends base
         $jine = floatval($this->post['jine']);
         $askfromuid = intval($this->post['askfromuid']);
         $needpay = 0;
-        $touser = $_ENV['user']->get_by_uid($askfromuid);
+        $touser = $_ENV['user']->get_by_uid($askfromuid); //邀请回答
 
         if ($touser != null) {
             if ($touser['uid'] == $this->user['uid']) {
@@ -461,28 +488,13 @@ class questioncontrol extends base
 
 
         $_ENV['user']->follow($qid, $this->user['uid'], $this->user['username']);
-        // $taglist=dz_segment(htmlspecialchars($title));
-        //$taglist && $_ENV['tag']->multi_add(array_unique($taglist), $qid);
-        //增加用户积分，扣除用户悬赏的财富
+
         if ($this->user['uid']) {
             $this->credit($this->user['uid'], 0, -$offerscore, 0, 'offer');
             $this->credit($this->user['uid'], $this->setting['credit1_ask'], $this->setting['credit2_ask']);
         }
         $viewurl = urlmap('question/view/' . $qid, 2);
-        /* 如果是向别人提问，则需要发个消息给别人 */
-        if ($askfromuid) {
-            $this->load("message");
 
-
-            $username = addslashes($this->user['username']);
-            $_ENV['message']->add($username, $this->user['uid'], $touser['uid'], '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
-
-
-            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
-                sendmail($touser, '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
-            }
-
-        }
         //如果ucenter开启，则postfeed
         if ($this->setting["ucenter_open"] && $this->setting["ucenter_ask"]) {
             $this->load('ucenter');
@@ -492,7 +504,7 @@ class questioncontrol extends base
         $_ENV['doing']->add($this->user['uid'], $this->user['username'], 1, $qid, $description);
 
 
-        if (0 == $status) {
+        if (0 == $status) { //这个status==0是什么意思？
 
             $message['url'] = SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'];
             $message['sh'] = 1;
@@ -503,19 +515,26 @@ class questioncontrol extends base
         } else {
             $this->load("message");
             $this->load("user");
-            $touser = $_ENV['user']->get_by_uid(1);
 
-            if ($touser) {
-                if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser == 1) {
-                    sendmail($touser, '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
-                }
+        }
+        /* 如果是向别人提问，这个就是邀请回答 则需要发个消息给别人 */
+        if ($askfromuid) {
+            $this->load("message");
+
+            $username = addslashes($this->user['username']);
+            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>';
+            $msginfo = $_ENV['email_msg']->question_invite($touser['username'],$this->user['username'],$title,$weburl)  ;
+            
+
+            $_ENV['message']->add($username, $this->user['uid'], $touser['uid'], $msginfo['title'], $msginfo['content'] );
+
+
+            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
+                $_ENV['email']->sendmail($touser,$msginfo['title'], $msginfo['content']);
             }
 
-
-            // exit('ddddddddd11dddddd');
-            //$username = addslashes($this->user['username']);
-
-
+        } else
+        {
             //改相关分类专家私信
             $expert1 = $this->sendmessagetoexpert($cid);
             $expert2 = $this->sendmessagetoexpert($cid1);
@@ -524,19 +543,34 @@ class questioncontrol extends base
 
             $result = array_merge($expert1, $expert2, $expert3, $expert4);
             $result = array_unique($result);
-
+            
             foreach ($result as $key => $val) {
 
-                if ($this->user['uid'] != $val['uid'])
-                    $_ENV['message']->add($username, $this->user['uid'], $val['uid'], '问题求助:' . $title, $description . '<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>');
+                if ($this->user['uid'] != $val['uid']){
+                    $expert =$_ENV['user']->get_by_uid($val['uid']);
+                    $categoryname=$_ENV['category']->get($val['cid']);
+                    $weburl = '<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看！</a>';
+                    $msginfo = $_ENV['email_msg']->question_add($expert['username'],$categoryname['name'],$title,$weburl); //获取领域专家消息
+                    $_ENV['message']->add($this->user['username'], $this->user['uid'], $val['uid'], $msginfo['title'], $msginfo['content']);
+                    if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $expert['active'] == 1) {
+                        $_ENV['email']->sendmail($expert, $msginfo['title'],$msginfo['content']);
+
+                    }
+                    
+                }
 
             }
 
-            $message['url'] = SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'];
-            $message['message'] = "ok";
-            echo json_encode($message);
-            exit();
         }
+        
+     
+        $message['url'] = SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'];
+        $message['message'] = "ok";
+        echo json_encode($message);
+        exit();
+
+
+        
     }
 
     function sendmessagetoexpert($cid)
@@ -903,61 +937,54 @@ class questioncontrol extends base
         $touid = $answer['authorid'];
         $quid = $question['authorid'];
 
-
-        $cash_fee = intval($question['shangjin']) * 100;
-        $adoptmoeny = $question['shangjin'];
-        $time = time();
-        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
-        //被采纳获得赏金记录
-        if ($adoptmoeny > 0)
-            $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='adoptqid',typeid=$qid,money=$adoptmoeny,openid='',fromuid=$quid,touid=$touid,`time`=$time");
-        //$this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine-'$cash_fee' WHERE `uid`=$quid");
-        $this->load('depositmoney');
-        $_ENV['depositmoney']->update($quid, 'qid', $question['id']);
-
-
-        $model = $_ENV['depositmoney']->get($quid, 'eqid', $question['id']);
-        if ($model != null) {
-            if ($model['touid'] == $touid) {
-                $cash_fee = intval($model['needpay']) * 100;
-                $needpay = $model['needpay'];
-                $_ENV['depositmoney']->update($quid, 'eqid', $question['id']);
-                $this->db->query("UPDATE " . DB_TABLEPRE . "user SET  `jine`=jine+'$cash_fee' WHERE `uid`=$touid");
-                //如果专家回答了问题，记录获奖记录
-                if ($needpay > 0)
-                    $this->db->query("INSERT INTO " . DB_TABLEPRE . "paylog SET type='eqid',typeid=$qid,money=$needpay,openid='',fromuid=$quid,touid=$touid,`time`=$time");
-            } else {
-                $_ENV['depositmoney']->remove($quid, 'eqid', $question['id']);
-            }
-        }
-
-
         if ($ret) {
             $this->load("answer_comment");
             $_ENV['answer_comment']->add($aid, $comment, $question['authorid'], $question['author']);
 
             $this->credit($answer['authorid'], $this->setting['credit1_adopt'], intval($question['price'] + $this->setting['credit2_adopt']), 0, 'adopt');
-
-            $this->send($answer['authorid'], $question['id'], 1);
+            //通知提问者，问题已经被采纳
+            $msginfo =$_ENV['email_msg']->question_adopt($question['author'],$question['title'],$answer['content']);
+            $quser = $_ENV['user']->get_by_uid($quid);
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            //$this->send($answer['authorid'], $question['id'], 1);
             $viewurl = urlmap('question/view/' . $qid, 2);
+            global $setting;
+             $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
             $_ENV['doing']->add($question['authorid'], $question['author'], 8, $qid, $comment, $answer['id'], $answer['authorid'], $answer['content']);
-        }
-        $quser = $_ENV['user']->get_by_uid($answer['authorid']);
-        global $setting;
-        $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
-        //发送邮件通知
-        $subject = "你的问题被采纳(" . $question['title'] . ")！";
-        $emailmessage = $comment . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看详情</a>。</p>';
-        try {
-            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
-                sendmail($quser, $subject, $emailmessage);
+            
+            //通知收藏着  问题已经被采纳
+            $userlist = $_ENV['favorite']->get_list_byqid_fav($question['id']);
+            foreach ($userlist as $val)
+            {
+                $msginfo = $_ENV['email_msg']->question_adopt_with($val['username'],$question['title'],$mpurl);
+                $this->sendmsg($val,$msginfo['title'],$msginfo['content']);
             }
-        } catch (Exception $e) {
-            $message['message'] = 'ok';
-            echo json_encode($message);
-            exit();
-
+            //通知问题回答者
+            
+            $msginfo = $_ENV['email_msg']->question_adopt_with($answer['author'],$question['title']);
+            $quser = $_ENV['user']->get_by_uid($answer['authorid']);
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            
+            
+           
+            
         }
+     
+        //global $setting;
+       
+        ////发送邮件通知
+        //$subject = "你的问题被采纳(" . $question['title'] . ")！";
+        //$emailmessage = $comment . '<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看详情</a>。</p>';
+        //try {
+        //    if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $quser['active'] == 1) {
+        //        sendmail($quser, $subject, $emailmessage);
+        //    }
+        //} catch (Exception $e) {
+        //    $message['message'] = 'ok';
+        //    echo json_encode($message);
+        //    exit();
+
+        //}
         $message['message'] = 'ok';
         echo json_encode($message);
         exit();
@@ -1555,7 +1582,21 @@ class questioncontrol extends base
             $navtitle = $word;
         }
         $seo_keywords = $word;
-        @$page = max(1, intval($this->get[4]));
+        $cid = intval($this->get[4])?$this->get[4]:'all';
+        if ($cid != 'all') {
+            $category = $this->category[$cid]; //得到分类信息
+            $cfield = 'cid' . $category['grade'];
+        } else {
+            $category = $this->category;
+            $cfield = '';
+            $category['pid'] = 0;
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
+        
+        
+        @$page = max(1, intval($this->get[5]));
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
         if (preg_match("/^tag:(.+)/", $word, $tagarr)) {
@@ -1563,9 +1604,20 @@ class questioncontrol extends base
             $rownum = $_ENV['question']->rownum_by_tag($tag, $qstatus);
             $questionlist1 = $_ENV['question']->list_by_tag($tag, $qstatus, $startindex, $pagesize);
         } else {
-            $questionlist1 = $_ENV['question']->search_title($word, $qstatus, 0, $startindex, $pagesize);
-            $rownum = $_ENV['question']->search_title_num($word, $qstatus);
+            $questionlist1 = $_ENV['question']->search_title($word, $qstatus, 0, $startindex, $pagesize,$cfield,$cid);
+            $rownum = $_ENV['question']->search_title_num($word, $qstatus,$cfield,$cid);
         }
+        
+        $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
+        
+        foreach ($sublist as $key => $val)
+        {
+            $relrownum= $_ENV['question']->search_title_num($word,$qstatus,'cid'.$val['grade'],$val['id']);
+            $sublist[$key]['topics']=$relrownum;
+        }
+        
+        
+        
         //if(count($questionlist)==0){
 //				$tagarr=dz_segment($word);
 //			//	print_r($tagarr);
@@ -1579,8 +1631,8 @@ class questioncontrol extends base
 
         //}
         
-        $questionlist = $questionlist1;//array_merge($questionlist1,$questionlist2);
-        $rownum = count($questionlist);
+        $questionlist = $questionlist1;//array_merge($questionlist1,$questionlist2); //应该保证搜索的数量和文章的数量一致；
+        //$qrownum = count($questionlist);
         foreach ($questionlist as $key=>$value)
         {
             $quesrc=  $_ENV['category']->get_navigation($value['cid'],true);
@@ -1606,7 +1658,7 @@ class questioncontrol extends base
         $related_words = $_ENV['question']->get_related_words();
         $hot_words = $_ENV['question']->get_hot_words();
         $corrected_words = $_ENV['question']->get_corrected_word($word);
-        $departstr = page($rownum, $pagesize, $page, "question/search/$word/$status");
+        $departstr = page($rownum, $pagesize, $page, "question/search/$word/$status/$cid");
         include template('search');
     }
 
@@ -1861,10 +1913,32 @@ class questioncontrol extends base
             $username = addslashes($this->user['username']);
             $this->load("message");
             $viewurl = url('question/view/' . $qid, 1);
-            $_ENV['message']->add($msgfrom, 0, $question['authorid'], $username . "刚刚关注了您的问题", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您的问题' . $question['title'] . '"<br /> <a href="' . $viewurl . '">点击查看</a>');
+            
+            $msginfo = $_ENV['email_msg']->question_atto($question['author'],$question['title'],$this->user['username']);
+            $this->sendmsg($this->user,$msginfo['title'],$msginfo['content']);
+            //$_ENV['message']->add($msgfrom, 0, $question['authorid'], $username . "刚刚关注了您的问题", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您的问题' . $question['title'] . '"<br /> <a href="' . $viewurl . '">点击查看</a>');
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 4, $qid);
 
             $this->message("问题收藏成功!");
+        }
+
+    }
+    
+    
+     function onattentto1()
+    {
+        $qid = intval($this->get[2]);
+        if (!$qid) {
+            $this->message("专题不存在!");
+        }
+        if ($this->user['uid'] == 0) {
+            $this->message("游客不能收藏!");
+        }
+        $is_followed = $_ENV['question']->is_followed($qid, $this->user['uid']);
+        if ($is_followed) {
+            $this->message("已取消收藏!");
+        } else {
+        $this->message("专题收藏成功!");
         }
 
     }
@@ -1885,6 +1959,7 @@ class questioncontrol extends base
         $departstr = page($rownum, $pagesize, $page, "question/follow/$qid");
         include template("question_follower");
     }
+    
 
 }
 

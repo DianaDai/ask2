@@ -1,7 +1,9 @@
 ﻿<!--{template header}-->
+<!--<script src="{SITE_URL}static/css/bianping/js/navstatus.js"></script>-->
 <!--{eval $adlist = $this->fromcache("adlist");}-->
 <!--{if 0!=$user['uid']}-->
 <!--{if $setting['register_on']==1&&$user['active']!=1}-->
+
 <div class="alert alert-success-inverse text-center">
     <button type="button" class="close text-whtie" data-dismiss="alert" aria-hidden="true">×</button>
     <p>
@@ -12,7 +14,7 @@
 <!--{/if}-->
 <div id="NavTop">
     <ul id="menu1">
-        <li><a href="http://221.6.15.178:8580/NewContact.aspx" target="_blank">WEB型管</a></li>
+        <li><a href="http://221.6.15.178:8580/pmsweb/NewContact.aspx" target="_blank">WEB型管</a></li>
         <li>
             <a>规格查询</a>
             <ul>
@@ -20,11 +22,22 @@
                 <li><a href="http://221.6.15.178:8580/pmsweb/SpecList/default.aspx " target="_blank">清单查询</a></li>
             </ul>
         </li>
-        <li><a href="http://221.6.15.178:8580/NewContact.aspx" target="_blank">WEB型管</a></li>
+   <!--     <li><a href="http://221.6.15.178:8580/pmsweb/NewContact.aspx" target="_blank">WEB型管</a></li>-->
         <li><a href="ftp://221.6.15.178:4002/" target="_blank">E10 FTP</a></li>
         <li><a href="http://221.6.15.178:8081/AppStore.aspx" target="_blank">E10应用商店</a></li>
         <li><a href="{url gift/default}" target="_blank">奖品商城</a></li>
     </ul>
+
+    <ul >
+        <li>
+            <div id="dimcard">
+            <img src="{SITE_URL}static/css/bianping/images/cli_300_2px.png"   class="img-rounded" />
+
+            </div>
+        </li>
+
+    </ul>
+
 </div>
 <div class="container index slideInDown animated">
 
@@ -37,9 +50,12 @@
                 <!--{loop $categorylist  $category1}-->
 
 
-                <a class="collection" target="_blank" href="{url category/view/$category1['id']}">
+                <a class="collection" target="_blank" href="{url topic/catlist/$category1['id']}">
                     <img src="$category1['image']" alt="195" style="height:32px;width:32px;">
                     <div class="name">{$category1['name']}</div>
+                       <!--{eval  $temp= $_ENV['category']->get_topnav($category1['id']);}-->
+                    <span class="label label-danger " style="  ">{$temp['name']}
+</span>
                 </a>
                 <!--{/loop}-->
 
@@ -132,13 +148,17 @@
                 </ul>
                 <!-- 文章列表模块 -->
             </div>
+
+            <!--nav-->
+                     <div class="pages">{$departstr}</div>
         </div>
 
         <!--右边栏目-->
         <div class="col-xs-7    col-xs-offset-1 aside rightpanel">
 
 
-            <!--{template sider_author}-->
+           
+            <!--{template sider_alluser}-->
 
             <!--{template sider_hotarticle}-->
             <!--{template cms}-->
@@ -149,6 +169,11 @@
 
 
 </div>
+<!--<Script>
+    nav_status('发现');
+    nav_status('首页');
+</Script>-->
+
 <!--{template footer}-->
 
 <style type="text/css">
@@ -157,6 +182,39 @@
         padding: 0px;
     }
 
+    /* 二维嘛  */
+
+      #dimcard {
+            transition: All 0.4s ease-in-out;
+            -webkit-transition: All 0.4s ease-in-out;
+            -moz-transition: All 0.4s ease-in-out;
+            -o-transition: All 0.4s ease-in-out;
+        }
+
+        #dimcard:hover {
+            transform: rotate(360deg) scale(1.2);
+            -webkit-transform: rotate(360deg) scale(1.2);
+            -moz-transform: rotate(360deg) scale(1.2);
+            -o-transform: rotate(360deg) scale(1.2);
+            -ms-transform: rotate(360deg) scale(1.2);
+        }
+
+/*首页专题角标*/
+
+   .main div a.collection span.label{
+       margin-top:15px;
+        margin-right:-10px;
+         float:right;
+         display:inline-block ;
+         -webkit-transform: rotate(-45deg); /* Safari和Chrome */
+           -moz-transform: rotate(-45deg);/* Firefox 旋转属性，参数表示角度(deg表示角度)，负数逆时针，正数顺时针 */
+           -ms-transform: rotate(-45deg);/* IE 9 */
+            -o-transform: rotate(-45deg);/* Opera */
+   }
+
+
+
+
     #NavTop {
         width: 140px;
         border-radius: 10px;
@@ -164,7 +222,7 @@
         /*height: 280px;*/
         position: fixed;
         left: 0px;
-        top: 150px; /*固定位置,右浮动，距上150px*/
+        top: 120px; /*固定位置,右浮动，距上150px*/
     }
 
     #NavTop ul {

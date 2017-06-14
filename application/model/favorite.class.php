@@ -41,6 +41,26 @@ class favoritemodel {
         return $topiclist;
     }
     
+    
+    /* 获取问题所有的关注者    */
+    function get_list_byqid_fav($qid){
+    
+        $userlist = array();
+        $query = $this->db->query("SELECT * FROM ".DB_TABLEPRE."favorite where qid=$qid");
+        while ($fav=$this->db->fetch_array($query))
+        {
+        	$user['format_time']=tdate($fav['time']);
+            $_user=$this->get_by_uid($user['uid']);
+            $user['username']=$_user['username'];
+            $user['email']=$_user['email'];
+            $userlist=$user;
+        }
+        
+        return $userlist;
+        
+    }
+    
+    
     function get_list_byqid($qid,$start = 0, $limit = 10) {
         $uid = $this->base->user['uid'];
         $userlist = array();

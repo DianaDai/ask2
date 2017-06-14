@@ -57,14 +57,16 @@ class topicmodel
         return $topic;
     }
 
-    function get_bylikename($word, $start = 0, $limit = 6)
+    /*要进行修改  */
+    function get_bylikename($word, $start = 0, $limit = 6 ,$cfield='cid1',  $cid=0)
     {
         $topiclist = array();
         if ($this->base->setting['xunsearch_open']) {
-
-            $result = $this->search->setQuery($word)->setLimit($limit, $start)->search();
+           
+            $result = $this->search->setQuery($word) ->setLimit($limit, $start)->search();
             foreach ($result as $doc) {
                 //用户是顾问则只查询 authoritycontrol = 2
+
                 if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
                     if($doc->authoritycontrol ==2) {
                         $topic = array();
@@ -75,18 +77,19 @@ class topicmodel
                         $topic['author'] = $doc->author;
                         $topic['authorid'] = $doc->authorid;
                         $topic['image'] = $topic->image;
-
                         $topic['title'] = $this->search->highlight($doc->title);
                         $topic['describtion'] = $this->search->highlight($doc->describtion);
                         $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
                         $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-                        $topic['format_time'] = tdate($topic['viewtime']);
+                        
                         $topic['avatar'] = get_avatar_dir($topic['authorid']);
                         $topic['views'] = $doc->views;
                         $topic['articles'] = $doc->articles;
                         $topic['likes'] = $doc->likes;
+                        $topic['format_time'] =tdate($doc->viewtime);
                         $topic['viewtime'] = tdate($doc->viewtime);
                         $topiclist[] = $topic;
+                      
                     }
                 }else{
                     $topic = array();
@@ -102,26 +105,37 @@ class topicmodel
                     $topic['describtion'] = $this->search->highlight($doc->describtion);
                     $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
                     $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-                    $topic['format_time'] = tdate($topic['viewtime']);
+               
                     $topic['avatar'] = get_avatar_dir($topic['authorid']);
                     $topic['views'] = $doc->views;
                     $topic['articles'] = $doc->articles;
                     $topic['likes'] = $doc->likes;
+                    $topic['format_time'] = tdate($doc->viewtime);
                     $topic['viewtime'] = tdate($doc->viewtime);
                     $topiclist[] = $topic;
+                    
+
+                   
                 }
             }
             if (count($topiclist) == 0) {
+
                 $topiclist = $this->get_by_likename($word, $start, $limit);
             }
 
 
         } else {
+            
+            ($cid!='all')&&  $condition=" and $cfield='$cid' ";
             //用户是顾问则只查询 authoritycontrol = 2
-            if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' AND authoritycontrol = 2 order by id desc LIMIT $start,$limit");
-            } else {
-                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
+            if ($this->base->user['identity'] == 2 ) {
+               
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 2   $condition order by id desc LIMIT $start,$limit");
+            } else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
+            }else {
+                //未登录用户
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 0   $condition order by id desc LIMIT $start,$limit");
             }
             //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
 
@@ -145,6 +159,7 @@ class topicmodel
 
     function get_by_likename($word, $start = 0, $limit = 6)
     {
+
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
@@ -161,6 +176,8 @@ class topicmodel
 
             $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
+
+            
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['avatar'] = get_avatar_dir($topic['authorid']);
             $topic['viewtime'] = tdate($topic['viewtime']);
@@ -223,6 +240,60 @@ class topicmodel
         return $modellist;
 
     }
+    
+    /* 获取分类下文章数量  */
+    function rownum_by_topic_articleid($cfield='cid1',  $cid=0){
+        $condition='1=1';
+        if($this->base->user['identity']!=1&&$this->base->user['username']!='admin'){
+            $condition.=" AND authoritycontrol=2"; 
+        }
+        ($cfield && $cid != 'all') && $condition .= " AND $cfield=$cid ";
+
+        return $this->db->fetch_total('topic',$condition);
+        
+    }
+    /**
+     *  文章专题 分类查询
+     *  
+     * @param mixed $aid 
+     * @param mixed $start 
+     * @param mixed $limit 
+     * @return array
+     */
+    function get_topic_byarticle($cfield='cid1' ,$cid=0, $start = 0, $limit = 6){
+    
+        $topiclist= array();
+        $condition='where 1=1';
+        ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid";
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') { //权限=2的用户查看少数的
+
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  $condition and authoritycontrol = 2   order by id desc LIMIT $start,$limit");
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic $condition order by id desc LIMIT $start,$limit");
+        }
+        while ($topic =$this->db->fetch_array($query))
+        {
+            $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
+            $topic['sortime'] = $topic['viewtime'];//用于排序
+            $topic['format_time'] = tdate($topic['viewtime']);
+            $topic['viewtime'] = tdate($topic['viewtime']);
+
+            $topic['title'] = checkwordsglobal($topic['title']);
+            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
+            $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
+            $topic['answers'] = $topic['articles'];
+            $topic['attentions'] = $topic['likes'];
+            $topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topiclist[] = $topic;
+        }
+        return $topiclist;
+        
+
+        
+    }
+    
+    
 
     /* 是否关注问题 */
 
@@ -330,14 +401,28 @@ class topicmodel
         $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND t.name='$name' ORDER BY q.views DESC");
         return $this->db->num_rows($query);
     }
-
-    function rownum_by_title($word)
+    /* 搜索数量   */
+    function rownum_by_title($word ,$cfield='cid1',  $cid=0)
     {
         if ($this->base->setting['xunsearch_open']) {
             $rownum = $this->search->getLastCount();
         } else {
+            $condition='1=1';
+            ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid ";
+            
+            if ($this->base->user['identity']==2) //用户是顾问则只查询 authoritycontrol = 2
+            {
+                $rownum = $this->db->fetch_total('topic', " $condition and authoritycontrol=2  and (title like '%$word%' or describtion like '%$word%') ");
 
-            $rownum = $this->db->fetch_total('topic', " title like '%$word%' or describtion like '%$word%' ");
+            }else if($this->base->user['identity']==1||$this->base->user['username']=='admin')
+            {
+                $rownum = $this->db->fetch_total('topic', " $condition and    (title like '%$word%' or describtion like '%$word%') ");
+            }else{ //如果用户没有登录 查询authoritycontrol=0
+                $rownum = $this->db->fetch_total('topic', " $condition and  authoritycontrol=0 and  (title like '%$word%' or describtion like '%$word%') ");
+            }
+            
+
+           
 
         }
         return $rownum;
@@ -592,7 +677,7 @@ class topicmodel
 
 
     }
-
+    /* 没有发现哪边用到？可能是备份*/
     function updatetopicbk($id, $title, $desrc, $filepath = '', $isphone = '', $views = '', $cid)
     {
         $creattime = $this->base->time;
@@ -616,12 +701,15 @@ class topicmodel
 
     }
 
-    function updatetopic($id, $title, $desrc, $filepath = '', $isphone = '', $views = '', $cid, $ispc = 0,$authoritycontrol)
+   /*  更新文章多处用到        */
+    function updatetopic($id, $title, $desrc, $filepath = '', $isphone = '', $views = '', $cid, $ispc = 0,$authoritycontrol,$cid1=0,$cid2=0,$cid3=0)
     {
         if ($filepath)
-            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc' , `image`='$filepath', `isphone`='$isphone', `ispc`='$ispc', `views`='$views',`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid' WHERE `id`=$id");
+            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc' , `image`='$filepath', 
+            `isphone`='$isphone', `ispc`='$ispc', `views`='$views',`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid',`cid1`='$cid1',`cid2`='$cid2',`cid3`='$cid3' WHERE `id`=$id");
         else
-            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc',`isphone`='$isphone', `ispc`='$ispc', `views`='$views' ,`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid' WHERE `id`=$id");
+            $this->db->query("UPDATE `" . DB_TABLEPRE . "topic` SET  `title`='$title' ,`describtion`='$desrc',`isphone`='$isphone', 
+            `ispc`='$ispc', `views`='$views' ,`authoritycontrol`='$authoritycontrol',`articleclassid`='$cid' ,`cid1`='$cid1',`cid2`='$cid2',`cid3`='$cid3' WHERE `id`=$id");
 
         if ($this->base->setting['xunsearch_open']) {
             $topic = array();
@@ -629,6 +717,9 @@ class topicmodel
             $topic['views'] = $views;
             $topic['articleclassid'] = $cid;
             $topic['authoritycontrol'] = $authoritycontrol;
+            $topic['cid1']=$cid1;
+            $topic['cid2']=$cid2;
+            $topic['cid3']=$cid3;
             if ($filepath) {
                 $topic['image'] = $filepath;
             }
@@ -650,13 +741,15 @@ class topicmodel
 
     /* 后台添加专题 */
 
-    function add($title, $desc, $image, $isphone = '0', $views = '1', $cid = 1)
+    function add($title, $desc, $image, $isphone = '0', $views = '1', $cid = 1,$cid1=0,$cid2=0,$cid3=0)
     {
         $creattime = $this->base->time;
         $author = $this->base->user['username'];
         $authorid = $this->base->user['uid'];
         //exit("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,`isphone`) VALUES ('$title','$desc','$image','$isphone')");
-        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,,`author`,`authorid`,`isphone`,`views`,`articleclassid`) VALUES ('$title','$desc','$image','$author','$authorid','$isphone','$views','$cid')");
+        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,,`author`,`authorid`,`isphone`,`views`,`articleclassid`,`cid1`,
+        `cid2`,`cid3`
+        ) VALUES ('$title','$desc','$image','$author','$authorid','$isphone','$views','$cid','$cid1','$cid2','$cid3')");
         $aid = $this->db->insert_id();
         if ($this->base->setting['xunsearch_open'] && $aid) {
             $topic = array();
@@ -665,6 +758,9 @@ class topicmodel
             $topic['articles'] = 0;
             $topic['likes'] = 0;
             $topic['articleclassid'] = $cid;
+            $topic['cid1']=$cid1;
+            $topic['cid2']=$cid2;
+            $topic['cid3']=$cid3;
             $topic['title'] = checkwordsglobal($title);
             $topic['describtion'] = checkwordsglobal($desc);
             $topic['author'] = $author;
@@ -678,10 +774,11 @@ class topicmodel
         return $aid;
     }
 
-    function addtopic($title, $desc, $image, $author, $authorid, $views, $articleclassid,$authoritycontrol)
+    function addtopic($title, $desc, $image, $author, $authorid, $views, $articleclassid,$authoritycontrol,$cid1,$cid2,$cid3)
     {
         $creattime = $this->base->time;
-        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,`author`,`authorid`,`views`,`articleclassid`,`authoritycontrol`,`viewtime`) VALUES ('$title','$desc','$image','$author','$authorid','$views','$articleclassid','$authoritycontrol','$creattime')");
+        $this->db->query("INSERT INTO `" . DB_TABLEPRE . "topic`(`title`,`describtion`,`image`,`author`,`authorid`,`views`,`articleclassid`,`authoritycontrol`,`viewtime`,`cid1`,`cid2`,`cid3`)
+        VALUES ('$title','$desc','$image','$author','$authorid','$views','$articleclassid','$authoritycontrol','$creattime','$cid1','$cid2','$cid3')");
         $aid = $this->db->insert_id();
         if ($this->base->setting['xunsearch_open'] && $aid) {
             $topic = array();
@@ -696,11 +793,18 @@ class topicmodel
             $topic['author'] = $author;
             $topic['authorid'] = $authorid;
             $topic['viewtime'] = $creattime;
+            $topic['cid1']=$cid1;
+            $topic['cid2']=$cid2;
+            $topic['cid3']=$cid3;
 
             $doc = new XSDocument;
             $doc->setFields($topic);
             $this->index->add($doc);
         }
+        $cid1 = intval($cid1);
+        $cid2 = intval($cid2);
+        $cid3 = intval($cid3);
+        $this->db->query("UPDATE " . DB_TABLEPRE . "category SET topics=topics+1 WHERE  id IN ($cid1,$cid2,$cid3) ");
         return $aid;
     }
 
@@ -741,6 +845,7 @@ class topicmodel
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic ");
             while ($topic = $this->db->fetch_array($query)) {
                 $data = array();
+              
                 $data['id'] = $topic['id'];
                 $data['articleclassid'] = $topic['articleclassid'];
                 $data['image'] = $topic['image'];
@@ -751,12 +856,18 @@ class topicmodel
                 $data['articles'] = $topic['articles'];
                 $data['likes'] = $topic['likes'];
                 $data['viewtime'] = $topic['viewtime'];
+           
+                $data['cid1']= $topic['cid1'];
+                $data['cid2']= $topic['cid2'];
+                $data['cid3']= $topic['cid3'];
 
                 $data['title'] = $topic['title'];
                 $data['describtion'] = $topic['describtion'];
                 $doc = new XSDocument;
+             
                 $doc->setFields($data);
                 $this->index->add($doc);
+           
             }
         }
     }

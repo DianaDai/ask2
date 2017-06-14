@@ -5,6 +5,7 @@
   <div class="row">
     <div class="col-xs-24 col-sm-16 main">
       <!-- 专题头部模块 -->
+        
       <div class="main-top">
         <a class="avatar-collection" href="{url category/view/$category['id']}">
           <img src="$category['bigimage']" alt="240">
@@ -28,23 +29,26 @@
                   收录了{$trownum}篇文章 ·{$category['questions']}个问题 · {$category['followers']}人关注
         </div>
       </div>
+       
       <ul class="trigger-menu" data-pjax-container="#list-container">
+       <li >
+      <a href="{url topic/catlist/$cid}"><i class="fa fa-sticky-note-o"></i> 相关文章</a>
+      </li>
+
       <li <!--{if all==$status}-->class="active"<!--{/if}-->><a href="{url category/view/$cid/all}">
-      <i class="fa fa-sticky-note-o"></i> 全部问题</a>
+      <i class="fa fa-sticky-note-o"></i> 全部问题  <!--{if all==$status}-->   <span class="label label-info">{$rownum}</span> <!--{/if}--> </a>
       </li>
       <li <!--{if 1==$status}-->class="active"<!--{/if}-->><a href="{url category/view/$cid/1}">
       <i class="fa fa-times">
-      </i> 未解决</a>
+      </i> 未解决 <!--{if 1==$status}-->  <span class="label label-info">{$rownum}</span> <!--{/if}--> </a>
       </li>
       <li <!--{if 2==$status}-->class="active"<!--{/if}-->>
-      <a  href="{url category/view/$cid/2}"><i class="fa fa-check"></i> 已解决</a>
+      <a  href="{url category/view/$cid/2}"><i class="fa fa-check"></i> 已解决 <!--{if 2==$status}-->   <span class="label label-info">{$rownum}</span> <!--{/if}--> </a>
       </li>
       <li <!--{if 6==$status}-->class="active"<!--{/if}-->>
-      <a href="{url category/view/$cid/6}"><i class="fa fa-shield"></i> 推荐问题</a>
+      <a href="{url category/view/$cid/6}"><i class="fa fa-shield"></i> 推荐问题 <!--{if 6==$status}-->  <span class="label label-info">{$rownum}</span><!--{/if}-->  </a>
       </li>
-        <li >
-      <a href="{url topic/catlist/$cid}"><i class="fa fa-sticky-note-o"></i> 相关文章</a>
-      </li>
+
       </ul>
       <div id="list-container">
         <!-- 文章列表模块 -->

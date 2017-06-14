@@ -522,6 +522,11 @@
 .search .main .user-list .name:hover {
 	color:#2f2f2f
 }
+
+
+
+
+
 .search .main .user-list .meta {
 	padding-top:2px;
 	font-size:0;
@@ -552,3 +557,16 @@
 	max-width:315px
 }
 }
+
+
+/*…Ë÷√ul—˘ Ω*/
+.search .aside ul li ul {
+    margin-left:20px;
+    display:none;
+
+}
+.search .aside ul li:hover ul{
+    display:block;
+}
+
+

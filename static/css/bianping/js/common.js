@@ -302,6 +302,7 @@ function initcategory(category1) {
     }
 
 }
+
 var ctrdown=false;
 var returndown=false;
 function keydownlistener(){
@@ -382,11 +383,11 @@ function postask(){
 	 }
 	 
 	   
-		
-	   if(has_submit){
-		   alert("提交中,稍后操作....");
-		   return false;
-	   }
+		// 把 问题提交改成异步的； 之前是同步的，超慢的感觉
+	   //if(has_submit){
+	   //    alert("提交中,稍后操作....");
+	   //    return false;
+	   //}
 	  
 	 var url="/?question/ajaxanswer";
 	$.ajax({
@@ -396,11 +397,15 @@ function postask(){
        url:url,
        //提交的数据
        data:data,
-       async: false,
+       //async: false, 去掉同步提交
        //返回数据的格式
        datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
-       //在请求之前调用的函数
-       beforeSend:function(){has_submit=true; ajaxloading("提交中...");},
+	    //在请求之前调用的函数
+       beforeSend: function () {
+           //has_submit = true;
+           ajaxloading("提交中...");
+       },
+
        //成功返回之后调用的函数             
        success:function(data){
        	var data=eval("("+data+")");
@@ -423,9 +428,9 @@ function postask(){
         
        }   ,
        //调用执行后调用的函数
-       complete: function(XMLHttpRequest, textStatus){
+       complete: function (XMLHttpRequest, textStatus) {
     	   removeajaxloading();
-    	   has_submit=false;
+    	  // has_submit=false;
        },
        //调用出错执行的函数
        error: function(){
@@ -512,6 +517,7 @@ function fillcategory(category2, value1, cateid) {
     }
     $("#" + cateid).html(optionhtml);
 }
+
 setTimeout(function(){
 	$(".fixedbottom").removeClass("hide").addClass("slideInUp animated ");
 	
@@ -589,6 +595,66 @@ $(function(){
         $("#jiantou2").show();
         $("#category3").show();
     });
+    
+    
+    
+    
+    
+    
+    
+    $("#category1").change(function() {
+        fillcategorytiwen(category22, $("#category1 option:selected").val(), "category2");
+        $("#jiantou1").show();
+        $("#category2").show();
+    });
+    
+    
+    
+function fillcategorytiwen(category2, value1, cateid) {
+    var optionhtml = '<option value="0">不选择</option>';
+    var selectedcid = 0;
+    if (cateid === "category2") {
+        selectedcid = $("#selectcid2").val();
+        for (var i = 0; i < category2.length; i++) {
+        if(category2[i][2]!="E10开发-FAQ"&&category2[i][2]!="E10服务-FAQ"&&category2[i][2]!="易飞服务-FAQ"){
+        }else{
+        if (value1 === category2[i][0]) {
+            var selected = '';
+//            if (selectedcid === category2[i][1]) {
+//                selected = ' selected';
+//                $("#" + cateid).show();
+//            }
+            optionhtml += "<option value='" + category2[i][1] + "' " + selected + ">" + category2[i][2] + "</option>";
+        }
+        }
+        
+    }
+    } 
+    $("#" + cateid).html("");
+    
+    $("#" + cateid).html(optionhtml);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	$("#comfirm_pay").click(function(){
 		 var _chakanjine=$("#chakanjine").val();
 		 if(_chakanjine!=0){

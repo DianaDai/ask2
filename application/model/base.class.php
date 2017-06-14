@@ -109,7 +109,8 @@ class base {
                 break;
             case 'categorylist'://首页左侧分类列表
                 $this->load('category');
-                $cachedata = $_ENV['category']->list_by_grade();
+               // $cachedata = $_ENV['category']->list_by_grade();
+                $cachedata =$_ENV['category']->list_by_gradetop();
                 break;
             case 'notelist'://首页右侧公告列表
                 $this->load('note');
@@ -354,7 +355,7 @@ class base {
       2:问题超时自动关闭
       3:回答有新评分
      */
-
+    // 提问人id    ，问题id，类型 ，
     function send($uid, $qid, $type, $aid = 0) {
         $question = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE id='$qid'");
         $msgtpl = unserialize($this->setting['msgtpl']);
@@ -384,6 +385,10 @@ class base {
         }
         //4,5,6,7 允许发手机短信
     }
+
+    
+  
+    
 
     /* 检查验证码 */
 

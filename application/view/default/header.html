@@ -1,8 +1,8 @@
 <!--{template meta}-->
 <body lang="zh-CN" class="reader-black-font">
-<!--[if lt IE 8]>
+<!--[if lte IE 8]>
 <div class="alert alert-danger">您正在使用 <strong>过时的</strong> 浏览器. 是时候 <a href="http://browsehappy.com/">更换一个更好的浏览器</a>
-    来提升用户体验.
+    来提升用户体验. <a href ="javascript:void(0)">请使用<strong>IE9</strong>以上浏览器访问 </a>
 </div>
 <![endif]-->
 
@@ -84,7 +84,7 @@
                     <span class="icon-bar"></span>
                 </button>
             </div>
-            <div class="collapse navbar-collapse" id="menu">
+            <div class="collapse navbar-collapse" id="menu" style="position:fixed">
                 <ul class="nav navbar-nav">
 
                     <!--{if 0!=$user['uid']}-->
@@ -98,7 +98,7 @@
                                 class="fa fa-lemon-o menu-icon"></i></a>
                     </li>
                     <li>
-                        <a class="app-download-btn" href="{url topic/default}"><span class="menu-text">文章</span><i
+                        <a class="app-download-btn" href="{url topic/default}"><span class="menu-text">知识库</span><i
                                 class="fa fa-lemon-o menu-icon"></i></a>
                     </li>
                     <li>
@@ -126,7 +126,8 @@
                                 <a href="javascrpt:void(0)"><i class="fa fa-paypal"></i>
                                     <span>赞赏</span> &lt;!&ndash;&ndash;&gt;
                                 </a></li>
-                            <li>-->
+                                -->
+                            <li>
 
                                 <a href="{url message/system}">
                                     <i class="fa fa-envelope"></i><span>系统私信</span>
@@ -194,3 +195,5 @@
         </div>
     </div>
 </nav>
+    
+ 

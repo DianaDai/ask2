@@ -11,6 +11,9 @@ class answercontrol extends base {
         $this->load('question');
         $this->load('message');
         $this->load('doing');
+        $this->load('email');
+        $this->load('email_msg');
+        $this->load('favorite');
     }
 
     /* 追问模块---追问 */
@@ -34,39 +37,71 @@ class answercontrol extends base {
 //        				}
             $_ENV['answer']->append($answer['id'], $this->user['username'], $this->user['uid'], $this->post['content']);
             if ($answer['authorid'] == $this->user['uid']) {//继续回答
-                $_ENV['message']->add($this->user['username'], $this->user['uid'], $question['authorid'], $this->user['username'] . '继续回答了您的问题:' . $question['title'], $this->post['content'] . '<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看</a>');
+              //通知给提问者
+                $qurl ='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
+                $msginfo =$_ENV['email_msg']->question_ask_ans($question['author'],$question['title'],$qurl);
+                $_ENV['message']->add($this->user['username'], $this->user['uid'], $question['authorid'], $msginfo['title'], $msginfo['content']);
                 $_ENV['doing']->add($this->user['uid'], $this->user['username'], 7, $qid, $this->post['content']);
 
                 $quser= $_ENV['user']->get_by_uid($question['authorid']);
-        	 global $setting;
-        	$mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl.$setting['seo_suffix'];
-        	 //发送邮件通知
-            $subject = "问题有新回答(对方继续回答)！" ;
-            $message = $this->post['content'].'<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看最新回复</a>。</p>';
+        	
               if(isset($this->setting['notify_mail'])&&$this->setting['notify_mail']=='1'){
-            sendmail($quser, $subject, $message);
+                  $_ENV['email']->sendmail($quser,$msginfo['title'],$msginfo['content']);
               }
+              //通知信息给关注着
+              $userlist = $_ENV['favorite']->get_list_byqid_fav($qid);
+              foreach ($userlist as $val)
+              {
+                  $msginfo = $_ENV['email_msg']->question_ask($val['username'],$question['title'],$qurl);
+                  
+                  sendmsg($val,$msginfo['title'],$msginfo['content']);
+              }
+              
                 $this->message('继续回答成功!', $viewurl);
-            } else {//继续追问
-                $_ENV['message']->add($this->user['username'], $this->user['uid'], $answer['authorid'], $this->user['username'] . '对您的回答进行了追问', $this->post['content'] . '<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>');
+            } else {
+                //追问对回答者追问，通知回答者；通知相关的评论者
+                $qurl ='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
+                $msginfo =$_ENV['email_msg']->question_comment($answer['author'],$question['title'],$qurl);
+             
+                $_ENV['message']->add($this->user['username'], $this->user['uid'], $answer['authorid'],$msginfo['title'],$msginfo['content']);
                 $_ENV['doing']->add($this->user['uid'], $this->user['username'], 6, $qid, $this->post['content'], $answer['id'], $answer['authorid'], $answer['content']);
-  $auser= $_ENV['user']->get_by_uid($answer['authorid']);
-        	 global $setting;
-        	$mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl.$setting['seo_suffix'];
-        	 //发送邮件通知
-            $subject = "您回答的问题有新回答(对方继续追问)！" ;
-            $message = $this->post['content'].'<p>现在您可以点击<a swaped="true" target="_blank" href="' . $mpurl . '">查看最新回复</a>。</p>';
-
+                $auser= $_ENV['user']->get_by_uid($answer['authorid']);
+      
                 if(isset($this->setting['notify_mail'])&&$this->setting['notify_mail']=='1'){
-            sendmail($auser, $subject, $message);
+                  
+                    $_ENV['email']->sendmail($auser,$msginfo['title'],$msginfo['content']); //发送邮件通知
                 }
-                
+
+                //准备通知关注着
+                $userlist = $_ENV['favorite']->get_list_byqid_fav($qid);
+                foreach ($userlist as $val)
+                {
+                    $msginfo = $_ENV['email_msg']->question_ask($val['username'],$question['title'],$qurl);
+                    
+                    sendmsg($val,$msginfo['title'],$msginfo['content']);
+                }
                 $this->message('继续提问成功!', $viewurl);
             }
         }
         include template("appendanswer");
     }
-
+ 
+     function sendmsg($touser,$subject,$content){
+    
+           $time = $this->time;
+           $msgfrom = $this->setting['site_name'] . '管理员';
+           if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['id']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+           }
+           if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+               $_ENV['email']->sendmail($touser['email'],$subject,$content);
+          
+        }
+    }  
+    
+    
+    
+    
     function onajaxviewcomment() {
         $answerid = intval($this->get[2]);
         $commentlist = $_ENV['answer_comment']->get_by_aid($answerid, 0, 50);
@@ -139,6 +174,11 @@ class answercontrol extends base {
         $answer = $_ENV['answer']->get($answerid);
         if ($this->user['uid']) {
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 5, $answer['qid'], '', $answer['id'], $answer['authorid'], $answer['content']);
+            $question =$_ENV['question']->get($answer['qid']);
+            $msginfo = $_ENV['email_msg']->question_ok($answer['author'],$question['titile']);
+            $touser =$_ENV['user']->get_by_uid($answer['authorid']);
+            $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
         }
         exit($answer['supports']);
     }
