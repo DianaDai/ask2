@@ -36,7 +36,7 @@ class answercontrol extends base {
 //        }
 //        				}
             $_ENV['answer']->append($answer['id'], $this->user['username'], $this->user['uid'], $this->post['content']);
-            if ($answer['authorid'] == $this->user['uid']) {//继续回答
+            if ($answer['authorid'] == $this->user['uid']) {//追答
               //通知给提问者
                 $qurl ='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
                 $msginfo =$_ENV['email_msg']->question_ask_ans($question['author'],$question['title'],$qurl);
@@ -46,15 +46,15 @@ class answercontrol extends base {
                 $quser= $_ENV['user']->get_by_uid($question['authorid']);
         	
               if(isset($this->setting['notify_mail'])&&$this->setting['notify_mail']=='1'){
-                  $_ENV['email']->sendmail($quser,$msginfo['title'],$msginfo['content']);
+                  $_ENV['email']->sendmail($quser['email'],$msginfo['title'],$msginfo['content']);
               }
               //通知信息给关注着
               $userlist = $_ENV['favorite']->get_list_byqid_fav($qid);
               foreach ($userlist as $val)
               {
-                  $msginfo = $_ENV['email_msg']->question_ask($val['username'],$question['title'],$qurl);
+                  $msginfo = $_ENV['email_msg']->question_ask_with($val['username'],$question['title'],$qurl); //追答了问题通知给关注着
                   
-                  sendmsg($val,$msginfo['title'],$msginfo['content']);
+                  $this-> sendmsg($val,$msginfo['title'],$msginfo['content']);
               }
               
                 $this->message('继续回答成功!', $viewurl);
@@ -69,7 +69,7 @@ class answercontrol extends base {
       
                 if(isset($this->setting['notify_mail'])&&$this->setting['notify_mail']=='1'){
                   
-                    $_ENV['email']->sendmail($auser,$msginfo['title'],$msginfo['content']); //发送邮件通知
+                    $_ENV['email']->sendmail($auser['email'],$msginfo['title'],$msginfo['content']); //发送邮件通知
                 }
 
                 //准备通知关注着
@@ -78,7 +78,7 @@ class answercontrol extends base {
                 {
                     $msginfo = $_ENV['email_msg']->question_ask($val['username'],$question['title'],$qurl);
                     
-                    sendmsg($val,$msginfo['title'],$msginfo['content']);
+                   $this-> sendmsg($val,$msginfo['title'],$msginfo['content']);
                 }
                 $this->message('继续提问成功!', $viewurl);
             }
@@ -88,10 +88,10 @@ class answercontrol extends base {
  
      function sendmsg($touser,$subject,$content){
     
-           $time = $this->time;
+           $time =time();
            $msgfrom = $this->setting['site_name'] . '管理员';
            if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
-            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['id']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
            }
            if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
                $_ENV['email']->sendmail($touser['email'],$subject,$content);

@@ -147,14 +147,14 @@ class email_msgmodel
     
     
     function question_atto($zzxm,$wtbt,$gzzxm){
-        $msg = $this->get_msg('问题','关注',2);
+        $msg = $this->get_msg('问题','关注');
         $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         return $msg;
     }
     function question_ok($plrmc,$wtbt){
-        $msg = $this->get_msg('问题','点赞',4);
+        $msg = $this->get_msg('问题','点赞');
         $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content'])   ;
         return $msg;
@@ -167,7 +167,8 @@ class email_msgmodel
         $msg['content']= str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
-        $msg['content'] = str_replace('{url}',$url,$url['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
         return $msg;
         
     }
