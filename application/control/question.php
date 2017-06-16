@@ -1774,6 +1774,8 @@ class questioncontrol extends base
         }
         $navlist = $_ENV['category']->get_navigation($question['cid'], true);
         if (isset($this->post['submit'])) {
+            echo "这个地方还会进来吗？";
+            exit();
             $viewurl = urlmap('question/view/' . $qid, 2);
             $title = trim($this->post['title']);
             (!trim($title)) && $this->message('问题标题不能为空!', $viewurl);
@@ -1848,12 +1850,12 @@ class questioncontrol extends base
             }
             $_ENV['question']->update_content($qid, $title, $this->post['content'],$authoritycontrol);
             $qurl='<br /> <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
-            //编辑问题通知作者和关注着，并不是回答者
+            //编辑问题通知作者 和回答者
             $msginfo =$_ENV['email_msg']->question_edit($question['author'],$question['title'],$this->user['username'], tdate(time()),$qurl);
             $touser =$_ENV['user']->get_by_uid($question['authorid']);
             $this->sendmsg($touser,$msginfo['titile'],$msginfo['content']);
             
-            $userlist = $_ENV['favorite']->get_list_byqid_fav($question['id']);
+            $userlist = $_ENV['answer']->getanser_user($question['id']);
             foreach ($userlist as $val)
             {
                 $this->sendmsg($val,$msginfo['title'],$msginfo['content']);

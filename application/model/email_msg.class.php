@@ -178,6 +178,7 @@ class email_msgmodel
         $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
         $msg['content']= str_replace('{url}',$url,$msg['content']);
         return $msg;
     }
