@@ -65,12 +65,32 @@ class favoritecontrol extends base {
      
         if (!$_ENV['favorite']->get_by_tid($tid)) {
             $_ENV['favorite']->addtopiclikes($tid);
+            
+            $touser =$_ENV['user']->get_by_uid($tid);
+            $topic = $_ENV['topic']->get($tid);
+            $msginfo = $_ENV['email_msg']->topic_save($touser['author'],$topic['title'],tdate(time()),$this->user['username']);
+             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+
             $this->load("doing");
             
               $_ENV['doing']->add($this->user['uid'], $this->user['username'], 13, $tid, "收藏了文章");
             $message = '文章收藏成功!';
         }
         $this->message($message, $viewurl);
+    }
+    
+        /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+    
+           $time = time();
+           $msgfrom = $this->setting['site_name'] . '管理员';
+           if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+           }
+           if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+               $_ENV['email']->sendmail($touser['email'],$subject,$content);
+          
+        }
     }
 
 }

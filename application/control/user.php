@@ -16,6 +16,8 @@ class usercontrol extends base
         $this->load('answer');
         $this->load("category");
         $this->load("favorite");
+        $this->load("email");
+        $this->load("email_msg");
 
         $this->whitelist = "search,spacefollower,vertifyemail,editemail,sendcheckmail,getsmscode";
     }
@@ -374,6 +376,14 @@ class usercontrol extends base
 //                }
                     $ispc = $topic['ispc'];
                     $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
+                    $viewurl = urlmap('topic/getone/' . $tid, 2);
+                    $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+                    $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
+                    foreach ($favusers as $fav)
+                    {
+                        $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                        $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+                    }
                     $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                     $this->message('文章修改成功！', 'article-' . $tid);
                 } else {
@@ -385,6 +395,14 @@ class usercontrol extends base
                 }
                 $ispc = $topic['ispc'];
                 $_ENV['topic']->updatetopic($tid, $title, $desrc, $upimg, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
+                $viewurl = urlmap('topic/getone/' . $tid, 2);
+                $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+                $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
+                foreach ($favusers as $fav)
+                {
+                    $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                	$this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+                }
                 $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                 $this->message('文章修改成功！', 'article-' . $tid);
             }
@@ -407,6 +425,27 @@ class usercontrol extends base
         }
 
     }
+    
+    /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+        
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+            
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
 
     function onregtip()
     {

@@ -203,6 +203,63 @@ class email_msgmodel
         return $msg;
     }
     
+    //文章修改
+    function topic_edit($gzzxm,$wtbt,$url){
+        $msg= $this->get_msg('文章','编辑');
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    function topic_ans($zzxm,$wzbt,$url){
+        $msg =$this->get_msg('文章','评论',2);
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    function topic_ans_fav($gzzxm,$wzbt,$url){
+        $msg =$this ->get_msg('文章','评论',3);
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return  $msg;
+    }
+    
+    function topic_save($zzxm,$wzbt,$time,$gzzxm){
+        $msg = $this->get_msg('文章','收藏');
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt ,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time, $msg['content']);
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        return $msg;
+    }
+    //目前文章还没有点赞表
+    //要么不做要么创建表做个点赞功能
+    function topic_ok($zzxm,$wzbt){
+        $msg = $this->get_msg('文章','点赞');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt ,$msg['content']);
+        return $msg;
+    }
+    //公告通知粉丝。。。
+    function notice_info($yhxm,$ggbt,$url) {
+        $msg = $this->get_msg('公告','新增');
+        $msg['content'] =str_replace('{yhxm}',$yhxm,$msg['conntet']);
+        $msg['content'] = str_replace('{ggbt}',$ggbt ,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    //公告评论
+    function notice_comment($zzxm,$ggbt,$url){
+        $msg = $this->get_msg('公告','评论');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{ggbt}',$ggbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
     
     
 }
