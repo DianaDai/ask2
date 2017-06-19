@@ -39,7 +39,7 @@ class email_msgmodel
         $msg['content']= str_replace('{zjxm}',$zjxm,$msg['content']);
         $msg['content']= str_replace('{lymc}',$lymc,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
-        $msg['content']=$msg['content'].=$url;
+        $msg['content']= str_replace('{url}',$url,$msg['content']);
         return $msg;
         
     }

@@ -949,14 +949,15 @@ class questioncontrol extends base
             //$this->send($answer['authorid'], $question['id'], 1);
             $viewurl = urlmap('question/view/' . $qid, 2);
             global $setting;
-             $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
+          
             $_ENV['doing']->add($question['authorid'], $question['author'], 8, $qid, $comment, $answer['id'], $answer['authorid'], $answer['content']);
-            
+            $weburl = '<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看！</a>';
+
             //通知收藏着  问题已经被采纳
             $userlist = $_ENV['favorite']->get_list_byqid_fav($question['id']);
             foreach ($userlist as $val)
             {
-                $msginfo = $_ENV['email_msg']->question_adopt_with($val['username'],$question['title'],$mpurl);
+                $msginfo = $_ENV['email_msg']->question_adopt_with($val['username'],$question['title'],$weburl);
                 $this->sendmsg($val,$msginfo['title'],$msginfo['content']);
             }
             //通知问题回答者
@@ -1002,13 +1003,13 @@ class questioncontrol extends base
         $msginfo =$_ENV['email_msg']->question_close($question['author'],$question['title'],$this->user['username'],tdate(time()));
         $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
         
-        $ansusers = $_ENV['answer']->getanser_user($question['id']);
+        //$ansusers = $_ENV['answer']->getanser_user($question['id']); //去掉关闭问题通知评论者
         
-        foreach ($ansusers as $val)
-        {           
-            $touser =$_ENV['user']->get_by_uid($val['authorid']);
-            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
-        }
+        //foreach ($ansusers as $val)
+        //{           
+        //    $touser =$_ENV['user']->get_by_uid($val['authorid']);
+        //    $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+        //}
         
         
         $_ENV['question']->update_status($qid, 9);
@@ -1335,12 +1336,12 @@ class questioncontrol extends base
             $qurl='<br /> <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
             $msginfo =$_ENV['email_msg']->question_edit_ans($answer['author'],$question['title'],$this->user['username'],tdate(time()),$qurl);
             $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
-            $ansusers = $_ENV['answer']->getanser_user($question['id']);
-            foreach ($ansusers as $val)
-            {           
-                $touser =$_ENV['user']->get_by_uid($val['authorid']);
-                $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
-            }
+            //$ansusers = $_ENV['answer']->getanser_user($question['id']); //去掉编辑答案通知评论者
+            //foreach ($ansusers as $val)
+            //{           
+            //    $touser =$_ENV['user']->get_by_uid($val['authorid']);
+            //    $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            //}
 
             if (0 == $status) {
                 $message['sh'] = 1;
@@ -1728,15 +1729,13 @@ class questioncontrol extends base
         $msginfo = $_ENV['email_msg']->question_del($question['author'],$question['title'],$this->user['username'],tdate(time()));
         $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
         
-        $ansusers = $_ENV['answer']->getanser_user($question['id']);
-        foreach ($ansusers as $val)
-        {           
-            $touser =$_ENV['user']->get_by_uid($val['authorid']);
-            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
-        }
-        //if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
-        //    sendmail($touser, '您的问题' . $question['title'] . '已被删除');
+        //$ansusers = $_ENV['answer']->getanser_user($question['id']); //去掉删除问题通知回答者
+        //foreach ($ansusers as $val)
+        //{           
+        //    $touser =$_ENV['user']->get_by_uid($val['authorid']);
+        //    $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
         //}
+
         $this->credit($question['authorid'], 0, $question['price'], 0, 'back');
         $_ENV['question']->remove(intval($this->get[2]));
 
@@ -1850,16 +1849,16 @@ class questioncontrol extends base
             }
             $_ENV['question']->update_content($qid, $title, $this->post['content'],$authoritycontrol);
             $qurl='<br /> <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
-            //编辑问题通知作者 和回答者
+            //编辑问题通知作者 
             $msginfo =$_ENV['email_msg']->question_edit($question['author'],$question['title'],$this->user['username'], tdate(time()),$qurl);
             $touser =$_ENV['user']->get_by_uid($question['authorid']);
             $this->sendmsg($touser,$msginfo['titile'],$msginfo['content']);
             
-            $userlist = $_ENV['answer']->getanser_user($question['id']);
-            foreach ($userlist as $val)
-            {
-                $this->sendmsg($val,$msginfo['title'],$msginfo['content']);
-            }
+            //$userlist = $_ENV['answer']->getanser_user($question['id']); 去掉编辑问题通知作者
+            //foreach ($userlist as $val)
+            //{
+            //    $this->sendmsg($val,$msginfo['title'],$msginfo['content']);
+            //}
             global $setting;
             $message['url'] = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
             $message['message'] = 'ok';
@@ -1970,7 +1969,8 @@ class questioncontrol extends base
             $viewurl = url('question/view/' . $qid, 1);
             
             $msginfo = $_ENV['email_msg']->question_atto($question['author'],$question['title'],$this->user['username']);
-            $this->sendmsg($this->user,$msginfo['title'],$msginfo['content']);
+            $touser =$_ENV['user']->get_by_uid($question['authorid']);
+            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             //$_ENV['message']->add($msgfrom, 0, $question['authorid'], $username . "刚刚关注了您的问题", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您的问题' . $question['title'] . '"<br /> <a href="' . $viewurl . '">点击查看</a>');
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 4, $qid);
 
