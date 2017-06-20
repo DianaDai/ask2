@@ -8,6 +8,9 @@ class notecontrol extends base {
         $this->base($get, $post);
         $this->load("note");
         $this->load("note_comment");
+        $this->load('email_msg');
+        $this->load('email');
+        $this->load('user');
     }
 
     /* 前台查看公告列表 */
@@ -59,10 +62,33 @@ class notecontrol extends base {
             $noteid = intval($this->post['noteid']);
             $_ENV['note_comment']->add($noteid, $this->post['content']);
             $_ENV['note']->update_comments($noteid);
+            //通知公告作者
+            $note = $_ENV['note']->get($noteid);
+            $touser = $_ENV['user']->get_by_uid($note['authorid']);
+            $viewurl = url('note/view/'.$noteid,2);
+            global $setting;
+            $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
+            $qurl='<br /> <a href="' .$mpurl . '">点击查看公告</a>'; //站内url都使用这个
+            $msginfo =$_ENV['email_msg']->notice_comment($touser['username'],$note['title'],$qurl);
+            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
+            
+            
             $this->message("评论添加成功!", "note/view/" . $noteid);
         }
     }
-
+   function sendmsg($touser,$subject,$content){
+        
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+            
+        }
+    }
     function ondeletecomment() {
         $commentid = intval($this->get[3]);
         $noteid = intval($this->get[2]);
