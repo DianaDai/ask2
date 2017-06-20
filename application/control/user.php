@@ -1617,10 +1617,17 @@ class usercontrol extends base
             $quser = $_ENV['user']->get_by_uid($uid);
             $this->load("doing");
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
-            $msgfrom = $this->setting['site_name'] . '管理员';
-            $username = addslashes($this->user['username']);
-            $this->load("message");
-            $_ENV['message']->add($msgfrom, 0, $uid, $username . "刚刚关注了您", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您!<br /> <a href="' . url('user/follower', 1) . '">点击查看</a>');
+            
+            $viewurl = urlmap('user/follower' , 1); //查看关注
+            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看</a>';
+            $msginfo =$_ENV['email_msg']->user_follow($quser['username'],$this->user['username'],$weburl);
+            
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            
+            //$msgfrom = $this->setting['site_name'] . '管理员';
+            //$username = addslashes($this->user['username']);
+            //$this->load("message");
+            //$_ENV['message']->add($msgfrom, 0, $uid, $username . "刚刚关注了您", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您!<br /> <a href="' . url('user/follower', 1) . '">点击查看</a>');
         }
         exit('ok');
     }
