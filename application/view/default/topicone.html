@@ -86,10 +86,12 @@
                     <a id="report-modal">举报问题</a>
                 </div>
             </div>
-        </div>
+        </div>s
 
     <div class="meta-bottom">
       <div class="like"><div class="btn like-group"><div class="btn-like"><a href="{url favorite/topicadd/$topicone['id']}"><i class="fa fa-heart-o"></i>喜欢</a></div> <div class="modal-wrap"><a> {$topicone['likes']}</a></div></div> <!----></div>
+      <div class="like"> <div class ="btn like-group"><div class="btn-like"> <a class="button_agree" id='{$topicone['id']}'><i class="fa fa-thumbs-o-up"></i> 点赞</a></div><div class="modal-wrap"><a><span id="support">{$topicone['supports']}</span></a></div> </div></div>               
+
       <div class="share-group">
         <!--<a class="share-circle share-weixin" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
           <i class="fa fa-wechat"></i>
@@ -267,9 +269,42 @@ $(function(){
 	    	 $(".share-wechat").show();
 	     });
 	     //关闭微信二维码
-	     $(".close").click(function(){
-	    	 $(".share-wechat").hide();
-	     })
+	     $(".close").click(function () {
+	         $(".share-wechat").hide();
+	     });
+      //点赞
+	     $(".button_agree").click(function () {
+	         var supportobj = $(this);
+	         var topicid = $(this).attr("id");
+	         $.ajax({
+	             type: "GET",
+	             url: "{SITE_URL}index.php?topic/ajaxhasssupport/" + topicid,
+	             cache: false,
+	             success: function (hassupport) {
+	                 if (hassupport != '1') {
+
+
+
+
+
+
+	                     $.ajax({
+	                         type: "GET",
+	                         cache: false,
+	                         url: "{SITE_URL}index.php?topic/ajaxaddsupport/" + topicid,
+	                         success: function (comments) {
+	                             $("#support").html(comments);
+	                             //supportobj.find("span").html(comments + "人赞");
+	                         }
+	                     });
+	                 } else {
+	                     alert("您已经赞过");
+	                 }
+	             }
+	         });
+	     });
+
+
 })
 </script>
 <!--{template footer}-->

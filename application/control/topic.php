@@ -11,7 +11,8 @@ var $whitelist;
   
           $this->load('category');
             $this->load('question');
-            
+            $this->load('email_msg');
+            $this->load('email');
             $this->whitelist="getuserarticles,getnewlist,getbycatidanduid,view";
     }
 
@@ -571,6 +572,33 @@ foreach ($topiclist as $key=>$val){
     		include template('topicone');
  
     }
+    
+    
+    function onajaxhasssupport(){
+        $tid = intval($this->get[2]);
+        $has = $_ENV['topic']->get_support_by_sid_aid($this->user['sid'],$tid);
+        $ret =$has ?'1' :'-1'; //?输出数字不行？
+        exit($ret);
+    }
+    
+    function onajaxaddsupport(){
+        $topicid = intval($this->get[2]);
+        $topic = $_ENV['topic']->get($topicid);
+        $_ENV['topic']->add_support($this->user['sid'], $topicid, $topic['authorid']);
+        $topic = $_ENV['topic']->get($topicid);
+        if ($this->user['uid']) {
+            $this->load('doing');
+            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 15, $topicid, $topic['title']);
+            $msginfo = $_ENV['email_msg']->topic_ok($this->user['username'],$topic['title']);
+            $touser =$_ENV['user']->get_by_uid($topic['authorid']);
+            $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
+        }
+        exit($topic['supports']);
+    }
+    
+    
+    
     
 
     function onuserxinzhi(){

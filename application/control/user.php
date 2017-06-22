@@ -253,6 +253,20 @@ class usercontrol extends base
 
             $this->load("doing");
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 9, $aid, $title);
+            
+            //通知关注分类的用户
+            $category = $_ENV['category']->get($acid);
+            $followerlist = $_ENV['category']->get_fol_sendmsg($acid);
+            $viewurl = urlmap('topic/getone/' . $aid, 2);
+            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+
+            foreach ($followerlist as $fov)
+            {
+            	$msginfo =$_ENV['email_msg']->special($fov['username'],$category['name'],$weburl);
+                $this->sendmsg($fov,$msginfo['title'],$msginfo['content']);
+            }
+
+            
             $this->message('添加成功！', 'article-' . $aid);
         } else {
             // $this->load("topicclass");

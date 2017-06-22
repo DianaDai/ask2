@@ -774,6 +774,18 @@ class topicmodel
         return $aid;
     }
 
+    //查看文章是否被用户点赞
+    function get_support_by_sid_aid($sid ,$tid){
+        return $this->db->fetch_total('topic_support'," sid ='$sid' and tid =$tid");
+    }
+    function add_support($sid,$tid,$uid){
+        $this->db->query("REPLACE INTO " . DB_TABLEPRE . "topic_support(sid,tid,time) VALUES ('$sid',$tid,{$this->base->time})");
+        $this->db->query("UPDATE `".DB_TABLEPRE."topic` set `supports` = supports+1 where id =$tid ");
+        $this->db->query("UPDATE `".DB_TABLEPRE."user` set `supports`=supports+1 where uid= $uid");
+    }
+    
+    
+    
     function addtopic($title, $desc, $image, $author, $authorid, $views, $articleclassid,$authoritycontrol,$cid1,$cid2,$cid3)
     {
         $creattime = $this->base->time;

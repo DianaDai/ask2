@@ -9,6 +9,8 @@ class admin_expertcontrol extends base {
         $this->load('expert');
         $this->load('user');
         $this->load('category');
+        $this->load('email');
+        $this->load('email_msg');
     }
 
     function ondefault($msg = '') {
@@ -44,7 +46,23 @@ class admin_expertcontrol extends base {
         }
         //添加专家
         if ('correctmsg' == $type) {
+           
             $_ENV['expert']->add($user['uid'], $cids);
+            //添加专家通知信息
+            foreach ($cids as $cid)
+            {
+            	$follwers =$_ENV['category']->get_fol_sendmsg($cid);
+                $lymc =$_ENV['category']->get($cid);
+                foreach ($follwers as $fol)
+                {
+                    $msginfo =$_ENV['email_msg']->speacial_pro($fol['username'],$lymc['name'],$user['username'],url);
+                    $this->sendmsg($fol,$msginfo['title'],$msginfo['content']);
+                }
+                //通知专家自己
+                $msginfo= $_ENV['email_msg']->sepeacial_uppro($user['username'],$lymc['name']);
+                $this->sendmsg($user,$msginfo['title'],$msginfo['content']);
+            }
+            
         }
         $this->ondefault($message, $type);
     }
@@ -68,6 +86,27 @@ class admin_expertcontrol extends base {
             echo substr($categorystr, 0, -2);
         }
     }
+    
+    
+    
+    /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+        
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+            
+        }
+    }
+    
+    
+    
+    
+    
 
 }
 

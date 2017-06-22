@@ -264,14 +264,34 @@ class base {
         $this->db->query("UPDATE " . DB_TABLEPRE . "user SET credit2=credit2+$credit2,credit1=credit1+$credit1,credit3=credit3+$credit3 WHERE uid=$uid ");
         if (2 == $this->user['grouptype']) {
             $currentcredit1 = $this->user['credit1'] + $credit1;
-            $usergroup = $this->db->fetch_first("SELECT g.groupid FROM " . DB_TABLEPRE . "usergroup g WHERE  g.`grouptype`=2  AND $currentcredit1 >= g.creditslower ORDER BY g.creditslower DESC LIMIT 0,1");
+            $usergroup = $this->db->fetch_first("SELECT g.groupid ,g.grouptitle FROM " . DB_TABLEPRE . "usergroup g WHERE  g.`grouptype`=2  AND $currentcredit1 >= g.creditslower ORDER BY g.creditslower DESC LIMIT 0,1");
             //判断是否需要升级
             if (is_array($usergroup) && ($this->user['groupid'] != $usergroup['groupid'])) {
                 $groupid = $usergroup['groupid'];
                 $this->db->query("UPDATE " . DB_TABLEPRE . "user SET groupid=$groupid WHERE uid=$uid ");
+                $msginfo  = $_ENV['email_msg']->user_update($this->user['username'],$usergroup['grouptitle']);
+              
+                $this->send_msg_all($user,$msginfo['title'],$msginfo['content']);
+                
             }
         }
     }
+    /*现在这个在子类中基本没有用，后面再加可以使用*/
+    function send_msg_all($touser,$subject,$content){
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+             $this->db->query("INSERT INTO ".DB_TABLEPRE."email SET `mailto`='".$touser['email']."',`subject`='".$subject."',`content`='".$content."'");
+            
+        }
+               
+    }
+    
+    
 
     /* 权限检测 */
 
