@@ -276,7 +276,7 @@ class email_msgmodel
     function user_msg($yhxm,$url){
         $msg = $this->get_msg('用户','私信');
         $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
-        $msg['content'] = str_replace('url',$url,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
         return $msg;
     }
     

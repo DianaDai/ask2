@@ -156,7 +156,24 @@ class admin_usercontrol extends base {
                 $message = '该邮箱已有人使用，请修改!';
             } else {
                 $password = ($password == '') ? $user['password'] : md5($password);
+                $olduser =$_ENV['user']->get_by_uid($uid);
                 $_ENV['user']->update_user($uid, $username, $password, $email, $groupid, $credits, $credit1, $credit2, $gender, $bday, $phone, $qq, $msn,$introduction,$signature,$isblack);
+                //做个消息通知
+                if ($olduser['groupid']!=$groupid)
+                {
+                   
+                	$this->load('email_msg');
+                    $this->load('usergroup');
+                    $usergp = $_ENV['usergroup']->get($groupid);
+                   
+                    $msginfo = $_ENV['email_msg']->user_update($username,$usergp['grouptitle']);
+
+                    $user = $_ENV['user']->get_by_uid($uid);
+                    $this->send_msg_all($user,$msginfo['title'],$msginfo['content']);
+                }
+                
+                
+                
                 $message = '用户资料编辑成功!';
                 unset($type);
             }
