@@ -589,8 +589,8 @@ foreach ($topiclist as $key=>$val){
         if ($this->user['uid']) {
             $this->load('doing');
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 15, $topicid, $topic['title']);
-            $msginfo = $_ENV['email_msg']->topic_ok($this->user['username'],$topic['title']);
             $touser =$_ENV['user']->get_by_uid($topic['authorid']);
+            $msginfo = $_ENV['email_msg']->topic_ok($touser['username'],$topic['title']);
             $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
         }
