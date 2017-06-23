@@ -7,6 +7,9 @@ class favoritecontrol extends base {
     function favoritecontrol(& $get, & $post) {
         $this->base($get, $post);
         $this->load("favorite");
+        $this->load('user');
+        $this->load('topic');      
+        $this->load('email_msg');
         $this->whitelist="topicadd,deletetopiclikes";
     }
 
@@ -65,12 +68,13 @@ class favoritecontrol extends base {
      
         if (!$_ENV['favorite']->get_by_tid($tid)) {
             $_ENV['favorite']->addtopiclikes($tid);
-            
-            $touser =$_ENV['user']->get_by_uid($tid);
             $topic = $_ENV['topic']->get($tid);
-            $msginfo = $_ENV['email_msg']->topic_save($touser['author'],$topic['title'],tdate(time()),$this->user['username']);
-             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
-
+       
+            $touser =$_ENV['user']->get_by_uid($topic['authorid']);
+       
+            $msginfo = $_ENV['email_msg']->topic_save($touser['username'],$topic['title'],tdate(time(),3,0),$this->user['username']);
+           
+             $this->send_msg_all($touser,$msginfo['title'],$msginfo['content']);
             $this->load("doing");
             
               $_ENV['doing']->add($this->user['uid'], $this->user['username'], 13, $tid, "收藏了文章");

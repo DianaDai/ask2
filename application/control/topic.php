@@ -176,7 +176,7 @@ foreach ($topiclist as $key=>$val){
             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
             //通知关注着
-            
+            $this->load('favorite');
             $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
             
             foreach ($favusers as $fav)

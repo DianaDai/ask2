@@ -204,10 +204,10 @@ class email_msgmodel
     }
     
     //文章修改
-    function topic_edit($gzzxm,$wtbt,$url){
+    function topic_edit($gzzxm,$wzbt,$url){
         $msg= $this->get_msg('文章','编辑');
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
-        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
         return $msg;
     }
@@ -247,7 +247,7 @@ class email_msgmodel
     //公告通知粉丝。。。
     function notice_info($yhxm,$ggbt,$url) {
         $msg = $this->get_msg('公告','新增');
-        $msg['content'] =str_replace('{yhxm}',$yhxm,$msg['conntet']);
+        $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
         $msg['content'] = str_replace('{ggbt}',$ggbt ,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
         return $msg;
@@ -299,22 +299,22 @@ class email_msgmodel
     function special($gzzxm,$lymc,$url){
         $msg = $this->get_msg('专题','新增文章');
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
-        $msg['content'] = str_replace('lymc',$lymc,$msg['content']);
-        $msg['content'] = str_replace('url',$url,$msg['content']);
+        $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
         return $msg;
     }
     
     function speacial_pro($gzzxm,$lymc,$zjxm,$url){
-        $msg = $this->get_msg('领域','新增专家',5);
-        $msg['contnet'] = str_replace('{$gzzxm}',$gzzxm,$msg['content']);
+        $msg = $this->get_msg('专题','新增专家',5);
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
         $msg['content'] = str_replace('{zjxm}',$zjxm,$msg['content']);
-        $msg['content'] = str_replace('url',$url,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
         return $msg;
     }
     //
     function sepeacial_uppro($zjxm,$lymc){
-        $msg = $this->get_msg('领域','新增专家',6);
+        $msg = $this->get_msg('专题','新增专家',6);
         $msg['content'] = str_replace('{zjxm}',$zjxm,$msg['content']);
         $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
         return $msg;

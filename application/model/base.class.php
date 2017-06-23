@@ -269,9 +269,10 @@ class base {
             if (is_array($usergroup) && ($this->user['groupid'] != $usergroup['groupid'])) {
                 $groupid = $usergroup['groupid'];
                 $this->db->query("UPDATE " . DB_TABLEPRE . "user SET groupid=$groupid WHERE uid=$uid ");
+                $this->load('email_msg');
                 $msginfo  = $_ENV['email_msg']->user_update($this->user['username'],$usergroup['grouptitle']);
               
-                $this->send_msg_all($user,$msginfo['title'],$msginfo['content']);
+                $this->send_msg_all($this->user,$msginfo['title'],$msginfo['content']);
                 
             }
         }
@@ -284,7 +285,6 @@ class base {
             $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
         }
         if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
-            $_ENV['email']->sendmail($touser['email'],$subject,$content);
              $this->db->query("INSERT INTO ".DB_TABLEPRE."email SET `mailto`='".$touser['email']."',`subject`='".$subject."',`content`='".$content."'");
             
         }

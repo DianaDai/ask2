@@ -1632,9 +1632,9 @@ class usercontrol extends base
             $this->load("doing");
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
             
-            $viewurl = urlmap('user/follower' , 1); //查看关注
-            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看</a>';
-            $msginfo =$_ENV['email_msg']->user_follow($quser['username'],$this->user['username'],$weburl);
+            //$viewurl = urlmap('user/follower' , 1); //查看关注
+            //$weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看</a>';
+            $msginfo =$_ENV['email_msg']->user_follow($quser['username'],$this->user['username'],tdate(time(),3,0));
             
             $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
             

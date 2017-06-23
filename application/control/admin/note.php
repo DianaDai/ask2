@@ -28,15 +28,16 @@ class admin_notecontrol extends base {
             $content = $this->post['content'];
             $nid= $_ENV['note']->add($title, $url, $content);
             $this->load('user');
-            $this->load('email');
+            $this->load('email_msg');
             $followerlist= $_ENV['user']->get_follower($this->user['uid']);
+       
             $viewurl = url('note/view/'.$nid,2);
             global $setting;
-            $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
-            $qurl='<br /> <a href="' .$mpurl . '">点击查看公告</a>'; //站内url都使用这个
+            $qurl='<br /> <a href="' .$viewurl . '">点击查看公告</a>'; //站内url都使用这个
             foreach ($followerlist as $fol)
             {
             	$msginfo =$_ENV['email_msg']->notice_info($fol['info']['username'],$title,$qurl);
+                $this->send_msg_all($fol['info'],$msginfo['title'],$msginfo['content']);
             }
 
             $this->ondefault('公告添加成功！');
@@ -45,20 +46,7 @@ class admin_notecontrol extends base {
         }
     }
     
-    /*发送邮件和消息   给谁  主题，内容   */
-    function sendmsg($touser,$subject,$content){
-        
-        $time = time();
-        $msgfrom = $this->setting['site_name'] . '管理员';
-        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
-            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
-        }
-        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
-            $_ENV['email']->sendmail($touser['email'],$subject,$content);
-            
-        }
-    }
-    
+ 
     
     
     
