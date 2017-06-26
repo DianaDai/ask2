@@ -559,11 +559,12 @@ class questioncontrol extends base
                     $categoryname=$_ENV['category']->get($val['cid']);
                     $weburl = '<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看！</a>';
                     $msginfo = $_ENV['email_msg']->question_add($expert['username'],$categoryname['name'],$title,$weburl); //获取领域专家消息
-                    $_ENV['message']->add($this->user['username'], $this->user['uid'], $val['uid'], $msginfo['title'], $msginfo['content']);
-                    if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $expert['active'] == 1) {
-                        $_ENV['email']->sendmail($expert['email'], $msginfo['title'],$msginfo['content']);
+                    $this->send_msg_all($expert,$msginfo['title'],$msginfo['content']);
+                    //$_ENV['message']->add($this->user['username'], $this->user['uid'], $val['uid'], $msginfo['title'], $msginfo['content']);
+                    //if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $expert['active'] == 1) {
+                    //    $_ENV['email']->sendmail($expert['email'], $msginfo['title'],$msginfo['content']);
 
-                    }
+                    //}
                     
                 }
 
