@@ -535,15 +535,23 @@ class questioncontrol extends base
 
         } else
         {
+
             //改相关分类专家私信
             $expert1 = $this->sendmessagetoexpert($cid);
+          
             $expert2 = $this->sendmessagetoexpert($cid1);
+         
             $expert3 = $this->sendmessagetoexpert($cid2);
+           
             $expert4 = $this->sendmessagetoexpert($cid3);
-
+           
             $result = array_merge($expert1, $expert2, $expert3, $expert4);
-            $result = array_unique($result);
+           
             
+            $result = $this-> unique_arr($result);
+            //$result = array_unique($result);
+            
+        
             foreach ($result as $key => $val) {
 
                 if ($this->user['uid'] != $val['uid']){
@@ -573,6 +581,33 @@ class questioncontrol extends base
         
     }
 
+    function unique_arr($array2D,$stkeep=false,$ndformat=true)
+    {
+        // 判断是否保留一级数组键 (一级数组键可以为非数字)
+        if($stkeep) $stArr = array_keys($array2D);
+        // 判断是否保留二级数组键 (所有二级数组键必须相同)
+        if($ndformat) $ndArr = array_keys(end($array2D));
+        //降维,也可以用implode,将一维数组转换为用逗号连接的字符串
+        foreach ($array2D as $v){
+            $v = join(",",$v); 
+            $temp[] = $v;
+        }
+        //去掉重复的字符串,也就是重复的一维数组
+        $temp = array_unique($temp); 
+        //再将拆开的数组重新组装
+        foreach ($temp as $k => $v)
+        {
+            if($stkeep) $k = $stArr[$k];
+            if($ndformat)
+            {
+                $tempArr = explode(",",$v); 
+                foreach($tempArr as $ndkey => $ndval) $output[$k][$ndArr[$ndkey]] = $ndval;
+            }
+            else $output[$k] = explode(",",$v); 
+        }
+        return $output;
+    }
+    
     function sendmessagetoexpert($cid)
     {
         $expertlist = $_ENV['expert']->getlist_by_cid($cid);
