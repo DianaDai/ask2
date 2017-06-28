@@ -138,6 +138,9 @@ class admin_usercontrol extends base {
              $isblack = $this->post['isblack'];
             $phone = $this->post['phone'];
             $qq = $this->post['qq'];
+            $approvestatus = $this->post['approvestatus'];
+            $domain =$this->post['domain'];
+            
     
             $msn = $this->post['msn'];
             $introduction = htmlspecialchars($this->post['introduction']);
@@ -157,7 +160,7 @@ class admin_usercontrol extends base {
             } else {
                 $password = ($password == '') ? $user['password'] : md5($password);
                 $olduser =$_ENV['user']->get_by_uid($uid);
-                $_ENV['user']->update_user($uid, $username, $password, $email, $groupid, $credits, $credit1, $credit2, $gender, $bday, $phone, $qq, $msn,$introduction,$signature,$isblack);
+                $_ENV['user']->update_user($uid, $username, $password, $email, $groupid, $credits, $credit1, $credit2, $gender, $bday, $phone, $qq, $msn,$introduction,$signature,$isblack,$domain,$approvestatus);
                 //做个消息通知
                 if ($olduser['groupid']!=$groupid)
                 {

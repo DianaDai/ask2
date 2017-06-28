@@ -395,6 +395,9 @@ class api_usercontrol extends base
                 if ($user['isblack'] == 1) {
                     exit('用户被列入网站黑名单!');//登录参数为空
                 }
+                if($user['approvestatus']=='v'){
+                    exit('未生效用户，非法登录！');
+                }
 
 
                 $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
@@ -440,7 +443,8 @@ class api_usercontrol extends base
                 }
             }
         } else {     //通过域认证 ；但是用户查不到信息应该是没有登录过ewen或者是用户被删掉了；重新添加登录信息
-            $uid = $_ENV['user']->add($username, $orgpassword);
+            //$uid = $_ENV['user']->add($username, $orgpassword);
+            $uid =$_ENV['user']->adddomain($username,$orgpassword,$domainidentity);
             $user = $_ENV['user']->get_by_username($username);
             $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
             $_ENV['user']->refresh($user['uid'], 1, $cookietime);
@@ -460,7 +464,7 @@ class api_usercontrol extends base
 
     function domainidentityverify($user, $pwd)
     {
-        $identity = array("displayname" => "", "cn" => "", "mail" => "", "sn" => "", "givenname" => "", "ex_message" => "", "verify_flag" => "fail");
+        $identity = array("displayname" => "", "cn" => "", "mail" => "", "sn" => "", "givenname" => "", "ex_message" => "", "verify_flag" => "fail","itcode"=>"","adminunit"=>"","adminunitid"=>"","introduction"=>"");
         $host = "ldap://digiwin.biz";
         $domain_user_name = "digiwin\\" . $user;
         $dn = "OU=DIGIWIN,DC=digiwin,DC=biz";
@@ -470,11 +474,15 @@ class api_usercontrol extends base
                 ldap_set_option($ad, LDAP_OPT_PROTOCOL_VERSION, 3);
                 ldap_set_option($ad, LDAP_OPT_REFERRALS, 0);
                 $bd = ldap_bind($ad, $domain_user_name, $pwd) or die ("域账户验证失败，请重试");
-                $attrs = array("displayname", "cn", "mail", "sn", "givenname");
+                $attrs = array("displayname", "cn", "mail", "sn", "givenname","description","distinguishedname","department","title");
                 $filter = "(sAMAccountName=" . $user . ")";
                 $search = ldap_search($ad, $dn, $filter, $attrs) or die ("无法匹配用户信息");
                 $entries = ldap_get_entries($ad, $search);
                 if ($entries["count"] > 0) {
+                    $identity["adminunit"] = $entries[0]["department"][0];
+                    $identity["adminunitid"] =$this->checkdepartment($entries[0]["distinguishedname"][0]);
+                    $identity['itcode'] =$this->checkitcode($entries[0]["description"][0]);
+                    $identity['introduction'] = $entries[0]["title"][0];
                     $identity["displayname"] = $entries[0]["displayname"][0];
                     $identity["cn"] = $entries[0]["cn"][0];
                     $identity["mail"] = $entries[0]["mail"][0];
@@ -601,6 +609,33 @@ class api_usercontrol extends base
         $_ENV['user']->uppass($uid, trim($newpwd));
         exit('editpwd_ok');//退出成功
     }
+    
+    //配置itcode
+    
+    function checkitcode($str){
+        $matches = array();
+        $regex ='/\d+/';
+        $ret='';
+        if (preg_match($regex,$str,$matches))
+        {
+        	$ret = $matches[0];
+        }
+        return $ret;
+        
+    
+    }
+    //检查部门编号 
+    function checkdepartment($str){
+        $regex='/OU=(.*?) /';
+        $matches =array();
+        $ret='';
+        if(preg_match($regex,$str,$matches)){
+            $ret =$matches[1];
+        }
+        return $ret;
+    }
+    
+    
 
     //检查特殊字符函数
     function checkstring($str)

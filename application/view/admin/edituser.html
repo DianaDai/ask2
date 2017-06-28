@@ -36,6 +36,26 @@
 					<td class="altbg1" width="45%"><b>邮箱:</b><br><span class="smalltxt">用户电子邮件地址，可以修改</span></td>
 					<td class="altbg2"><input class="text"  name="email" value="{$member['email']}" /></td>
 				</tr>
+                <tr>
+                    <td class="altbg1" width="45%"><b>用户状态</b><br /> <span class="smalltxt">设置用户状态y生效，n未定义，v失效</span></td>
+                    <td  class="altbg2">
+                        <select name="approvestatus" id="approvestatus">
+                            <option {if $member['approvestatus']=='v'}selected{/if}  value ="v">失效</option>
+                            <option {if $member['approvestatus']=='y'}selected{/if}  value ="y">生效</option>
+                            <option {if $member['approvestatus']=='n'}selected{/if} value ="n">未定义</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1" width="45%"><b>是否域用户</b><br /> <span class="smalltxt">域用户会定期同步信息，比如itcode，还有检查用户是否过期；请确定用户是否域用户</span></td>
+                    <td class="altbg2">
+                        <select name="domain" id="domain">
+                            <option {if $member['domain']==0}selected {/if}  value="0">域用户</option>
+                            <option {if $member['domain']==1} selected {/if} value ="1">常规用户</option>
+                        </select>
+
+                    </td>
+                </tr>
 				<tr>
 					<td class="altbg1" width="45%"><b>用户组:</b><br><span class="smalltxt">用户所在用户组</span></td>
 					<td class="altbg2">
