@@ -5,6 +5,13 @@
     <div class="col-xs-16 main">
           <!-- 用户title部分导航 -->
               <!--{template user_title}-->
+           <ul class="trigger-menu" data-pjax-container="#list-container">
+
+                 <li <!--{if $regular=="user/follower"}--> class="active" <!--{/if}-->><a href="{url user/follower}"><i class="fa fa-user-circle-o"></i> 粉丝</a></li>
+           </ul>
+
+
+               
 
      
       <div id="list-container">

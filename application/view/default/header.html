@@ -24,9 +24,37 @@
         <!-- 如果用户登录，显示下拉菜单 -->
         <div class="user">
             <div data-hover="dropdown">
-                <a class="avatar" href="{url user/default}"><img src="{$user['avatar']}" alt="120"/></a>
+                <a class="avatar" href="{url user/default}"><img src="{$user['avatar']}" alt="120"/><span  style ="position:absolute ; margin-top:-4px;margin-left:-14px" class="badge msg-count hide"></span></a>
+                
             </div>
             <ul class="dropdown-menu">
+
+                <li><a class="avatar" href="{url user/default}">
+                        <img src="{$user['avatar']}" alt="120" /> </a>
+                   </li>
+                <li class="userdetal">
+                    <ul>
+                        <li>
+                            {$user['realname']}  
+                        </li>
+               <!--         <li>
+                            {$user['adminunit']}
+                        </li>-->
+                        <li>
+                            {$user['introduction']}
+                        </li>
+                        <li>
+                            {$user['phone']}
+                        </li>
+                    </ul>
+
+                </li>
+                        <li style ="float:right;margin-top:-85px">
+                    <a rel="nofollow" data-method="delete" href="{url user/logout}">
+                    <i class="fa fa-power-off"></i><span>退出</span>
+                 </a></li>
+
+                <hr />
                 <!--{if $user['groupid']<=3}-->
 
 
@@ -38,10 +66,24 @@
 
                 <!--{/if}-->
 
-                <li>
+           <!--     <li>
                     <a href="{url user/default}">
-                        <i class="fa fa-user"></i><span>我的主页</span>
-                    </a></li>
+                        <i class="fa fa-user"></i><span>个人中心</span>
+                    </a></li>-->
+                      <li>
+
+                                <a href="{url message/system}">
+                                    <i class="fa fa-envelope"></i><span>系统私信</span>
+                                    <span class="badge s-msg-count"></span>
+                                </a>
+                            </li>
+                            <li>
+
+                                <a href="{url message/system}">
+                                    <i class="fa fa-envelope-o"></i><span>个人私信</span>
+                                    <span class="badge p-msg-count"></span>
+                                </a>
+                            </li>
 
                 <li>
                     <a href="{url topic/userxinzhi/$user['uid']}}">
@@ -56,10 +98,7 @@
                     <a href="{url user/ask/1}">
                         <i class="fa fa-question-circle-o"></i><span>我的问题</span>
                     </a></li>
-                <li>
-                    <a rel="nofollow" data-method="delete" href="{url user/logout}">
-                        <i class="fa fa-power-off"></i><span>退出</span>
-                    </a></li>
+        
             </ul>
         </div>
         <!--{else}-->
@@ -110,50 +149,7 @@
                                 class="fa fa-bullhorn menu-icon"></i></a>
                     </li>
 
-                    <li class="notification v-notification-dropdown-menu ">
-                        <a class="notification-btn" data-hover="dropdown">
-                            <span class="menu-text">消息</span>
-                            <i class="fa fa-bell-o menu-icon"></i>
-                            <span class="badge msg-count hide"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-
-                            <li>
-                                <a href="{url user/attention}"><i class="fa  fa-gittip"></i>
-                                    <span>关注</span> <!----></a>
-                            </li>
-                            <!--<li>
-                                <a href="javascrpt:void(0)"><i class="fa fa-paypal"></i>
-                                    <span>赞赏</span> &lt;!&ndash;&ndash;&gt;
-                                </a></li>
-                                -->
-                            <li>
-
-                                <a href="{url message/system}">
-                                    <i class="fa fa-envelope"></i><span>系统私信</span>
-                                    <span class="badge s-msg-count"></span>
-                                </a>
-                            </li>
-                            <li>
-
-                                <a href="{url message/system}">
-                                    <i class="fa fa-envelope-o"></i><span>个人私信</span>
-                                    <span class="badge p-msg-count"></span>
-                                </a>
-                            </li>
-
-                            <!--<li>-->
-                                <!--<a href="javascrpt:void(0)"><i class="fa fa-heart"></i>-->
-                                    <!--<span>喜欢和赞</span> &lt;!&ndash;&ndash;&gt;-->
-                                <!--</a>-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<a href="javascrpt:void(0)"><i class="fa fa-flickr"></i>-->
-                                    <!--<span>其他消息</span> &lt;!&ndash;&ndash;&gt;-->
-                                <!--</a>-->
-                            <!--</li>-->
-                        </ul>
-                    </li>
+              
                     <!--{else}-->
                     <li class="active">
                         <a href="/">

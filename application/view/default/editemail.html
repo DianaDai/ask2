@@ -52,6 +52,17 @@
            </button>
        </div>
         </div>
+     {if $user['domain']==0}
+     <div class="form-group">
+         <div class="col-md-4">身份确认</div>
+         <div class ="col-md-8" style="margin-left:-25px">
+             <select name ="identity" id="identity">
+                 <option {if $user['identity']==1}selected {/if}  value="1">研发</option>
+                 <option {if $user['identity']==2} selected {/if} value="2">顾问&服务</option>
+             </select>
+         </div>
+     </div>
+    {/if}
      <div class="form-group">
          <label class="col-md-4 control-label">验证码</label>
          <div class="col-md-8" style="margin-left: -25px;">

@@ -24,6 +24,9 @@ class usermodel {
              
         }
     }
+    
+
+    
     /*daixy修改邮箱并修改激活为1 */
     function update_emailactive($email, $uid)
     {

@@ -41,11 +41,12 @@
              'indent', '|',
             'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 
             'link', 'unlink', 'anchor',  '|',
-            'simpleupload', 'insertimage', 'scrawl', 'insertvideo', 'attachment', 'map', 'insertcode',    '|',
+            'simpleupload', 'insertimage', 'scrawl', 'attachment', 'map', 'insertcode',    '|',
             'horizontal',   '|',
           
             'preview', 'searchreplace', 'drafts'
         ]]
+        //'insertvideo'  临时去掉插入视频按钮
         //当鼠标放在工具栏上时显示的tooltip提示,留空支持自动多语言配置，否则以配置值为准
         //,labelMap:{
         //    'anchor':'', 'undo':''

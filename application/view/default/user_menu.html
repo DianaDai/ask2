@@ -9,7 +9,7 @@
   <ul class="list user-dynamic">
     <li>
       <a href="{url user/default}">
-        <i class="fa fa-home"></i> <span>我的首页</span>
+        <i class="fa fa-user"></i> <span>个人中心</span>
 </a>    </li>
 
 
@@ -34,15 +34,28 @@
 </a>    </li>
 
    <li>
-      <a href="{url topic/userxinzhi/$user['uid']}">
+      <a href="{url user/xinzhi/$user['uid']}">
         <i class=" fa fa-rss-square"></i> <span>我的文章</span>
 </a>    </li>
 <li>
       <a href="{url user/attention/question}">
         <i class="fa fa-star-o"></i> <span>我关注的问题</span>
 </a>    </li>
+      <li>
+          <a href="{url user/attention/topic}">
+              <i class ="fa fa-star"></i> <span>我关注的文章</span>
+          </a>
+      </li>
 <li>
-      <a href="{url user/attention}">
+      <a href="{url user/attention_user}">
         <i class="fa fa-user-circle"></i> <span>我关注的用户</span>
 </a>    </li>
+
+      <li>
+          <a href="{url user/follower}">
+              <i class ="fa fa-user-circle-o"></i> <span>我的粉丝</span>
+          </a>
+      </li>
+
+
   </ul>

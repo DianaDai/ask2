@@ -12,6 +12,7 @@ class usercontrol extends base
         $this->base($get, $post);
         $this->load('user');
         $this->load('topic');
+        $this->load('topic_tag');
         $this->load('question');
         $this->load('answer');
         $this->load("category");
@@ -122,9 +123,40 @@ class usercontrol extends base
         include template('serach_huser');
     }
 
+    //发现个人的文章和其他人员的文章公用一个
+    //页面，现在把他们分开
+    //创建一个myxinzhi 页面
     function onxinzhi()
     {
+        $uid=$this->get[2];
+    	if($uid==null){
+    		exit("非法操作");
+    	}
+        $member = $_ENV['user']->get_by_uid($uid, 2);
+        $is_followed = $_ENV['user']->is_followed($member['uid'], $this->user['uid']);
+        $navtitle = $member['username'].'的专栏列表';
+        
+        @$page = max(1, intval($this->get[3]));
+        $pagesize = 5;//$this->setting['list_default'];
+        $startindex = ($page - 1) * $pagesize;
+        $rownum = $this->db->fetch_total('topic',"authorid=$uid");
+        $topiclist = $_ENV['topic']->get_list_byuid($uid, $startindex, $pagesize);
+        $pages = @ceil($rownum / $pagesize);
+        $catags= $_ENV['topic']->get_article_by_uid($uid);
+        
+        foreach ($topiclist as $key=>$val){
+            
 
+            $taglist = $_ENV['topic_tag']->get_by_aid($val['id']);
+
+            $topiclist[$key]['tags']=$taglist;
+            
+            
+        }
+        $departstr = page($rownum, 5, $page, "user/xinzhi/$uid");
+        $metakeywords = $navtitle;
+        $metadescription = $member['username'].'的专栏列表';
+       
         include template('myxinzhi');
     }
 
@@ -900,7 +932,7 @@ class usercontrol extends base
         $departstr = page($answersize, $pagesize, $page, "user/space_answer/$uid/$status"); //得到分页字符串
         include template('space_answer');
     }
-
+//关注我的用户
     function onfollower()
     {
         $navtitle = '关注者';
@@ -942,15 +974,28 @@ class usercontrol extends base
             $departstr = page($rownum, $pagesize, $page, "user/attention/$attentiontype");
             include template("myattention_question");
         } else {
-            $page = max(1, intval($this->get[2]));
-            $pagesize = $this->setting['list_default'];
-            $startindex = ($page - 1) * $pagesize;
-            $attentionlist = $_ENV['user']->get_attention($this->user['uid'], $startindex, $pagesize);
-            $rownum = $this->db->fetch_total('user_attention', " followerid=" . $this->user['uid']);
-            $departstr = page($rownum, $pagesize, $page, "user/attention");
-            include template("myattention");
+            //换成关注的文章
+            
+     
         }
     }
+    
+    
+    //我关注的用户
+
+    function onattention_user(){
+        $navtitle ='已关注';
+        $page = max(1, intval($this->get[2]));
+        $pagesize = $this->setting['list_default'];
+        $startindex = ($page - 1) * $pagesize;
+        $attentionlist = $_ENV['user']->get_attention($this->user['uid'], $startindex, $pagesize);
+        $rownum = $this->db->fetch_total('user_attention', " followerid=" . $this->user['uid']);
+        $departstr = page($rownum, $pagesize, $page, "user/attention");
+        include template("myattention");
+    
+    }
+    
+    
 
     function onscore()
     {
@@ -1373,14 +1418,36 @@ class usercontrol extends base
         if ($this->post['submit']) {
             $email = trim($this->post['email']);
             $activecode = trim($this->post['code']);
+            $identity =$this->post['identity'];
             //$code = $_COOKIE['useremailcheck'];
             $user = $_ENV['user']->get_by_uid($uid);
+            $msg ='';
+            if ($this->user['identity']!=$user['identity'])
+            {
+                $_ENV['user']->update_identity($identity,$uid);
+                $msg ='身份修改成功';
+            }
+            
             //已经激活了就不需要激活
             if ($this->user['active'] == 1 && $this->user['email'] == $email) {
-                $this->message("您激活过该邮箱了,您是不是想修改邮箱!", 'BACK');
+                if ($msg !='')
+                {
+                	$this->message($msg,'BACK');
+                }else
+                {
+                    $this->message("您激活过该邮箱了,您是不是想修改邮箱!", 'BACK');
+
+                }   
+                
             } else {
                 if ($email == '') {
-                    $this->message("请输入邮箱", 'BACK');
+                    if ($msg!='')
+                    {
+                    	$this->message($msg,'BACK');
+                    }else
+                    {
+                        $this->message("请输入邮箱", 'BACK');
+                    } 
                 } else {
 //                    if(empty($code)){
 //                        $this->message("验证码已过期，请重新发送验证码!");
