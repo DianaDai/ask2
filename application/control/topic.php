@@ -11,7 +11,8 @@ var $whitelist;
   
           $this->load('category');
             $this->load('question');
-            
+            $this->load('email_msg');
+            $this->load('email');
             $this->whitelist="getuserarticles,getnewlist,getbycatidanduid,view";
     }
 
@@ -165,6 +166,25 @@ foreach ($topiclist as $key=>$val){
     	$supports=rand(1, 5);
     	$id=$_ENV['articlecomment']->add_seo($tid,$title,$content,$this->user['uid'],$this->user['username'],$status,$supports);
     	if($id>0){
+            //通知作者
+            $topic = $_ENV['topic']->get($tid);
+            $touser = $_ENV['user']->get_by_uid($topic['authorid']);
+            $viewurl = urlmap('topic/getone/' . $tid, 2);
+            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+
+            $msginfo = $_ENV['email_msg']->topic_ans($touser['username'],$title,$weburl);
+            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
+            //通知关注着
+            $this->load('favorite');
+            $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
+            
+            foreach ($favusers as $fav)
+            {
+            	$msginfo = $_ENV['email_msg']->topic_ans_fav($fav['username'],$title,$weburl);
+                $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+            }
+            
     		$message['state']=1;
     		$message['msg']="评论成功!";
     		 $this->load("doing");
@@ -178,6 +198,26 @@ foreach ($topiclist as $key=>$val){
     	echo json_encode($message);
     		exit();
     }
+    
+    
+    /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+        
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+            
+        }
+    }
+    
+    
+    
+    
+    
     function onhotlist(){
     	 $navtitle = "最新文章推荐";
         $seo_description= "推荐问答最新文章，图文展示文章内容。";
@@ -532,6 +572,33 @@ foreach ($topiclist as $key=>$val){
     		include template('topicone');
  
     }
+    
+    
+    function onajaxhasssupport(){
+        $tid = intval($this->get[2]);
+        $has = $_ENV['topic']->get_support_by_sid_aid($this->user['sid'],$tid);
+        $ret =$has ?'1' :'-1'; //?输出数字不行？
+        exit($ret);
+    }
+    
+    function onajaxaddsupport(){
+        $topicid = intval($this->get[2]);
+        $topic = $_ENV['topic']->get($topicid);
+        $_ENV['topic']->add_support($this->user['sid'], $topicid, $topic['authorid']);
+        $topic = $_ENV['topic']->get($topicid);
+        if ($this->user['uid']) {
+            $this->load('doing');
+            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 15, $topicid, $topic['title']);
+            $touser =$_ENV['user']->get_by_uid($topic['authorid']);
+            $msginfo = $_ENV['email_msg']->topic_ok($touser['username'],$topic['title']);
+            $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
+            
+        }
+        exit($topic['supports']);
+    }
+    
+    
+    
     
 
     function onuserxinzhi(){

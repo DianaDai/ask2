@@ -50,15 +50,34 @@ class favoritemodel {
         while ($fav=$this->db->fetch_array($query))
         {
         	$user['format_time']=tdate($fav['time']);
-            $_user=$this->get_by_uid($user['uid']);
+            $_user=$this->get_by_uid($fav['uid']);
             $user['username']=$_user['username'];
+            $user['isnotify']=$_user['isnotify'];
+            $user['uid']=$_user['uid'];
             $user['email']=$_user['email'];
-            $userlist=$user;
+            $userlist[]=$user;
         }
         
         return $userlist;
         
     }
+    //获取文章所有关注着
+    function get_list_bytid_fav($tid){
+        $userlist = array();
+        $query =$this->db->query("SELECT * FROM ".DB_TABLEPRE."topic_likes where tid=$tid");
+        while ($fav=$this->db->fetch_array($query))
+        {
+        	$user['format_time']=tdate($fav['time']);
+            $_user =$this->get_by_uid($fav['uid']);
+            $user['username'] = $_user['username'];
+            $user['isnotify'] = $_user['isnotify'];
+            $user['uid'] = $_user['uid'];
+            $user['email'] = $_user['email'];
+            $userlist[] =$user;
+        }
+        return $userlist;
+    }
+    
     
     
     function get_list_byqid($qid,$start = 0, $limit = 10) {

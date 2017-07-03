@@ -26,12 +26,34 @@ class admin_notecontrol extends base {
             $title = $this->post['title'];
             $url = $this->post['url'];
             $content = $this->post['content'];
-            $_ENV['note']->add($title, $url, $content);
+            $nid= $_ENV['note']->add($title, $url, $content);
+            $this->load('user');
+            $this->load('email_msg');
+            $followerlist= $_ENV['user']->get_follower($this->user['uid']);
+       
+            $viewurl = url('note/view/'.$nid,2);
+            global $setting;
+            $qurl='<br /> <a href="' .$viewurl . '">点击查看公告</a>'; //站内url都使用这个
+            foreach ($followerlist as $fol)
+            {
+            	$msginfo =$_ENV['email_msg']->notice_info($fol['info']['username'],$title,$qurl);
+                $this->send_msg_all($fol['info'],$msginfo['title'],$msginfo['content']);
+            }
+
             $this->ondefault('公告添加成功！');
         } else {
             include template('addnote', 'admin');
         }
     }
+    
+ 
+    
+    
+    
+    
+    
+    
+    
 
     function onedit() {
         if (isset($this->post['submit'])) {

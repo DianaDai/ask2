@@ -21,9 +21,9 @@ class emailmodel
     }
     
     /*  写入要发送邮件     */
-    function sendmail($touser ,$subject ,$content){
-        $mailto=$touser['email'];
-        $this->db->query("INSERT INTO ".DB_TABLEPRE."email (`mailto`,`subject`,`content`) values('$mailto','$subject','$content')");
+    function sendmail($tomail ,$subject ,$content){
+
+        $this->db->query("INSERT INTO ".DB_TABLEPRE."email (`mailto`,`subject`,`content`) values('$tomail','$subject','$content')");
     }
     
     

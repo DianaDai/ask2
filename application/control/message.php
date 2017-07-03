@@ -64,6 +64,12 @@ class messagecontrol extends base {
             ($touser['uid'] == $this->user['uid']) && $this->message("不能给自己发消息!", "message/send");
             (trim($this->post['content']) == '') && $this->message("消息内容不能为空!", "message/send");
             $_ENV['message']->add($this->user['username'], $this->user['uid'], $touser['uid'], htmlspecialchars($this->post['subject']), $this->post['content']);
+            $this->load('email');
+            $this->load('email_msg');
+            $viewurl = url('message/personal/',2);
+            $qurl='<br /> <a href="' .$viewurl . '">点击查看消息</a>'; 
+            $msginfo = $_ENV['email_msg']->user_msg($touser['username'],$qurl);
+            $_ENV['email']->sendmail($touser['email'],$msginfo['title'],$msginfo['content']);
             $this->credit($this->user['uid'], $this->setting['credit1_message'], $this->setting['credit2_message']);
             $this->message('消息发送成功!', get_url_source());
         }

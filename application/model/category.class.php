@@ -162,6 +162,34 @@ class categorymodel {
         }
         return $followerlist;
     }
+ 
+ //获取关注分类的用户
+ function get_fol_sendmsg($cid){
+     $followerlist = array();
+     $query = $this->db->query("SELECT * FROM ".DB_TABLEPRE."categotry_follower WHERE cid=$cid ORDER BY `time` DESC ");
+     while ($follower =$this->db->fetch_array($query))
+     {
+     	$_user = $this->get_by_uid($follower['uid']);
+         $follower['username'] = $_user['username'];
+         $follower['uid'] = $_user['uid'];
+         $follower['email'] = $_user['email'];
+         $follower['isnotify'] = $_user['isnotify'];
+         $follower['avatar'] = get_avatar_dir($follower['uid']);
+         $follower['format_time'] = tdate($follower['time']);
+         $followerlist[] = $follower;
+     }
+     return $followerlist;
+     
+ 
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
     /*根据uid获取用户名*/
     function get_by_uid($uid) {

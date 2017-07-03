@@ -924,3 +924,37 @@
 		max-width: 315px
 	}
 }
+
+
+
+/*设置用户标题样式*/
+
+
+.person .main .main-top .instr{
+    margin-top:5px;
+    padding-left:100px;
+    font-size:14px;
+}
+
+.instr ul li{
+    display:block;
+    list-style:none;
+}
+.person .main .main-top .instr  ul .level{
+    float:right;
+    margin-right:290px;
+    margin-top:-20px;
+}
+.person .main .main-top .instr ul .score{
+    float:right;
+    margin-right:190px;
+    margin-top:-20px;
+}
+
+.person .main .main-top .instr ul .riche{
+    float:right;
+    margin-right:100px;
+    margin-top:-20px;
+}
+
+

@@ -24,6 +24,9 @@ class usermodel {
              
         }
     }
+    
+
+    
     /*daixy修改邮箱并修改激活为1 */
     function update_emailactive($email, $uid)
     {
@@ -235,7 +238,7 @@ class usermodel {
 
     /* 添加用户，本函数需要返回uid */
 
-    function add($username, $password, $email = '', $uid = 0) {
+    function add($username, $password, $email = '', $uid = 0 ) {
         $password = md5($password);
         if ($uid) {
             $this->db->query("REPLACE INTO  " . DB_TABLEPRE . "user (uid,username,password,email,regip,regtime,`lastlogin`) VALUES ('$uid','$username','$password','$email','" . getip() . "',{$this->base->time},{$this->base->time})");
@@ -245,6 +248,26 @@ class usermodel {
         }
         return $uid;
     }
+    //添加用户 针对域用户存在的情况
+    function adddomain($username ,$password,$domain=0){
+        $password =md5($password);
+        if ($domain)
+        {
+        	$this->db->query("INSERT INTO ".DB_TABLEPRE."user(username,password,introduction,approvestatus,email,itcode,realname,adminunitid,adminunit,regip,regtime,`lastlogin`) values ('$username','$password','".$domain['introduction']."','y','".$domain['email']."','".$domain['itcode']."','".$domain['displayname']."','".$domain['adminunitid']."','".$domain['adminunit']."','" . getip() . "',{$this->base->time},{$this->base->time})");
+            $uid = $this->db->insert_id();   
+        }else
+        {
+        	$this->db->query("INSERT INTO " . DB_TABLEPRE . "user(username,password,email,regip,regtime,`lastlogin`) values ('$username','$password','','" . getip() . "',{$this->base->time},{$this->base->time})");
+            $uid = $this->db->insert_id();
+        }
+        return $uid;
+        
+        
+    }
+    
+    
+    
+    
     function caijiadd($username, $password, $email = '',$fromsite=1) {
         $password = md5($password);
      
@@ -318,9 +341,9 @@ class usermodel {
 
     /* 后台更新用户信息 */
 
-    function update_user($uid, $username, $passwd, $email, $groupid, $credits, $credit1, $credit2, $gender, $bday, $phone, $qq, $msn, $introduction, $signature,$isblack=0) {
+    function update_user($uid, $username, $passwd, $email, $groupid, $credits, $credit1, $credit2, $gender, $bday, $phone, $qq, $msn, $introduction, $signature,$isblack=0 ,$domain=0 ,$approvestatus='y') {
      
-    	$this->db->query("UPDATE " . DB_TABLEPRE . "user SET `username`='$username',`password`='$passwd',`isblack`='$isblack',`email`='$email',`groupid`='$groupid',`credits`=$credits,`credit1`=$credit1,`credit2`=$credit2,`gender`='$gender',`bday`='$bday',`phone`='$phone',`qq`='$qq',`msn`='$msn',introduction='$introduction',`signature`='$signature'   WHERE `uid`=$uid");
+    	$this->db->query("UPDATE " . DB_TABLEPRE . "user SET `username`='$username',`password`='$passwd',`isblack`='$isblack',`email`='$email',`groupid`='$groupid',`credits`=$credits,`credit1`=$credit1,`credit2`=$credit2,`gender`='$gender',`bday`='$bday',`phone`='$phone',`qq`='$qq',`msn`='$msn',introduction='$introduction',`signature`='$signature' ,`domain` ='$domain',`approvestatus`='$approvestatus'  WHERE `uid`=$uid");
     }
 
     /* 更新authstr */

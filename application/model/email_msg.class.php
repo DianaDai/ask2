@@ -39,7 +39,7 @@ class email_msgmodel
         $msg['content']= str_replace('{zjxm}',$zjxm,$msg['content']);
         $msg['content']= str_replace('{lymc}',$lymc,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
-        $msg['content']=$msg['content'].=$url;
+        $msg['content']= str_replace('{url}',$url,$msg['content']);
         return $msg;
         
     }
@@ -147,14 +147,14 @@ class email_msgmodel
     
     
     function question_atto($zzxm,$wtbt,$gzzxm){
-        $msg = $this->get_msg('问题','关注',2);
+        $msg = $this->get_msg('问题','关注');
         $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         return $msg;
     }
     function question_ok($plrmc,$wtbt){
-        $msg = $this->get_msg('问题','点赞',4);
+        $msg = $this->get_msg('问题','点赞');
         $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content'])   ;
         return $msg;
@@ -162,7 +162,163 @@ class email_msgmodel
     }
     
     
+    function question_edit($zzxm,$wtbt,$glymc,$time,$url){
+        $msg =$this->get_msg('问题','编辑问题');
+        $msg['content']= str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        return $msg;
+        
+    }
+    //编辑答案
+    function question_edit_ans($plrmc,$wtbt,$glymc,$time,$url){
+        $msg = $this->get_msg('问题','编辑答案');
+        $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        $msg['content']= str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    //关闭问题
     
+    function question_close($zzxm,$wtbt,$glymc,$time){
+        $msg = $this->get_msg('问题','关闭问题');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        return $msg;
+    }
+    //删除问题
+    
+    function question_del($zzxm,$wtbt,$glymc,$time){
+        $msg =$this->get_msg('问题','删除问题');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
+        $msg['content'] = str_replace('{glymc}',$glymc,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        return $msg;
+    }
+    
+    //文章修改
+    function topic_edit($gzzxm,$wzbt,$url){
+        $msg= $this->get_msg('文章','编辑');
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    function topic_ans($zzxm,$wzbt,$url){
+        $msg =$this->get_msg('文章','评论',2);
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    function topic_ans_fav($gzzxm,$wzbt,$url){
+        $msg =$this ->get_msg('文章','评论',3);
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return  $msg;
+    }
+    
+    function topic_save($zzxm,$wzbt,$time,$gzzxm){
+        $msg = $this->get_msg('文章','收藏');
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt ,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time, $msg['content']);
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        return $msg;
+    }
+    //目前文章还没有点赞表
+    //要么不做要么创建表做个点赞功能
+    function topic_ok($zzxm,$wzbt){
+        $msg = $this->get_msg('文章','点赞');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{wzbt}',$wzbt ,$msg['content']);
+        return $msg;
+    }
+    //公告通知粉丝。。。
+    function notice_info($yhxm,$ggbt,$url) {
+        $msg = $this->get_msg('公告','新增');
+        $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
+        $msg['content'] = str_replace('{ggbt}',$ggbt ,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    //公告评论
+    function notice_comment($zzxm,$ggbt,$url){
+        $msg = $this->get_msg('公告','评论');
+        $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
+        $msg['content'] = str_replace('{ggbt}',$ggbt,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    //用户 被关注
+    
+    
+    function user_follow($yhxm ,$gzzxm,$time){
+        $msg = $this->get_msg('用户','被关注');
+        $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{time}',$time,$msg['content']);
+        
+        return $msg;
+    }
+    
+    function user_msg($yhxm,$url){
+        $msg = $this->get_msg('用户','私信');
+        $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    function user_update($yhxm,$djmc){
+        $msg = $this->get_msg('用户','头衔变更');
+        $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
+        $msg['content'] = str_replace('{djmc}',$djmc,$msg['content']);
+        return $msg;
+    }
+    
+    
+    function user_replace($yhxm,$spmc,$gymc){
+        $msg = $this->get_msg('用户','兑换');
+        $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
+        $msg['content'] = str_replace('{spmc}',$spmc,$msg['content']);
+        $msg['content'] = str_replace('{gymc}',$gymc,$msg['content']);
+        return $msg;
+    }
+    
+    function special($gzzxm,$lymc,$url){
+        $msg = $this->get_msg('专题','新增文章');
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    
+    function speacial_pro($gzzxm,$lymc,$zjxm,$url){
+        $msg = $this->get_msg('专题','新增专家',5);
+        $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
+        $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
+        $msg['content'] = str_replace('{zjxm}',$zjxm,$msg['content']);
+        $msg['content'] = str_replace('{url}',$url,$msg['content']);
+        return $msg;
+    }
+    //
+    function sepeacial_uppro($zjxm,$lymc){
+        $msg = $this->get_msg('专题','新增专家',6);
+        $msg['content'] = str_replace('{zjxm}',$zjxm,$msg['content']);
+        $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
+        return $msg;
+    }
     
     
 }

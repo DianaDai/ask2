@@ -8,6 +8,8 @@ class giftcontrol extends base {
         $this->base($get,$post);
         $this->load('gift');
         $this->load('user');
+        $this->load('email');
+        $this->load('email_msg');
     }
 
     function ondefault() {
@@ -66,9 +68,28 @@ class giftcontrol extends base {
             $_ENV['user']->update_gift($this->user['uid'],$realname,$email,$phone,$qq);
             $_ENV['gift']->addlog($this->user['uid'],$gid,$this->user['username'],$realname,$this->user['email'],$phone,$addr,$postcode,$gift['title'],$qq,$notes,$gift['credit']);
             $this->credit($this->user['uid'],0,-$gift['credit']);//扣除财富值
+            
+            
+            $msginfo = $_ENV['email_msg']->user_replace($this->user['username'],$gift['title'],'admin');
+            $this->sendmsg($this->user,$msginfo['title'],$msginfo['content']);
             $this->message("礼品兑换申请已经送出等待管理员审核！","gift/default");
         }
     }
 
+       /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+        
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+            
+        }
+    }
+    
+    
 }
 ?>

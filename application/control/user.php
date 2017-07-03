@@ -12,10 +12,13 @@ class usercontrol extends base
         $this->base($get, $post);
         $this->load('user');
         $this->load('topic');
+        $this->load('topic_tag');
         $this->load('question');
         $this->load('answer');
         $this->load("category");
         $this->load("favorite");
+        $this->load("email");
+        $this->load("email_msg");
 
         $this->whitelist = "search,spacefollower,vertifyemail,editemail,sendcheckmail,getsmscode";
     }
@@ -120,9 +123,40 @@ class usercontrol extends base
         include template('serach_huser');
     }
 
+    //发现个人的文章和其他人员的文章公用一个
+    //页面，现在把他们分开
+    //创建一个myxinzhi 页面
     function onxinzhi()
     {
+        $uid=$this->get[2];
+    	if($uid==null){
+    		exit("非法操作");
+    	}
+        $member = $_ENV['user']->get_by_uid($uid, 2);
+        $is_followed = $_ENV['user']->is_followed($member['uid'], $this->user['uid']);
+        $navtitle = $member['username'].'的专栏列表';
+        
+        @$page = max(1, intval($this->get[3]));
+        $pagesize = 5;//$this->setting['list_default'];
+        $startindex = ($page - 1) * $pagesize;
+        $rownum = $this->db->fetch_total('topic',"authorid=$uid");
+        $topiclist = $_ENV['topic']->get_list_byuid($uid, $startindex, $pagesize);
+        $pages = @ceil($rownum / $pagesize);
+        $catags= $_ENV['topic']->get_article_by_uid($uid);
+        
+        foreach ($topiclist as $key=>$val){
+            
 
+            $taglist = $_ENV['topic_tag']->get_by_aid($val['id']);
+
+            $topiclist[$key]['tags']=$taglist;
+            
+            
+        }
+        $departstr = page($rownum, 5, $page, "user/xinzhi/$uid");
+        $metakeywords = $navtitle;
+        $metadescription = $member['username'].'的专栏列表';
+       
         include template('myxinzhi');
     }
 
@@ -251,6 +285,20 @@ class usercontrol extends base
 
             $this->load("doing");
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 9, $aid, $title);
+            
+            //通知关注分类的用户
+            $category = $_ENV['category']->get($acid);
+            $followerlist = $_ENV['category']->get_fol_sendmsg($acid);
+            $viewurl = urlmap('topic/getone/' . $aid, 2);
+            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+
+            foreach ($followerlist as $fov)
+            {
+            	$msginfo =$_ENV['email_msg']->special($fov['username'],$category['name'],$weburl);
+                $this->sendmsg($fov,$msginfo['title'],$msginfo['content']);
+            }
+
+            
             $this->message('添加成功！', 'article-' . $aid);
         } else {
             // $this->load("topicclass");
@@ -374,6 +422,14 @@ class usercontrol extends base
 //                }
                     $ispc = $topic['ispc'];
                     $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
+                    $viewurl = urlmap('topic/getone/' . $tid, 2);
+                    $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+                    $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
+                    foreach ($favusers as $fav)
+                    {
+                        $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                        $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+                    }
                     $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                     $this->message('文章修改成功！', 'article-' . $tid);
                 } else {
@@ -385,6 +441,14 @@ class usercontrol extends base
                 }
                 $ispc = $topic['ispc'];
                 $_ENV['topic']->updatetopic($tid, $title, $desrc, $upimg, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
+                $viewurl = urlmap('topic/getone/' . $tid, 2);
+                $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+                $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
+                foreach ($favusers as $fav)
+                {
+                    $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                	$this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+                }
                 $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                 $this->message('文章修改成功！', 'article-' . $tid);
             }
@@ -407,6 +471,27 @@ class usercontrol extends base
         }
 
     }
+    
+    /*发送邮件和消息   给谁  主题，内容   */
+    function sendmsg($touser,$subject,$content){
+        
+        $time = time();
+        $msgfrom = $this->setting['site_name'] . '管理员';
+        if ((1 & $touser['isnotify']) && $this->setting['notify_message']) {
+            $this->db->query('INSERT INTO ' . DB_TABLEPRE . "message  SET `from`='" . $msgfrom . "' , `fromuid`=0 , `touid`='".$touser['uid']."'  , `subject`='" . $subject . "' , `time`=" . $time . " , `content`='" . $content . "'");
+        }
+        if ((2 & $touser['isnotify']) && $this->setting['notify_mail']) {
+            $_ENV['email']->sendmail($touser['email'],$subject,$content);
+            
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
 
     function onregtip()
     {
@@ -847,7 +932,7 @@ class usercontrol extends base
         $departstr = page($answersize, $pagesize, $page, "user/space_answer/$uid/$status"); //得到分页字符串
         include template('space_answer');
     }
-
+//关注我的用户
     function onfollower()
     {
         $navtitle = '关注者';
@@ -889,15 +974,28 @@ class usercontrol extends base
             $departstr = page($rownum, $pagesize, $page, "user/attention/$attentiontype");
             include template("myattention_question");
         } else {
-            $page = max(1, intval($this->get[2]));
-            $pagesize = $this->setting['list_default'];
-            $startindex = ($page - 1) * $pagesize;
-            $attentionlist = $_ENV['user']->get_attention($this->user['uid'], $startindex, $pagesize);
-            $rownum = $this->db->fetch_total('user_attention', " followerid=" . $this->user['uid']);
-            $departstr = page($rownum, $pagesize, $page, "user/attention");
-            include template("myattention");
+            //换成关注的文章
+            
+     
         }
     }
+    
+    
+    //我关注的用户
+
+    function onattention_user(){
+        $navtitle ='已关注';
+        $page = max(1, intval($this->get[2]));
+        $pagesize = $this->setting['list_default'];
+        $startindex = ($page - 1) * $pagesize;
+        $attentionlist = $_ENV['user']->get_attention($this->user['uid'], $startindex, $pagesize);
+        $rownum = $this->db->fetch_total('user_attention', " followerid=" . $this->user['uid']);
+        $departstr = page($rownum, $pagesize, $page, "user/attention");
+        include template("myattention");
+    
+    }
+    
+    
 
     function onscore()
     {
@@ -1320,14 +1418,36 @@ class usercontrol extends base
         if ($this->post['submit']) {
             $email = trim($this->post['email']);
             $activecode = trim($this->post['code']);
+            $identity =$this->post['identity'];
             //$code = $_COOKIE['useremailcheck'];
             $user = $_ENV['user']->get_by_uid($uid);
+            $msg ='';
+            if ($this->user['identity']!=$user['identity'])
+            {
+                $_ENV['user']->update_identity($identity,$uid);
+                $msg ='身份修改成功';
+            }
+            
             //已经激活了就不需要激活
             if ($this->user['active'] == 1 && $this->user['email'] == $email) {
-                $this->message("您激活过该邮箱了,您是不是想修改邮箱!", 'BACK');
+                if ($msg !='')
+                {
+                	$this->message($msg,'BACK');
+                }else
+                {
+                    $this->message("您激活过该邮箱了,您是不是想修改邮箱!", 'BACK');
+
+                }   
+                
             } else {
                 if ($email == '') {
-                    $this->message("请输入邮箱", 'BACK');
+                    if ($msg!='')
+                    {
+                    	$this->message($msg,'BACK');
+                    }else
+                    {
+                        $this->message("请输入邮箱", 'BACK');
+                    } 
                 } else {
 //                    if(empty($code)){
 //                        $this->message("验证码已过期，请重新发送验证码!");
@@ -1578,10 +1698,17 @@ class usercontrol extends base
             $quser = $_ENV['user']->get_by_uid($uid);
             $this->load("doing");
             $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
-            $msgfrom = $this->setting['site_name'] . '管理员';
-            $username = addslashes($this->user['username']);
-            $this->load("message");
-            $_ENV['message']->add($msgfrom, 0, $uid, $username . "刚刚关注了您", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您!<br /> <a href="' . url('user/follower', 1) . '">点击查看</a>');
+            
+            //$viewurl = urlmap('user/follower' , 1); //查看关注
+            //$weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看</a>';
+            $msginfo =$_ENV['email_msg']->user_follow($quser['username'],$this->user['username'],tdate(time(),3,0));
+            
+            $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
+            
+            //$msgfrom = $this->setting['site_name'] . '管理员';
+            //$username = addslashes($this->user['username']);
+            //$this->load("message");
+            //$_ENV['message']->add($msgfrom, 0, $uid, $username . "刚刚关注了您", '<a target="_blank" href="' . url('user/space/' . $this->user['uid'], 1) . '">' . $username . '</a> 刚刚关注了您!<br /> <a href="' . url('user/follower', 1) . '">点击查看</a>');
         }
         exit('ok');
     }
