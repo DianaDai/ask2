@@ -9311,12 +9311,19 @@ nav .user .dropdown-menu .avatar img{
 
 nav .user .dropdown-menu .userdetal{
     display:block;
-    margin-left:98px;
-    margin-top:-41px;
+    margin-top:-45px;
+    margin-left:80px;
 }
 ul .userdetal ul li {
+    /*line-height:20px;*/
+    font-size:13px;
+    height:20px;
     display:block;
    
+}
+nav .user .dropdown-menu .viewimg{
+    margin-left:-15px;
+    margin-top:-5px;
 }
 
 

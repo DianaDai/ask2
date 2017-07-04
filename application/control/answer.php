@@ -52,7 +52,7 @@ class answercontrol extends base {
               $userlist = $_ENV['favorite']->get_list_byqid_fav($qid);
               foreach ($userlist as $val)
               {
-                  $msginfo = $_ENV['email_msg']->question_ask_with($val['username'],$question['title'],$qurl); //追答了问题通知给关注着
+                  $msginfo = $_ENV['email_msg']->question_ask_with($val['realname'],$question['title'],$qurl); //追答了问题通知给关注着
                   
                   $this-> sendmsg($val,$msginfo['title'],$msginfo['content']);
               }
@@ -76,7 +76,7 @@ class answercontrol extends base {
                 $userlist = $_ENV['favorite']->get_list_byqid_fav($qid);
                 foreach ($userlist as $val)
                 {
-                    $msginfo = $_ENV['email_msg']->question_ask($val['username'],$question['title'],$qurl);
+                    $msginfo = $_ENV['email_msg']->question_ask($val['realname'],$question['title'],$qurl);
                     
                    $this-> sendmsg($val,$msginfo['title'],$msginfo['content']);
                 }

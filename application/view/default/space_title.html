@@ -10,8 +10,19 @@
     <a class="btn btn-hollow" href="{url message/send/$member['uid']}">私信Ta</a>
 
   <div class="title">
-    <a class="name" href="{url user/space/$member['uid']}">{$member['username']}</a>
+    <a class="name" href="{url user/space/$member['uid']}">{$member['realname']}</a>
   </div>
+   <div  class="instr">
+       <ul>
+           <li><strong>部门</strong>  {$member['adminunit']} </li>
+           <li><strong>职务</strong>  {$member['introduction']}</li>
+           <li><strong>联系方式</strong> {$member['phone']}</li>
+           <li class="level"><strong>等级</strong> {$member['grouptitle']} </li>
+           <li class="score" ><strong>积分</strong> {$member['credit1']}</li>
+           <li class="riche" ><strong>财富</strong> {$member['credit2']}</li>
+       </ul>
+
+   </div>
   <div class="info">
     <ul>
       <li>

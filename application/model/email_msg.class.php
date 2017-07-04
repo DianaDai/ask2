@@ -86,7 +86,7 @@ class email_msgmodel
         return $msg;
         
     }
-    /*追问评论者或回答者*/
+    /*追问评论者或回答者 这个暂时没有改 */
     function question_comment($plrmc,$wtbt,$url){
         $msg =$this->get_msg('问题','追问',4);
         $msg['content']=str_replace('{plrmc}',$plrmc,$msg['content']);

@@ -2,9 +2,9 @@
 /*弹出user信息样式*/
 .usercard_in{
 	    border-radius: 1px;
-   -webkit-box-shadow:0 0 10px #0CC;  
-  -moz-box-shadow:0 0 10px #0CC;  
-  box-shadow:0 0 10px #0CC; 
+   -webkit-box-shadow:0 0 10px #3f3f3f;  
+  -moz-box-shadow:0 0 10px #3f3f3f;  
+  box-shadow:0 0 10px #3f3f3f; 
     
 }
 

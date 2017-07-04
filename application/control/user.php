@@ -277,14 +277,14 @@ class usercontrol extends base
             if (trim($outimgurl) != '') {
                 $filepath = $outimgurl;
             }
-            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['username'], $this->user['uid'], 1, $acid,$authoritycontrol,$cid1,$cid2,$cid3);
+            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['realname'], $this->user['uid'], 1, $acid,$authoritycontrol,$cid1,$cid2,$cid3);
 //$tag=implode(',',$tagarr);
             // $taglist = explode(",", $tag);
             $_ENV['userlog']->add('topic');
             $ataglist && $_ENV['topic_tag']->multi_add(array_unique($ataglist), $aid);
 
             $this->load("doing");
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 9, $aid, $title);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 9, $aid, $title);
             
             //通知关注分类的用户
             $category = $_ENV['category']->get($acid);
@@ -294,7 +294,7 @@ class usercontrol extends base
 
             foreach ($followerlist as $fov)
             {
-            	$msginfo =$_ENV['email_msg']->special($fov['username'],$category['name'],$weburl);
+            	$msginfo =$_ENV['email_msg']->special($fov['realname'],$category['name'],$weburl);
                 $this->sendmsg($fov,$msginfo['title'],$msginfo['content']);
             }
 

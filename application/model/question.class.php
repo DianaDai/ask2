@@ -494,7 +494,7 @@ class questionmodel
         $creattime = $this->base->time;
         $endtime = $this->base->time + $overdue_days * 86400;
         $uid = $this->base->user['uid'];
-        $username = $uid ? $this->base->user['username'] : $this->base->user['ip'];
+        $username = $uid ? $this->base->user['realname'] : $this->base->user['ip'];
         (!strip_tags($description, '<img>')) && $description = '';
         /* 分词索引 */
         $this->db->query("INSERT INTO " . DB_TABLEPRE . "question SET cid='$cid',cid1='$cid1',cid2='$cid2',cid3='$cid3',askuid='$askfromuid',authorid='$uid',authoritycontrol = '$authoritycontrol',shangjin='$shangjin',author='$username',title='$title',description='$description',price='$price',time='$creattime',endtime='$endtime',hidden='$hidanswer',status='$status',ip='{$this->base->ip}'");

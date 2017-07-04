@@ -196,7 +196,7 @@ class questioncontrol extends base
     function sendanswer($question ,$touser,$qurl ){
 
             //   通知提问题者
-            $msginfo= $_ENV['email_msg']->question_answer($touser['username'],$question['title'],$qurl);
+        $msginfo= $_ENV['email_msg']->question_answer($touser['realname'],$question['title'],$qurl);
            $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
             //通知关注着
@@ -204,7 +204,7 @@ class questioncontrol extends base
            $userlist =$_ENV['favorite']->get_list_byqid_fav($question['id']);
             foreach ($userlist as $val)
             {
-                $msginfo =$_ENV['email_msg']->question_answer_with($val['username'],$question['title'],$qurl);
+                $msginfo =$_ENV['email_msg']->question_answer_with($val['realname'],$question['title'],$qurl);
             	
                 $this-> sendmsg($val,$msginfo['title'],$msginfo['content']);
             }
@@ -523,7 +523,7 @@ class questioncontrol extends base
 
             $username = addslashes($this->user['username']);
             $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>';
-            $msginfo = $_ENV['email_msg']->question_invite($touser['username'],$this->user['username'],$title,$weburl)  ;
+            $msginfo = $_ENV['email_msg']->question_invite($touser['realname'],$this->user['username'],$title,$weburl)  ;
             
 
             $_ENV['message']->add($username, $this->user['uid'], $touser['uid'], $msginfo['title'], $msginfo['content'] );
@@ -558,7 +558,7 @@ class questioncontrol extends base
                     $expert =$_ENV['user']->get_by_uid($val['uid']);
                     $categoryname=$_ENV['category']->get($val['cid']);
                     $weburl = '<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看！</a>';
-                    $msginfo = $_ENV['email_msg']->question_add($expert['username'],$categoryname['name'],$title,$weburl); //获取领域专家消息
+                    $msginfo = $_ENV['email_msg']->question_add($expert['realname'],$categoryname['name'],$title,$weburl); //获取领域专家消息
                     $this->send_msg_all($expert,$msginfo['title'],$msginfo['content']);
                     //$_ENV['message']->add($this->user['username'], $this->user['uid'], $val['uid'], $msginfo['title'], $msginfo['content']);
                     //if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $expert['active'] == 1) {
@@ -993,7 +993,7 @@ class questioncontrol extends base
             $userlist = $_ENV['favorite']->get_list_byqid_fav($question['id']);
             foreach ($userlist as $val)
             {
-                $msginfo = $_ENV['email_msg']->question_adopt_with($val['username'],$question['title'],$weburl);
+                $msginfo = $_ENV['email_msg']->question_adopt_with($val['realname'],$question['title'],$weburl);
                 $this->sendmsg($val,$msginfo['title'],$msginfo['content']);
             }
             //通知问题回答者
