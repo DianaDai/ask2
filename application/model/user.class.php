@@ -596,6 +596,30 @@ class usermodel {
         return $attentionlist;
     }
 
+    /*获取个人已关注文章列表*/
+    //topic_likes 是文章关注表，
+    function get_attention_topic($followerid,$start =0 ,$limit =20){
+        $topiclist = array();
+
+        $query =$this->db->query("select t.* ,tl.time as ltime FROM ".DB_TABLEPRE."topic AS t,".DB_TABLEPRE."topic_likes AS tl WHERE t.id =tl.tid AND tl.uid =$followerid ORDER BY tl.time DESC LIMIT $start ,$limit");
+        while ($topic =$this->db->fetch_array($query))
+        {
+        	$topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topic['image'] = getfirstimg($topic['describtion']);
+            $topic['describtion'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])),240,'...');
+            $topic['attention_time'] = tdate($topic['ltime']);
+            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topiclist[] = $topic;
+        }
+      
+        return $topiclist;
+        
+    }
+    function rownum_attention_topic($followerid){
+        return $this->db->result_first("SELECT count(*) FROM ".DB_TABLEPRE."topic as t,".DB_TABLEPRE."topic_likes as tl where t.id = tl.tid and tl.uid = $followerid");
+    }
+    
+    
     /* 已关注列表 */
 
     function get_attention_question($followerid, $start = 0, $limit = 20) {

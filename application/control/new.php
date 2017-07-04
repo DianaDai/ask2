@@ -100,7 +100,7 @@ foreach ($questionlist as $key=>$val){
         $questionlist = $_ENV['question']->list_by_cfield_cvalue_status($cfield, $cid, $status, $startindex, $pagesize); //问题列表数据
         //$topiclist = $_ENV['topic']->get_bycatid($cid, 0, 8);
         $followerlist=$_ENV['category']->get_followers($cid,0,8); //获取导航
-        $departstr = page($rownum, $pagesize, $page, "category/view/$cid/$status"); //得到分页字符串
+        $departstr = page($rownum, $pagesize, $page, "new/default/$cid/$status/"); //得到分页字符串
         $navlist = $_ENV['category']->get_navigation($cid); //获取导航
         $sublist = $_ENV['category']->list_by_cid_pid($cid, $category['pid']); //获取子分类
         $this->load('tag');

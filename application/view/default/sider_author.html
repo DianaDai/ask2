@@ -5,7 +5,7 @@
      
        <!--{loop $userarticle $index $uarticle}-->
         <li>
-        <a href="{url user/space/$uarticle['uid']}" target="_blank" class="avatar">
+        <a href="{url user/space/$uarticle['uid']}" target="_blank" class="avatar" onmouseover="pop_user_on(this,$uarticle['uid'],'text')" onmouseout="pop_user_out()">
         <img src="{$uarticle['avatar']}">
         </a> 
         

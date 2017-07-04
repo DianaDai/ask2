@@ -975,7 +975,15 @@ class usercontrol extends base
             include template("myattention_question");
         } else {
             //换成关注的文章
-            
+            $page =max(1,intval($this->get[3]));
+            $pagesize =$this->setting['list_default'];
+            $startindex= ($page-1)* $pagesize;
+            $topiclist =$_ENV['user']->get_attention_topic($this->user['uid'],$startindex,$pagesize);
+            $rownum = $_ENV['user']->rownum_attention_topic($this->user['uid']);
+           
+            $departstr = page($rownum,$pagesize,$page,"user/attention");
+     
+            include template("myattention_topic");
      
         }
     }

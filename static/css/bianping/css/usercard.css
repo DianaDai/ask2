@@ -1,0 +1,79 @@
+﻿
+/*弹出user信息样式*/
+.usercard_in{
+	    border-radius: 1px;
+   -webkit-box-shadow:0 0 10px #0CC;  
+  -moz-box-shadow:0 0 10px #0CC;  
+  box-shadow:0 0 10px #0CC; 
+    
+}
+
+.usercard_in .usercard_c1{
+    width:100%
+}
+
+
+.usercard_in .usercard_c1 .usercard_c1_l {
+   margin-left:-15px;
+   width:100%;
+
+}
+.usercard_c1_l .avatar{
+    width:45px;
+    height:45px;
+}
+
+.usercard_in .usercard_c1 .usercard_c1_r{
+    width:100%;
+    margin-left:45px;
+    margin-top:-65px;
+}
+
+.usercard_in .usercard_c1 .usercard_c1_r .tit{
+    font-size:12px;
+    font-weight:bold;
+}
+.usercard_in .usercard_c1 .usercard_c1_r p{
+
+    font-size:13px;
+}
+
+
+.usercard_in .usercard_c2{
+    width:100%;
+}
+.usercard_in .usercard_c2 .usercard_c2_l{
+    margin-bottom:15px;
+}
+.usercard_c2_l .label{
+   background-color:#f5f5f5
+}
+
+.usercard_in  hr{
+    clear:both;
+}
+
+
+.usercard_in .usercard_c2 i{
+      color:#ea6f5a;
+}
+
+
+
+
+.clearfix,.clear{
+    clear: both;
+}
+.bg-white{
+    background-color:#ffffff;
+}
+
+.mar-t-1{
+    margin-top:1em;
+}
+.mar-l-03{
+    margin-left: 3px;
+
+    margin-left: 0.3em;
+}
+

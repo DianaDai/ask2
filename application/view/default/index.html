@@ -93,7 +93,7 @@
 
 
                                 {else}
-                                <a class="avatar" target="_blank" href="{url user/space/$question['authorid']}">
+                                <a class="avatar" target="_blank" href="{url user/space/$question['authorid']}" onmouseover="pop_user_on(this,$question['authorid'],'text')"  onmouseout="pop_user_out()">
                                     <img src="{$question['avatar']}" alt="96">
                                 </a>
                                 <div class="name">
