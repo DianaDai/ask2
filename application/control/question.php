@@ -173,7 +173,7 @@ class questioncontrol extends base
         $touser =$_ENV['user']->get_by_uid($question['authorid']);
         $this->sendanswer($question,$touser,$qurl); 
         $_ENV['userlog']->add('answer');
-        $_ENV['doing']->add($this->user['uid'], $this->user['username'], 2, $qid, $content);
+        $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 2, $qid, $content);
         if (0 == $status) {
 
             $message['message'] = '提交回答成功！为了确保问答的质量，我们会对您的回答内容进行审核。请耐心等待......';
@@ -1774,6 +1774,12 @@ class questioncontrol extends base
 
         $this->credit($question['authorid'], 0, $question['price'], 0, 'back');
         $_ENV['question']->remove(intval($this->get[2]));
+        //删除问题  要处理的内容有
+        //获取问题的用户id；
+        //更新改id的问题数量
+        //更新回答该问题用户的回答数量
+        //暂时不弄
+        
 
  
         $this->message('问题删除成功！', urlmap('index/default'));

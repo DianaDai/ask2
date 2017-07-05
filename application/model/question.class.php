@@ -286,8 +286,8 @@ class questionmodel
         $this->db->query("DELETE FROM `" . DB_TABLEPRE . "answer_comment ` WHERE `aid` IN (SELECT id FROM " . DB_TABLEPRE . "answer WHERE `qid` IN($qids))");
         $this->db->query("DELETE FROM `" . DB_TABLEPRE . "answer_support ` WHERE `aid` IN (SELECT id FROM " . DB_TABLEPRE . "answer WHERE `qid` IN($qids))");
         $this->db->query("DELETE FROM `" . DB_TABLEPRE . "answer` WHERE `qid` IN ($qids)");
-
-
+        //删除问题和回答后，用户信息的也同步更新
+       
         if ($this->base->setting['xunsearch_open']) {
             $this->index->del(explode(",", $qids));
         }

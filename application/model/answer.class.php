@@ -186,7 +186,7 @@ function f_get($openid) {
     function add($qid, $title, $content, $status = 0,$chakanjine=0) {
     	 $content=checkwordsglobal( $content);
         $uid = $this->base->user['uid'];
-        $username = $this->base->user['username'];
+        $username = $this->base->user['realname'];
         $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer SET qid='$qid',title='$title',author='$username',authorid='$uid',time='{$this->base->time}',content='$content',reward=$chakanjine,status=$status,ip='{$this->base->ip}'");
         $this->db->query("UPDATE " . DB_TABLEPRE . "question SET  answers=answers+1  WHERE id=" . $qid);
         $this->db->query("UPDATE " . DB_TABLEPRE . "user SET answers=answers+1 WHERE  uid =$uid");

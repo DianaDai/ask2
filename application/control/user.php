@@ -947,8 +947,6 @@ class usercontrol extends base
 
     function onspacefollower()
     {
-
-
         $uid = intval($this->get[2]);
         $member = $_ENV['user']->get_by_uid($uid, 0);
         $navtitle = $member['username'] . '的粉丝';

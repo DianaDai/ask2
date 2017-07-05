@@ -164,7 +164,7 @@ foreach ($topiclist as $key=>$val){
   	}
     	$status=1;
     	$supports=rand(1, 5);
-    	$id=$_ENV['articlecomment']->add_seo($tid,$title,$content,$this->user['uid'],$this->user['username'],$status,$supports);
+    	$id=$_ENV['articlecomment']->add_seo($tid,$title,$content,$this->user['uid'],$this->user['realname'],$status,$supports);
     	if($id>0){
             //通知作者
             $topic = $_ENV['topic']->get($tid);
@@ -189,7 +189,7 @@ foreach ($topiclist as $key=>$val){
     		$message['msg']="评论成功!";
     		 $this->load("doing");
             
-              $_ENV['doing']->add($this->user['uid'], $this->user['username'], 14, $tid, $content);
+             $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 14, $tid, $content);
     	}else{
     		$message['state']=0;
     		$message['msg']="评论失败!";

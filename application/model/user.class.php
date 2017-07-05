@@ -188,9 +188,9 @@ class usermodel {
             $starttime = $this->base->time - 30 * 24 * 3600;
         }
         $sqlarray = array(
-            'SELECT u.uid,u.groupid, u.username,u.gender,u.lastlogin,u.credit2,u.questions,u.answers,u.adopts FROM ' . DB_TABLEPRE . "user  u ORDER BY `credit2` DESC,u.answers DESC  LIMIT 0,$limit",
-            "SELECT u.uid,u.groupid, u.username,u.gender,u.lastlogin,sum( c.credit2 ) credit2,u.questions,u.answers,u.adopts FROM " . DB_TABLEPRE . "user u," . DB_TABLEPRE . "credit c   WHERE u.uid=c.uid AND c.time>$starttime   GROUP BY u.uid ORDER BY credit2  DESC,u.answers DESC LIMIT 0,$limit",
-            "SELECT u.uid,u.groupid, u.username,u.gender,u.lastlogin,sum( c.credit2 ) credit2,u.questions,u.answers,u.adopts  FROM " . DB_TABLEPRE . "user u," . DB_TABLEPRE . "credit c   WHERE u.uid=c.uid AND c.time>$starttime   GROUP BY u.uid ORDER BY credit2  DESC,u.answers DESC LIMIT 0,$limit"
+            'SELECT u.uid,u.groupid,u.realname, u.username,u.gender,u.lastlogin,u.credit2,u.questions,u.answers,u.adopts FROM ' . DB_TABLEPRE . "user  u ORDER BY `credit2` DESC,u.answers DESC  LIMIT 0,$limit",
+            "SELECT u.uid,u.groupid,u.realname,  u.username,u.gender,u.lastlogin,sum( c.credit2 ) credit2,u.questions,u.answers,u.adopts FROM " . DB_TABLEPRE . "user u," . DB_TABLEPRE . "credit c   WHERE u.uid=c.uid AND c.time>$starttime   GROUP BY u.uid ORDER BY credit2  DESC,u.answers DESC LIMIT 0,$limit",
+            "SELECT u.uid,u.groupid, u.realname, u.username,u.gender,u.lastlogin,sum( c.credit2 ) credit2,u.questions,u.answers,u.adopts  FROM " . DB_TABLEPRE . "user u," . DB_TABLEPRE . "credit c   WHERE u.uid=c.uid AND c.time>$starttime   GROUP BY u.uid ORDER BY credit2  DESC,u.answers DESC LIMIT 0,$limit"
         );
         $query = $this->db->query($sqlarray[$type]);
         while ($user = $this->db->fetch_array($query)) {
@@ -584,7 +584,7 @@ class usermodel {
 
     function get_attention($followerid, $start = 0, $limit = 20) {
         $attentionlist = array();
-        $query = $this->db->query("SELECT u.uid,u.username,u.gender FROM " . DB_TABLEPRE . "user_attention AS ua," . DB_TABLEPRE . "user AS u WHERE ua.uid=u.uid AND ua.followerid=$followerid ORDER BY ua.time DESC LIMIT $start,$limit");
+        $query = $this->db->query("SELECT u.uid,u.username,u.realname, u.gender FROM " . DB_TABLEPRE . "user_attention AS ua," . DB_TABLEPRE . "user AS u WHERE ua.uid=u.uid AND ua.followerid=$followerid ORDER BY ua.time DESC LIMIT $start,$limit");
         while ($attention = $this->db->fetch_array($query)) {
             $attention['avatar'] = get_avatar_dir($attention['uid']);
                $is_followed = $this->is_followed( $attention['uid'], $this->base->user['uid']);
