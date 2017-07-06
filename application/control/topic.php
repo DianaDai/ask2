@@ -172,7 +172,7 @@ foreach ($topiclist as $key=>$val){
             $viewurl = urlmap('topic/getone/' . $tid, 2);
             $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
 
-            $msginfo = $_ENV['email_msg']->topic_ans($touser['username'],$title,$weburl);
+            $msginfo = $_ENV['email_msg']->topic_ans($touser['realname'],$title,$weburl);
             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
             //通知关注着
@@ -181,7 +181,7 @@ foreach ($topiclist as $key=>$val){
             
             foreach ($favusers as $fav)
             {
-            	$msginfo = $_ENV['email_msg']->topic_ans_fav($fav['username'],$title,$weburl);
+            	$msginfo = $_ENV['email_msg']->topic_ans_fav($fav['realname'],$title,$weburl);
                 $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
             }
             
@@ -588,9 +588,9 @@ foreach ($topiclist as $key=>$val){
         $topic = $_ENV['topic']->get($topicid);
         if ($this->user['uid']) {
             $this->load('doing');
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 15, $topicid, $topic['title']);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 15, $topicid, $topic['title']);
             $touser =$_ENV['user']->get_by_uid($topic['authorid']);
-            $msginfo = $_ENV['email_msg']->topic_ok($touser['username'],$topic['title']);
+            $msginfo = $_ENV['email_msg']->topic_ok($touser['realname'],$topic['title']);
             $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
         }

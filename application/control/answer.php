@@ -40,7 +40,7 @@ class answercontrol extends base {
               //通知给提问者
                 $qurl ='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
                 $msginfo =$_ENV['email_msg']->question_ask_ans($question['author'],$question['title'],$qurl);
-                $_ENV['message']->add($this->user['username'], $this->user['uid'], $question['authorid'], $msginfo['title'], $msginfo['content']);
+                $_ENV['message']->add($this->user['realname'], $this->user['uid'], $question['authorid'], $msginfo['title'], $msginfo['content']);
                 $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 7, $qid, $this->post['content']);
 
                 $quser= $_ENV['user']->get_by_uid($question['authorid']);
@@ -63,8 +63,8 @@ class answercontrol extends base {
                 $qurl ='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
                 $msginfo =$_ENV['email_msg']->question_comment($answer['author'],$question['title'],$qurl);
              
-                $_ENV['message']->add($this->user['username'], $this->user['uid'], $answer['authorid'],$msginfo['title'],$msginfo['content']);
-                $_ENV['doing']->add($this->user['uid'], $this->user['username'], 6, $qid, $this->post['content'], $answer['id'], $answer['authorid'], $answer['content']);
+                $_ENV['message']->add($this->user['realname'], $this->user['uid'], $answer['authorid'],$msginfo['title'],$msginfo['content']);
+                $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 6, $qid, $this->post['content'], $answer['id'], $answer['authorid'], $answer['content']);
                 $auser= $_ENV['user']->get_by_uid($answer['authorid']);
       
                 if(isset($this->setting['notify_mail'])&&$this->setting['notify_mail']=='1'){
@@ -173,7 +173,7 @@ class answercontrol extends base {
         $_ENV['answer']->add_support($this->user['sid'], $answerid, $answer['authorid']);
         $answer = $_ENV['answer']->get($answerid);
         if ($this->user['uid']) {
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 5, $answer['qid'], '', $answer['id'], $answer['authorid'], $answer['content']);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 5, $answer['qid'], '', $answer['id'], $answer['authorid'], $answer['content']);
             $question =$_ENV['question']->get($answer['qid']);
             $msginfo = $_ENV['email_msg']->question_ok($answer['author'],$question['title']);
             $touser =$_ENV['user']->get_by_uid($answer['authorid']);

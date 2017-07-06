@@ -67,15 +67,17 @@ know_star .desc {
 .know_star li .text {
     float: left;
     background: #fff;
-    padding-left: 10px;
+    /*padding-left: 10px;*/
     padding-top: 5px;
+    margin-top:-10px;
 }
 
 .know_star li .nm {
     font-size: 12px;
 }
 .know_star li .nm {
-    float: right;
+    margin-top:-11px;
+    float: left;
     line-height: 30px;
     height: 30px;
     overflow: hidden;

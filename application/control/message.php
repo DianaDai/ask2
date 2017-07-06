@@ -68,7 +68,7 @@ class messagecontrol extends base {
             $this->load('email_msg');
             $viewurl = url('message/personal/',2);
             $qurl='<br /> <a href="' .$viewurl . '">点击查看消息</a>'; 
-            $msginfo = $_ENV['email_msg']->user_msg($touser['username'],$qurl);
+            $msginfo = $_ENV['email_msg']->user_msg($touser['realname'],$qurl);
             $_ENV['email']->sendmail($touser['email'],$msginfo['title'],$msginfo['content']);
             $this->credit($this->user['uid'], $this->setting['credit1_message'], $this->setting['credit2_message']);
             $this->message('消息发送成功!', get_url_source());

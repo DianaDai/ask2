@@ -270,7 +270,7 @@ class base {
                 $groupid = $usergroup['groupid'];
                 $this->db->query("UPDATE " . DB_TABLEPRE . "user SET groupid=$groupid WHERE uid=$uid ");
                 $this->load('email_msg');
-                $msginfo  = $_ENV['email_msg']->user_update($this->user['username'],$usergroup['grouptitle']);
+                $msginfo  = $_ENV['email_msg']->user_update($this->user['realname'],$usergroup['grouptitle']);
               
                 $this->send_msg_all($this->user,$msginfo['title'],$msginfo['content']);
                 

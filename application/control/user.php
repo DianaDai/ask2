@@ -427,7 +427,7 @@ class usercontrol extends base
                     $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
                     foreach ($favusers as $fav)
                     {
-                        $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                        $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'],$topic['title'],$weburl);
                         $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
                     }
                     $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
@@ -446,7 +446,7 @@ class usercontrol extends base
                 $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
                 foreach ($favusers as $fav)
                 {
-                    $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                    $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'],$topic['title'],$weburl);
                 	$this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
                 }
                 $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
@@ -1700,14 +1700,14 @@ class usercontrol extends base
             if ($uid == $this->user['uid']) {
                 exit('self');
             }
-            $_ENV['user']->follow($uid, $this->user['uid'], $this->user['username'], 'user');
+            $_ENV['user']->follow($uid, $this->user['uid'], $this->user['realname'], 'user');
             $quser = $_ENV['user']->get_by_uid($uid);
             $this->load("doing");
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 11, $uid, $quser['realname']);
             
             //$viewurl = urlmap('user/follower' , 1); //查看关注
             //$weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看</a>';
-            $msginfo =$_ENV['email_msg']->user_follow($quser['username'],$this->user['username'],tdate(time(),3,0));
+            $msginfo =$_ENV['email_msg']->user_follow($quser['realname'],$this->user['realname'],tdate(time(),3,0));
             
             $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
             

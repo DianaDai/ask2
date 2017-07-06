@@ -70,7 +70,7 @@ class giftcontrol extends base {
             $this->credit($this->user['uid'],0,-$gift['credit']);//扣除财富值
             
             
-            $msginfo = $_ENV['email_msg']->user_replace($this->user['username'],$gift['title'],'admin');
+            $msginfo = $_ENV['email_msg']->user_replace($this->user['realname'],$gift['title'],'admin');
             $this->sendmsg($this->user,$msginfo['title'],$msginfo['content']);
             $this->message("礼品兑换申请已经送出等待管理员审核！","gift/default");
         }

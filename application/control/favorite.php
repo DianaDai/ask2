@@ -72,12 +72,12 @@ class favoritecontrol extends base {
        
             $touser =$_ENV['user']->get_by_uid($topic['authorid']);
        
-            $msginfo = $_ENV['email_msg']->topic_save($touser['username'],$topic['title'],tdate(time(),3,0),$this->user['username']);
+            $msginfo = $_ENV['email_msg']->topic_save($touser['realname'],$topic['title'],tdate(time(),3,0),$this->user['realname']);
            
              $this->send_msg_all($touser,$msginfo['title'],$msginfo['content']);
             $this->load("doing");
             
-              $_ENV['doing']->add($this->user['uid'], $this->user['username'], 13, $tid, "收藏了文章");
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 13, $tid, "收藏了文章");
             $message = '文章收藏成功!';
         }
         $this->message($message, $viewurl);
