@@ -146,10 +146,10 @@
       <ul class="list collection-editor">
          <!--{loop $expertlist $expert}-->
       <li>
-      <a href="{url user/space/$expert['uid']}" target="_blank" class="avatar">
+      <a href="{url user/space/$expert['uid']}" target="_blank" class="avatar"  onmouseover="pop_user_on(this,$expert['uid'],'text')" onmouseout="pop_user_out()"  >
       <img src="{$expert['avatar']}">
       </a> 
-      <a href="{url user/space/$expert['uid']}" target="_blank" class="name">{$expert['username']}</a> 
+      <a href="{url user/space/$expert['uid']}" target="_blank" class="name">{$expert['realname']}</a> 
       
       
      

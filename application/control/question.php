@@ -501,7 +501,7 @@ class questioncontrol extends base
             $_ENV['ucenter']->ask_feed($qid, $title, $description);
         }
         $_ENV['userlog']->add('ask');
-        $_ENV['doing']->add($this->user['uid'], $this->user['username'], 1, $qid, $description);
+        $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 1, $qid, $description);
 
 
         if (0 == $status) { //这个status==0是什么意思？
@@ -521,7 +521,7 @@ class questioncontrol extends base
         if ($askfromuid) {
             $this->load("message");
 
-            $username = addslashes($this->user['username']);
+            $username = addslashes($this->user['realname']);
             $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>';
             $msginfo = $_ENV['email_msg']->question_invite($touser['realname'],$this->user['username'],$title,$weburl)  ;
             

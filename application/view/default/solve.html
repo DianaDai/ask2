@@ -173,7 +173,7 @@
 
             <div>
             <div class="author">
-            <a href="{url user/space/$bestanswer['authorid']}" target="_blank" class="avatar">
+            <a href="{url user/space/$bestanswer['authorid']}" target="_blank" class="avatar" onmouseover="pop_user_on(this,$bestanswer['authorid'],'text')" onmouseout="pop_user_out()" >
             <img src="{$bestanswer['author_avartar']}">
             </a> 
             <div class="info">
@@ -247,7 +247,7 @@
             <div id="comment-{$answer['id']}" class="comment">
             <div>
             <div class="author">
-            <a href="{url user/space/$answer['authorid']}" target="_blank" class="avatar">
+            <a href="{url user/space/$answer['authorid']}" target="_blank" class="avatar" onmouseover="pop_user_on(this,$answer['authorid'],'text')" onmouseout="pop_user_out()" >
             <img src="{$answer['author_avartar']}">
             </a> 
             <div class="info">

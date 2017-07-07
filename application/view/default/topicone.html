@@ -155,7 +155,7 @@
             <div id="comment-{$comment['id']}" class="comment">
             <div>
             <div class="author">
-            <a href="{url user/space/$comment['authorid']}" target="_blank" class="avatar">
+            <a href="{url user/space/$comment['authorid']}" target="_blank" class="avatar" onmouseover="pop_user_on(this,$comment['authorid'],'text')" onmouseout="pop_user_out()" >
             <img src="{$comment['avatar']}">
             </a> 
             <div class="info">
