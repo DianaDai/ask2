@@ -170,7 +170,7 @@ foreach ($topiclist as $key=>$val){
             $topic = $_ENV['topic']->get($tid);
             $touser = $_ENV['user']->get_by_uid($topic['authorid']);
             $viewurl = urlmap('topic/getone/' . $tid, 2);
-            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+            $weburl='<br> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
 
             $msginfo = $_ENV['email_msg']->topic_ans($touser['realname'],$title,$weburl);
             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);

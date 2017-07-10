@@ -169,7 +169,7 @@ class questioncontrol extends base
         //给提问者 关注着发送通知
         //$this->send($question['authorid'], $question['id'], 0);
       //  $viewurl = urlmap('question/view/' . $qid, 2);
-        $qurl='<br /> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
+        $qurl='<br> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';
         $touser =$_ENV['user']->get_by_uid($question['authorid']);
         $this->sendanswer($question,$touser,$qurl); 
         $_ENV['userlog']->add('answer');
@@ -204,7 +204,7 @@ class questioncontrol extends base
            $userlist =$_ENV['favorite']->get_list_byqid_fav($question['id']);
             foreach ($userlist as $val)
             {
-                $msginfo =$_ENV['email_msg']->question_answer_with($val['realname'],$question['title'],$qurl);
+                $msginfo =$_ENV['email_msg']->question_answer_with($val['realname'], $question['title'],$qurl);
             	
                 $this-> sendmsg($val,$msginfo['title'],$msginfo['content']);
             }
@@ -521,17 +521,10 @@ class questioncontrol extends base
         if ($askfromuid) {
             $this->load("message");
 
-            $username = addslashes($this->user['realname']);
-            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>';
+            $weburl='<br> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看问题</a>';
             $msginfo = $_ENV['email_msg']->question_invite($touser['realname'],$this->user['username'],$title,$weburl)  ;
-            
+            $this->send_msg_all($touser,$msginfo['title'],$msginfo['content']);
 
-            $_ENV['message']->add($username, $this->user['uid'], $touser['uid'], $msginfo['title'], $msginfo['content'] );
-
-
-            if (isset($this->setting['notify_mail']) && $this->setting['notify_mail'] == '1' && $touser['active'] == 1) {
-                $_ENV['email']->sendmail($touser['email'],$msginfo['title'], $msginfo['content']);
-            }
 
         } else
         {
@@ -557,7 +550,7 @@ class questioncontrol extends base
                 if ($this->user['uid'] != $val['uid']){
                     $expert =$_ENV['user']->get_by_uid($val['uid']);
                     $categoryname=$_ENV['category']->get($val['cid']);
-                    $weburl = '<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看！</a>';
+                    $weburl = ' <br> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看</a>';
                     $msginfo = $_ENV['email_msg']->question_add($expert['realname'],$categoryname['name'],$title,$weburl); //获取领域专家消息
                     $this->send_msg_all($expert,$msginfo['title'],$msginfo['content']);
                     //$_ENV['message']->add($this->user['username'], $this->user['uid'], $val['uid'], $msginfo['title'], $msginfo['content']);
@@ -987,9 +980,9 @@ class questioncontrol extends base
             global $setting;
           
             $_ENV['doing']->add($question['authorid'], $question['author'], 8, $qid, $comment, $answer['id'], $answer['authorid'], $answer['content']);
-            $weburl = '<br /><a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看！</a>';
+            $weburl = ' <br> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">'.' 点击查看</a>';
 
-            //通知收藏着  问题已经被采纳
+            //通知关注着  问题已经被采纳
             $userlist = $_ENV['favorite']->get_list_byqid_fav($question['id']);
             foreach ($userlist as $val)
             {
@@ -998,7 +991,7 @@ class questioncontrol extends base
             }
             //通知问题回答者
             
-            $msginfo = $_ENV['email_msg']->question_adopt_ans($answer['author'],$question['title']);
+            $msginfo = $_ENV['email_msg']->question_adopt_ans($answer['author'],$question['title'] ,$weburl);
             $quser = $_ENV['user']->get_by_uid($answer['authorid']);
             $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
             
@@ -1369,7 +1362,7 @@ class questioncontrol extends base
             //编辑问题答案通知作者和评论者
             global $setting;
             $mpurl = SITE_URL . $setting['seo_prefix'] . $viewurl . $setting['seo_suffix'];
-            $qurl='<br /> <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
+            $qurl='<br> <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
             $msginfo =$_ENV['email_msg']->question_edit_ans($answer['author'],$question['title'],$this->user['realname'],tdate(time()),$qurl);
             $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
             //$ansusers = $_ENV['answer']->getanser_user($question['id']); //去掉编辑答案通知评论者
@@ -1890,7 +1883,7 @@ class questioncontrol extends base
                 $authoritycontrol = $this->post['authoritycontrol'];
             }
             $_ENV['question']->update_content($qid, $title, $this->post['content'],$authoritycontrol);
-            $qurl='<br /> <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
+            $qurl=' <a href="' .$viewurl . '">点击查看问题</a>'; //站内url都使用这个
             //编辑问题通知作者 
             $msginfo =$_ENV['email_msg']->question_edit($question['author'],$question['title'],$this->user['realname'], tdate(time()),$qurl);
             $touser =$_ENV['user']->get_by_uid($question['authorid']);

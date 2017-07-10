@@ -36,6 +36,8 @@ class email_msgmodel
         $msg =$this->get_msg('问题','新增');
         //暂时想不到好的对应方法
         //{zjxm},{lymc},{wtbt}
+        $wtbt = str_replace('点击查看',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']= str_replace('{zjxm}',$zjxm,$msg['content']);
         $msg['content']= str_replace('{lymc}',$lymc,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
@@ -47,6 +49,8 @@ class email_msgmodel
     function question_invite($zjxm,$zzxm,$wtbt,$url){
     
         $msg = $this->get_msg('问题','邀请回答');
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']= str_replace('{zjxm}',$zjxm,$msg['content']);
         $msg['content']= str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
@@ -60,7 +64,9 @@ class email_msgmodel
     function question_answer($zzxm,$wtbt,$url){
    
         $msg = $this->get_msg('问题','回答',2);
-        
+         //
+        $wtbt = str_replace("点击查看问题",$wtbt,$url); //把  url中的 查看信息替换成 标题；  
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']=str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content']=str_replace('{url}',$url,$msg['content']);
@@ -70,6 +76,8 @@ class email_msgmodel
     /* 有多少个关注人，就查询多少次数据库。。。先这样吧    */
     function question_answer_with($gzzxm,$wtbt,$url){
         $msg =$this->get_msg('问题','回答',3);
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content']=str_replace('{url}',$url,$msg['content']);
@@ -80,6 +88,8 @@ class email_msgmodel
     function question_ask($gzzxm,$wtbt,$url){
     
         $msg =$this->get_msg('问题','追问',3);
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']=str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content']=str_replace('{url}',$url,$msg['content']);
@@ -89,6 +99,8 @@ class email_msgmodel
     /*追问评论者或回答者 这个暂时没有改 */
     function question_comment($plrmc,$wtbt,$url){
         $msg =$this->get_msg('问题','追问',4);
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']=str_replace('{plrmc}',$plrmc,$msg['content']);
         $msg['content']=str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content']=str_replace('{url}',$url,$msg['content']);
@@ -101,6 +113,8 @@ class email_msgmodel
     function question_ask_ans($zzxm,$wtbt,$url){
     
         $msg = $this->get_msg('问题','追答',2);
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content'] =str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
@@ -111,6 +125,8 @@ class email_msgmodel
     
     function question_ask_with($gzzxm,$wtbt,$url){
         $msg =$this->get_msg('问题','追答',3);
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']=str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content']= str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content']= str_replace('{url}',$url,$msg['content']);
@@ -130,6 +146,8 @@ class email_msgmodel
     
     function question_adopt_with($gzzxm,$wtbt,$url){
         $msg =$this->get_msg('问题','采纳',3);
+        $wtbt = str_replace('点击查看',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']= str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content']= str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content']= str_replace('{url}',$url,$msg['content']);
@@ -138,25 +156,30 @@ class email_msgmodel
     
     /* 采纳问题通知回答者*/
     
-    function question_adopt_ans($plrmc,$wtbt){
+    function question_adopt_ans($plrmc,$wtbt ,$url){
         $msg =$this->get_msg('问题','采纳',4);
+        $wtbt = str_replace('点击查看',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content']= str_replace('{plrmc}',$plrmc,$msg['content']);
         $msg['content']= str_replace('{wtbt}',$wtbt,$msg['content']);
         return $msg;
     }
     
     
-    function question_atto($zzxm,$wtbt,$gzzxm){
+    function question_atto($zzxm,$wtbt,$gzzxm ){
         $msg = $this->get_msg('问题','关注');
         $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         return $msg;
     }
-    function question_ok($plrmc,$wtbt){
+    function question_ok($plrmc,$wtbt ,$url){
         $msg = $this->get_msg('问题','点赞');
+        $wtbt = str_replace('点击查看问题',$wtbt,$url);
+        $wtbt = str_replace('<br>','',$wtbt);
         $msg['content'] =str_replace('{plrmc}',$plrmc,$msg['content']);
-        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content'])   ;
+        $msg['content'] = str_replace('{wtbt}',$wtbt,$msg['content']) ;
+        $msg['content'] = $msg['content'].=$url;
         return $msg;
     
     }
@@ -206,6 +229,8 @@ class email_msgmodel
     //文章修改
     function topic_edit($gzzxm,$wzbt,$url){
         $msg= $this->get_msg('文章','编辑');
+        $wzbt = str_replace('点击查看文章',$wzbt,$url);
+        $wzbt = str_replace('<br>','',$wzbt);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
@@ -214,6 +239,8 @@ class email_msgmodel
     
     function topic_ans($zzxm,$wzbt,$url){
         $msg =$this->get_msg('文章','评论',2);
+        $wzbt = str_replace('点击查看文章',$wzbt,$url);
+        $wzbt = str_replace('<br>','',$wzbt);
         $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
@@ -222,6 +249,8 @@ class email_msgmodel
     
     function topic_ans_fav($gzzxm,$wzbt,$url){
         $msg =$this ->get_msg('文章','评论',3);
+        $wzbt = str_replace('点击查看文章',$wzbt,$url);
+        $wzbt = str_replace('<br>','',$wzbt);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content'] = str_replace('{wzbt}',$wzbt,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
@@ -247,6 +276,7 @@ class email_msgmodel
     //公告通知粉丝。。。
     function notice_info($yhxm,$ggbt,$url) {
         $msg = $this->get_msg('公告','新增');
+        $ggbt = str_replace('点击查看公告',$ggbt,$url);
         $msg['content'] = str_replace('{yhxm}',$yhxm,$msg['content']);
         $msg['content'] = str_replace('{ggbt}',$ggbt ,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
@@ -255,6 +285,7 @@ class email_msgmodel
     //公告评论
     function notice_comment($zzxm,$ggbt,$url){
         $msg = $this->get_msg('公告','评论');
+        $ggbt = str_replace('点击查看公告',$ggbt,$url);
         $msg['content'] = str_replace('{zzxm}',$zzxm,$msg['content']);
         $msg['content'] = str_replace('{ggbt}',$ggbt,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
@@ -298,6 +329,7 @@ class email_msgmodel
     
     function special($gzzxm,$lymc,$url){
         $msg = $this->get_msg('专题','新增文章');
+        $lymc = str_replace('点击查看文章',$lymc,$url);
         $msg['content'] = str_replace('{gzzxm}',$gzzxm,$msg['content']);
         $msg['content'] = str_replace('{lymc}',$lymc,$msg['content']);
         $msg['content'] = str_replace('{url}',$url,$msg['content']);
