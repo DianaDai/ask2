@@ -330,6 +330,55 @@ class questionmodel
 
 
     }
+    
+    /*问题列表未回答的信息*/
+    
+    function rownum_by_nosove_list($cfield ='cid1',$cvalue =0){
+        $condition =" 1=1 AND answers = 0 and status = 1 ";
+        if ($this->base->user['identity']==2&&$this->base->user['username']!='admin')//用户是顾问则只查询 authoritycontrol = 2
+        {
+        	$condition .=" AND authoritycontrol=2 ";
+        }
+        ($cfield&&$cvalue!='all')&& $condition.=" AND $cfield=$cvalue";
+        return $this->db->fetch_total('question',$condition);
+        
+    }
+    /* 查询未回答的用户数量*/
+    function list_by_nosove_list($cfield='cid1',$cvalue=0,$start=0,$limit=10){
+        $questionlist = array();
+        $sql= "SELECT * FROM ".DB_TABLEPRE."question where 1=1 AND answers =0 and status =1 ";
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] == 2 && $this->base->user['username'] != 'admin') {
+            $sql .= " AND authoritycontrol=2 ";
+        }
+        ($cfield && $cvalue != 'all') && ($sql .= " AND $cfield=$cvalue ");
+        $sql.=" LIMIT $start ,$limit";
+        $query = $this->db->query($sql);
+        while ($question = $this->db->fetch_array($query))
+        {
+            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $question['sortime'] = $question['time'];//用于排序
+            $question['format_time'] = tdate($question['time']);
+            $question['avatar'] = get_avatar_dir($question['authorid']);
+            $question['url'] = url('question/view/' . $question['id'], $question['url']);
+            $question['title'] = checkwordsglobal($question['title']);
+            $question['image'] = getfirstimg($question['description']);
+            $question['description'] = cutstr(checkwordsglobal(strip_tags($question['description'])), 240, '...');
+            $question['tags'] = $this->get_by_qid($question['id']);
+            if ($question['askuid'] > 0) {
+                $question['askuser'] = $this->get_by_uid($question['askuid']);
+            }
+
+
+            $questionlist[] = $question;
+        }
+        return $questionlist;
+        
+    }
+    
+    
+    
+    
 
     /* 问题列表记录数目 */
 

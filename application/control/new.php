@@ -137,6 +137,70 @@ foreach ($questionlist as $key=>$val){
         include template('new');
     }
     
+    //分类未解决问题
+    function onnosolvequs(){
+        $cid = intval($this->get[2])?intval($this->get[2]):'all';
+        @$page = max(1,intval($this->get[3]));
+        $pagesize = $this->setting['list_default'];
+        $startindex = ($page-1)*$pagesize;
+        if ($cid!='all')
+        {
+        	$category =$this->category[$cid];
+            $navtitle = $category['name'];
+            $cfield = 'cid'.$category['grade'];
+        }else
+        {
+            $category =$this->category;
+            $navtitle ='问答列表';
+            $cfield='';
+            $category['pid'] =0; //获取根分类
+        	    
+        }
+        if ($cid != 'all') {
+            $category=$_ENV['category']->get($cid);
+        }
+        $is_followed = $_ENV['category']->is_followed($cid, $this->user['uid']);
+        $rownum = $_ENV['question']->rownum_by_nosove_list($cfield,$cid);
+        $questionlist = $_ENV['question']->list_by_nosove_list($cfield,$cid,$startindex,$pagesize);
+        $followerlist=$_ENV['category']->get_followers($cid,0,8); //获取导航
+        $departstr = page($rownum, $pagesize, $page, "new/nosolvequs/$cid"); //得到分页字符串
+        $navlist = $_ENV['category']->get_navigation($cid); //获取导航
+        $sublist = $_ENV['category']->list_by_cid_pid($cid, $category['pid']); //获取子分类
+        $this->load('tag');
+        foreach ($questionlist as $key=>$val){
+            
+
+            
+            $quesrc=  $_ENV['category']->get_navigation($val['cid'],true);
+            $quetemp =0;
+            $count = count($quesrc);
+            for ($i = 0; $i < $count; $i++)
+            {
+                $quetemp.=$quesrc[$i]['name'].'/';
+            }
+            $quesrc= substr($quetemp,1,strlen($quetemp)-1);
+            
+            
+            $questionlist[$key]["srcs"]=$quesrc;
+            $taglist = $_ENV['tag']->get_by_qid($val['id']);
+            
+            $questionlist[$key]['tags']=$taglist;
+            
+            
+        }
+        $seo_description="";
+        $seo_keywords="";
+        
+        if($category['alias']){
+        	$navtitle=$category['alias'];
+        }
+        include template('nosolvequs');
+        
+    }
+    
+    
+    
+    
  function onmaketag() {
     	 $this->load('question');
     	  $navtitle ="最近更新_";

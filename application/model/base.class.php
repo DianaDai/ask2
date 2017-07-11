@@ -309,7 +309,7 @@ class base {
             
           //  $pccaiji="";
          
-        $regulars = explode(',', 'user/emailcheck,user/neweditemail,user/sendemailcode,user/checkemail,chat/default,api_article/newqlist,api_article/list,api_user/editpwdapi,api_user/loginoutapi,api_user/bindloginapi,api_user/loginapi,api_user/bindregisterapi,api_user/registerapi,index/taobao,question/searchkey,pccaiji_catgory/addtopic,pccaiji_catgory/selectlist,pccaiji_catgory/list,topic/search,buy/buydetail,buy/default,download/default,tags/default,new/maketag,tag/default,user/regtip,new/default,user/deletexinzhi,user/editxinzhi,user/addxinzhi,topic/userxinzhi,topic/getone,topic/catlist,topic/hotlist,user/login,user/logout,user/code,user/getpass,user/resetpass,index/help,js/view,attach/upload,user/xinzhi,user/attention_user,' . $this->user['regulars']);
+        $regulars = explode(',', 'user/emailcheck,user/neweditemail,user/sendemailcode,user/checkemail,chat/default,api_article/newqlist,api_article/list,api_user/editpwdapi,api_user/loginoutapi,api_user/bindloginapi,api_user/loginapi,api_user/bindregisterapi,api_user/registerapi,index/taobao,question/searchkey,pccaiji_catgory/addtopic,pccaiji_catgory/selectlist,pccaiji_catgory/list,topic/search,buy/buydetail,buy/default,download/default,tags/default,new/maketag,tag/default,user/regtip,new/default,user/deletexinzhi,user/editxinzhi,user/addxinzhi,topic/userxinzhi,topic/getone,topic/catlist,topic/hotlist,user/login,user/logout,user/code,user/getpass,user/resetpass,index/help,js/view,attach/upload,user/xinzhi,user/attention_user,new/nosolvequs,' . $this->user['regulars']);
         
       //  $regulars=array_merge($regulars,$this->regular);
       
