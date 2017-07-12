@@ -4254,6 +4254,7 @@
   <ItemGroup>
     <Content Include="application\view\default\myattention_topic.html" />
     <Content Include="application\view\default\myxinzhi.html" />
+    <Content Include="application\view\default\noasknosolve.html" />
     <Content Include="application\view\default\nosolvequs.html" />
     <Content Include="application\view\default\sider_alluser.html" />
     <Content Include="static\css\bianping\css\credit.css" />

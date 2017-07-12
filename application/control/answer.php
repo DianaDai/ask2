@@ -35,7 +35,9 @@ class answercontrol extends base {
 //            $this->message($this->post['state']."验证码错误!", 'BACK');
 //        }
 //        				}
+            $flag = ($answer['authorid']==$this->user['uid'])?1:2;
             $_ENV['answer']->append($answer['id'], $this->user['realname'], $this->user['uid'], $this->post['content']);
+            $_ENV['answer']->update_answerflag($aid,$flag);
             if ($answer['authorid'] == $this->user['uid']) {//追答
               //通知给提问者
                 $qurl =' <br> <a href="' . url('question/view/' . $qid, 1) . '">点击查看问题</a>';

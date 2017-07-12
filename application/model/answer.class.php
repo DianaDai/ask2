@@ -240,13 +240,18 @@ try{
 
     /* 添加追问--追问--回答 */
 
-    function append($answerid, $author, $authorid, $content) {
+    function append($answerid, $author, $authorid, $content ) {
     	 $content=checkwordsglobal( $content);
     	   $content=checkwordsglobal( $content);
-        $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer_append(appendanswerid,answerid,author,authorid,content,time) VALUES (NULL,$answerid,'$author',$authorid,'$content',{$this->base->time})");
+        $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer_append(appendanswerid,answerid,author,authorid,content, time) VALUES (NULL,$answerid,'$author',$authorid,'$content',{$this->base->time})");
         return $this->db->insert_id();
     }
 
+    /*    1  没有追问， 2有追问*/
+    function update_answerflag($aid ,$flag =1){
+        $this->db->query("UPDATE `".DB_TABLEPRE."answer` SET askflag ='$flag' WHERE `id`=$aid");
+    }
+    
     /* 获取追问信息列表 */
 
     function get_appends($answerid, $start = 0, $limit = 20) {

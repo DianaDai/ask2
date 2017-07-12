@@ -395,7 +395,7 @@ class api_usercontrol extends base
                 if ($user['isblack'] == 1) {
                     exit('用户被列入网站黑名单!');//登录参数为空
                 }
-                if($user['approvestatus']=='v'){
+                if($user['approvestatus']!='y'){
                     exit('未生效用户，非法登录！');
                 }
 

@@ -330,6 +330,58 @@ class questionmodel
 
 
     }
+    /*问题列表追问未回答的信息*/
+
+    function rownum_by_asknosove_list($cfield='cid1',$cvalue =0){
+        $condition ="  where  qus.id = ans.qid AND ans.askflag=2   AND qus.status =1 and qus.answers >0 "; //未解决的问题并且问题有回答
+        if ($this->base->user['identity']==2&&$this->base->user['username']!='admin')
+        {
+        	$condition.=" AND qus.authoritycontrol=2 ";
+        }
+        ($cfield&&$cvalue!='all')&& $condition.=" AND qus.$cfield=$cvalue";
+        $sql = "select count(*) num FROM ".DB_TABLEPRE."question qus , ".DB_TABLEPRE."answer ans".$condition;
+        return $this->db->result_first($sql);
+    
+    }
+    /*获取问题追问未回答列表*/
+    function list_by_asknosove_list($cfield='cid1',$cvalue=0,$start =0 ,$limit =10){
+        $questionlist = array();
+        $sql = "SELECT qus.* , ans.author as answer_name  FROM ".DB_TABLEPRE."question as qus, ".DB_TABLEPRE."answer as ans where  qus.id = ans.qid and ans.askflag =2 and qus.status=1 and qus.answers>0 ";
+        if ($this->base->user['identity']==2 && $this->base->user['username'] != 'admin')
+        {
+        	$sql.= " AND qus.authoritycontrol=2 ";
+        }
+       ($cfield && $cvalue != 'all') && ($sql .= " AND qus.$cfield=$cvalue ");
+       $sql.= " order by qus.time desc  ";
+       $sql.=" LIMIT $start ,$limit";
+ 
+       $query = $this->db->query($sql);
+       while ($question = $this->db->fetch_array($query))
+       {
+         
+           $question['category_name'] = $this->base->category[$question['cid']]['name'];
+           $question['sortime'] = $question['time'];//用于排序
+           $question['format_time'] = tdate($question['time']);
+           $question['avatar'] = get_avatar_dir($question['authorid']);
+           $question['url'] = url('question/view/' . $question['id'], $question['url']);
+           $question['title'] = checkwordsglobal($question['title']);
+           $question['image'] = getfirstimg($question['description']);
+           $question['description'] = cutstr(checkwordsglobal(strip_tags($question['description'])), 240, '...');
+           $question['tags'] = $this->get_by_qid($question['id']);
+           if ($question['askuid'] > 0) {
+               $question['askuser'] = $this->get_by_uid($question['askuid']);
+           }
+           $questionlist[] = $question;
+       	
+       }
+       
+       return $questionlist;
+       
+        
+    }
+    
+    
+    
     
     /*问题列表未回答的信息*/
     
@@ -352,6 +404,7 @@ class questionmodel
             $sql .= " AND authoritycontrol=2 ";
         }
         ($cfield && $cvalue != 'all') && ($sql .= " AND $cfield=$cvalue ");
+        $sql.="order by time desc ";
         $sql.=" LIMIT $start ,$limit";
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query))
