@@ -155,7 +155,7 @@
             <div id="comment-{$comment['id']}" class="comment">
             <div>
             <div class="author">
-            <a href="{url user/space/$comment['authorid']}" target="_blank" class="avatar">
+            <a href="{url user/space/$comment['authorid']}" target="_blank" class="avatar" onmouseover="pop_user_on(this,$comment['authorid'],'text')" onmouseout="pop_user_out()" >
             <img src="{$comment['avatar']}">
             </a> 
             <div class="info">
@@ -234,7 +234,7 @@
             <!--{template sider_hotarticle}-->
 
           {if $topicone['likes']>0}
-             <div><div class="title">收藏的人({$topicone['likes']})</div> <ul class="list collection-follower">
+             <div><div class="title">关注的人({$topicone['likes']})</div> <ul class="list collection-follower">
              
                <!--{loop $followerlist $fuser}-->
              <li><a href="{url user/space/$fuser['followerid']}" target="_blank" class="avatar">

@@ -202,6 +202,7 @@ class categorymodel {
      {
      	$_user = $this->get_by_uid($follower['uid']);
          $follower['username'] = $_user['username'];
+         $follower['realname'] = $_user['realname'];
          $follower['uid'] = $_user['uid'];
          $follower['email'] = $_user['email'];
          $follower['isnotify'] = $_user['isnotify'];

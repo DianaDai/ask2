@@ -277,14 +277,14 @@ class usercontrol extends base
             if (trim($outimgurl) != '') {
                 $filepath = $outimgurl;
             }
-            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['username'], $this->user['uid'], 1, $acid,$authoritycontrol,$cid1,$cid2,$cid3);
+            $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['realname'], $this->user['uid'], 1, $acid,$authoritycontrol,$cid1,$cid2,$cid3);
 //$tag=implode(',',$tagarr);
             // $taglist = explode(",", $tag);
             $_ENV['userlog']->add('topic');
             $ataglist && $_ENV['topic_tag']->multi_add(array_unique($ataglist), $aid);
 
             $this->load("doing");
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 9, $aid, $title);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 9, $aid, $title);
             
             //通知关注分类的用户
             $category = $_ENV['category']->get($acid);
@@ -294,7 +294,7 @@ class usercontrol extends base
 
             foreach ($followerlist as $fov)
             {
-            	$msginfo =$_ENV['email_msg']->special($fov['username'],$category['name'],$weburl);
+            	$msginfo =$_ENV['email_msg']->special($fov['realname'],$category['name'],$weburl);
                 $this->sendmsg($fov,$msginfo['title'],$msginfo['content']);
             }
 
@@ -431,7 +431,7 @@ class usercontrol extends base
                     $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
                     foreach ($favusers as $fav)
                     {
-                        $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                        $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'],$topic['title'],$weburl);
                         $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
                     }
                     $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
@@ -450,7 +450,7 @@ class usercontrol extends base
                 $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
                 foreach ($favusers as $fav)
                 {
-                    $msginfo = $_ENV['email_msg']->topic_edit($fav['username'],$topic['title'],$weburl);
+                    $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'],$topic['title'],$weburl);
                 	$this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
                 }
                 $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
@@ -1227,8 +1227,6 @@ class usercontrol extends base
 
     function onspacefollower()
     {
-
-
         $uid = intval($this->get[2]);
         $member = $_ENV['user']->get_by_uid($uid, 0);
         $navtitle = $member['username'] . '的粉丝';
@@ -1255,7 +1253,15 @@ class usercontrol extends base
             include template("myattention_question");
         } else {
             //换成关注的文章
-            
+            $page =max(1,intval($this->get[3]));
+            $pagesize =$this->setting['list_default'];
+            $startindex= ($page-1)* $pagesize;
+            $topiclist =$_ENV['user']->get_attention_topic($this->user['uid'],$startindex,$pagesize);
+            $rownum = $_ENV['user']->rownum_attention_topic($this->user['uid']);
+           
+            $departstr = page($rownum,$pagesize,$page,"user/attention");
+     
+            include template("myattention_topic");
      
         }
     }
@@ -1965,14 +1971,14 @@ class usercontrol extends base
             if ($uid == $this->user['uid']) {
                 exit('self');
             }
-            $_ENV['user']->follow($uid, $this->user['uid'], $this->user['username'], 'user');
+            $_ENV['user']->follow($uid, $this->user['uid'], $this->user['realname'], 'user');
             $quser = $_ENV['user']->get_by_uid($uid);
             $this->load("doing");
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 11, $uid, $quser['username']);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 11, $uid, $quser['realname']);
             
             //$viewurl = urlmap('user/follower' , 1); //查看关注
             //$weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看</a>';
-            $msginfo =$_ENV['email_msg']->user_follow($quser['username'],$this->user['username'],tdate(time(),3,0));
+            $msginfo =$_ENV['email_msg']->user_follow($quser['realname'],$this->user['realname'],tdate(time(),3,0));
             
             $this->sendmsg($quser,$msginfo['title'],$msginfo['content']);
             

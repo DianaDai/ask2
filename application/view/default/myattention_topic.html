@@ -1,0 +1,104 @@
+﻿<!--{template header}-->
+<link rel="stylesheet" media="all" href="{SITE_URL}static/css/bianping/css/space.css" />
+<div class="person container">
+    <div class="row">
+
+        <div class="col-xs-16 main">
+            <!--{template user_title}-->
+            <ul class="trigger-menu" data-pjax-container="#list-container">
+                <li <!--{ if $regular=user/attention}--> class="active" <!--{/if}--> >
+                    <a href ="{url user/attention}">
+                        <i class="fa fa-star"></i>
+                        关注的文章
+                    </a>
+                 </li>
+            </ul>
+
+
+            <div class="list-container">
+
+
+                <!--文章列表模块-->
+
+                <ul class="note-list">
+                    <!--{if $topiclist}-->
+
+                       <!--{loop $topiclist $topic}-->
+
+
+                        <li class ="note-{$topic['id']}" data-note-id="{$topic['id']}"  {if $topic['image']!=null} class="have-img"{else} class="" {/if}>
+                           {if $topic['image']!=null}
+                             <a class="wrap-img" {if $topic['articleclassid']!=null} href="{url topic/getone/$topic['id']}"  {else}  href="{url question/view/$topic['id']}" {/if} target="_blank">
+                              <img src="{$topic['image']}">
+                          </a>
+                            {/if}
+                            <div class="content">
+                                <div class="author">
+                                     <a class="avatar" target="_blank" href="{url user/space/$topic['authorid']}">
+                    <img src="{$topic['avatar']}" alt="96">
+                </a>      <div class="name">
+                <a class="blue-link" target="_blank" href="{url user/space/$topic['authorid']}">{$topic['author']}</a>
+                              
+                                     <span class="time" data-shared-at="{$topic['format_time']}">.关注时间：{$topic['attention_time']}</span>
+
+                                 </div>
+                            </div>
+
+
+                                 <a class="title" target="_blank"   href="{url topic/getone/$topic['id']}"  >{$topic['title']}</a>
+                         <p class="abstract">
+                                 {eval echo strip_tags($topic['describtion']);}
+                
+                              </p>
+
+                                     <div class="meta">
+
+                <a target="_blank"  href="{url topic/getone/$topic['id']}" >
+                    <i class="fa fa-eye"></i> {$topic['views']}
+                </a>        <a target="_blank"   href="{url topic/getone/$topic['id']}#comments" >
+                <i class="fa fa-comment-o"></i> {$question['answers']}
+            </a>      <span><i class=" fa fa-heart-o"></i>  {$topic['likes']}</span>
+            </div>
+
+
+                                </div>
+
+
+                        </li>
+
+
+                       <!--{/loop}-->
+
+
+                    <!--{else}-->
+
+                    <div class="text">
+                        你还未关注过文章~
+                    </div>
+
+
+                    <!--{/if}-->
+
+
+                </ul>
+
+
+
+
+
+
+
+
+         <div class="pages" >{$departstr}</div>   
+
+            </div>
+        </div>
+
+
+        <div class="col-xs-7 col-xs-offset-1 aside">
+   <!--{template user_menu}-->
+          </div>
+
+    </div>
+</div>
+<!--{template footer}-->

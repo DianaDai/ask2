@@ -81,8 +81,10 @@ if ($cc != "") {
 $header .= "Cc: ".$cc."\r\n";
 
 }
-
-$header .= "From: $from\r\n";
+global $setting;
+$site_name =$setting['site_name'];
+//$header .= "From: $from\r\n";
+$header.="From:$site_name <".$from.">\r\n";
 
 $header .= "Subject: ".$subject."\r\n";
 

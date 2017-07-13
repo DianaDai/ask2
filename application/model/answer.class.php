@@ -218,7 +218,7 @@ function f_get($openid) {
     function add($qid, $title, $content, $status = 0,$chakanjine=0) {
     	 $content=checkwordsglobal( $content);
         $uid = $this->base->user['uid'];
-        $username = $this->base->user['username'];
+        $username = $this->base->user['realname'];
         $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer SET qid='$qid',title='$title',author='$username',authorid='$uid',time='{$this->base->time}',content='$content',reward=$chakanjine,status=$status,ip='{$this->base->ip}'");
         $this->db->query("UPDATE " . DB_TABLEPRE . "question SET  answers=answers+1  WHERE id=" . $qid);
         $this->db->query("UPDATE " . DB_TABLEPRE . "user SET answers=answers+1 WHERE  uid =$uid");
@@ -272,13 +272,18 @@ try{
 
     /* 添加追问--追问--回答 */
 
-    function append($answerid, $author, $authorid, $content) {
+    function append($answerid, $author, $authorid, $content ) {
     	 $content=checkwordsglobal( $content);
     	   $content=checkwordsglobal( $content);
-        $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer_append(appendanswerid,answerid,author,authorid,content,time) VALUES (NULL,$answerid,'$author',$authorid,'$content',{$this->base->time})");
+        $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer_append(appendanswerid,answerid,author,authorid,content, time) VALUES (NULL,$answerid,'$author',$authorid,'$content',{$this->base->time})");
         return $this->db->insert_id();
     }
 
+    /*    1  没有追问， 2有追问*/
+    function update_answerflag($aid ,$flag =1){
+        $this->db->query("UPDATE `".DB_TABLEPRE."answer` SET askflag ='$flag' WHERE `id`=$aid");
+    }
+    
     /* 获取追问信息列表 */
 
     function get_appends($answerid, $start = 0, $limit = 20) {

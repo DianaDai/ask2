@@ -39,7 +39,7 @@
                 
                    
       
-        <a class="avatar" target="_blank" href="{url user/space/$note['authorid']}">
+        <a class="avatar" target="_blank" href="{url user/space/$note['authorid']}"  onmouseover="pop_user_on(this,$note['authorid'],'text')"  onmouseout="pop_user_out()" >
                     <img src="{$note['avatar']}" alt="96">
                 </a>      <div class="name">
                 <a class="blue-link" target="_blank" href="{url user/space/$note['authorid']}">{$note['author']}</a>

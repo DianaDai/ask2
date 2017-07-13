@@ -4254,9 +4254,12 @@
   <ItemGroup>
     <Content Include="application\view\default\myattention_topic.html" />
     <Content Include="application\view\default\myxinzhi.html" />
+    <Content Include="application\view\default\noasknosolve.html" />
+    <Content Include="application\view\default\nosolvequs.html" />
     <Content Include="application\view\default\sider_alluser.html" />
     <Content Include="static\css\bianping\css\credit.css" />
     <Content Include="static\css\bianping\css\images\nums_ic.png" />
+    <Content Include="static\css\bianping\css\usercard.css" />
     <Content Include="static\css\bianping\images\cli_300_2px.png" />
     <Content Include="static\css\bianping\js\navstatus.js" />
     <Content Include="static\css\images\load.gif" />

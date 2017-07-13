@@ -19,10 +19,10 @@
          
                 <div class="col-xs-8">
   <div class="wrap expert-list">
-    <a class="avatar" target="_blank" href="{url user/space/$expert['uid']}">
+    <a class="avatar" target="_blank" href="{url user/space/$expert['uid']}"  onmouseover="pop_user_on(this,$expert['uid'],'text')"  onmouseout="pop_user_out()">
       <img src="{$expert['avatar']}" alt="180">
 </a>    <h4>
-      <a target="_blank" href="{url user/space/$expert['uid']}">{$expert['username']}</a>
+      <a target="_blank" href="{url user/space/$expert['uid']}">{$expert['realname']}</a>
       
     </h4>
     <p class="description">{$expert['signature']}</p>
