@@ -162,13 +162,45 @@ function f_get($openid) {
        
         return $model;
     }
-
+    function rownumbycondition($uid,$status){
+        if ($this->base->user['identity']==3){
+            //如果是客户，只选择属于它的分类
+            $sql = 'SELECT COUNT(*) num FROM ' . DB_TABLEPRE . 'answer as an left join ' . DB_TABLEPRE . 'question as q on q.id = an.qid left join ' . DB_TABLEPRE . 'category as ca on ca.id = q.cid WHERE ca.isFOSS = 1 ';
+            if($status =='all'){
+                $sql .=' AND an.status!=0';
+            }else if($status =='0'){
+                $sql .=' AND an.status=0';
+            }else if($status =='1'){
+                $sql .=' AND an.status!=0 AND an.adopttime=0';
+            }else if($status =='2'){
+                $sql .=' AND an.status!=0 AND an.adopttime>0';
+            }
+            $sql .=' AND an.authorid=' . $uid;
+            return $this->db->result_first($sql);
+        }
+        $condition ='authorid=' . $uid . $_ENV['answer']->statustable[$status];
+        return $this->db->fetch_total('answer',$condition);
+    }
     /* 根据uid获取答案的列表，用于在用户中心，我的回答显示 */
 
     function list_by_uid($uid, $status, $start = 0, $limit = 5) {
         $answerlist = array();
-        $sql = 'SELECT * FROM `' . DB_TABLEPRE . 'answer` WHERE `authorid`=' . $uid;
-        $sql .=$this->statustable[$status] . ' ORDER BY `time` DESC LIMIT ' . $start . ',' . $limit;
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if($this->base->user['identity'] == 3) {
+            $sql = 'SELECT an.* FROM ' . DB_TABLEPRE . 'answer as an left join ' . DB_TABLEPRE . 'question as q on q.id = an.qid left join ' . DB_TABLEPRE . 'category as ca on ca.id = q.cid WHERE ca.isFOSS = 1 and an.authorid=' . $uid;
+        }else {
+            $sql = 'SELECT * FROM ' . DB_TABLEPRE . 'answer as an WHERE an.authorid=' . $uid;
+        }
+        if($status =='all'){
+            $sql .=' AND an.status!=0';
+        }else if($status =='0'){
+            $sql .=' AND an.status=0';
+        }else if($status =='1'){
+            $sql .=' AND an.status!=0 AND an.adopttime=0';
+        }else if($status =='2'){
+            $sql .=' AND an.status!=0 AND an.adopttime>0';
+        }
+        $sql .=' ORDER BY an.time DESC LIMIT ' . $start . ',' . $limit;
         $query = $this->db->query($sql);
         while ($answer = $this->db->fetch_array($query)) {
             $answer['time'] = tdate($answer['time']);

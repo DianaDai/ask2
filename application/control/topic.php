@@ -516,7 +516,10 @@ foreach ($topiclist as $key=>$val){
      $topicid=intval($this->get[2]);
     	$topicone = $_ENV['topic']->get($topicid);
     	$topicone['describtion']=checkwordsglobal($topicone['describtion']);
-    	//$cat_model=$_ENV['category']->get($topicone['articleclassid']);
+        if(!$_ENV['topic']->checkisallowed($topicone)){
+            $this->message('您没有权限查看此问题！');
+        }
+    	$cat_model=$_ENV['category']->get($topicone['articleclassid']);
         $nav_article = $_ENV['category']->get_navigation($topicone['articleclassid'],true); //获取文章分类列表
 
         $toptemp =0;
@@ -613,7 +616,8 @@ foreach ($topiclist as $key=>$val){
         @$page = max(1, intval($this->get[3]));
         $pagesize = 5;//$this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
-        $rownum = $this->db->fetch_total('topic',"authorid=$uid");
+        //$rownum = $this->db->fetch_total('topic',"authorid=$uid");
+        $rownum = $_ENV['topic']->rownumbycondition("authorid=$uid");
         $topiclist = $_ENV['topic']->get_list_byuid($uid, $startindex, $pagesize);
         	 $pages = @ceil($rownum / $pagesize);
         $catags= $_ENV['topic']->get_article_by_uid($uid);

@@ -1,0 +1,29 @@
+﻿
+ <link href="{SITE_URL}static/css/bianping/css/credit.css" rel="stylesheet">
+<div class="recommend" >
+
+    <div  class="title"><span>冠军排行榜</span></div>
+      <div class="know_star">
+           
+                        <ul class="clearfix js_top_user_all      " >
+                           <!-- <p class="desc">总冠军 - 最有实力的领先者</p>-->
+                            <!--{eval $weekuserlist=$this->fromcache('alluserlist');}-->
+                            <!--{loop $weekuserlist $index $alluser}-->
+                            <!--{eval $index++;}-->
+                            <li class="b-b-line number{$index}">
+                                <span class="ic_num">{$index}</span>
+                                <a href="{url user/space/$alluser['uid']}" class="img" target="_blank" data-bn-ipg="21-2-1-1" ><img width="30" height="30" src="{$alluser['avatar']}" alt="{$alluser['username']}" title="{$alluser['username']}"></a>
+                                <a title="{$alluser['username']}" href="{url user/space/$alluser['uid']}" class="text" target="_blank" data-bn-ipg="21-2-1-2">
+
+                                    {eval echo cutstr(strip_tags(str_replace('&nbsp;','',$alluser['username'])),8,'..');}
+                                </a>
+                                <span class="nm"><em>{$alluser['credit2']}</em>分</span><p></p>
+
+                            </li>
+                            <!--{/loop}-->
+                        </ul>
+                    </div>
+
+</div>
+
+

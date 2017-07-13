@@ -155,7 +155,7 @@
         //daixy 验证身份和邮箱激活
         function checkLogin(){
             var url=g_site_url+"index.php?user/ajaxpopcheck";
-            var myModalTrigger = new $.zui.ModalTrigger({url:url});
+            var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
             myModalTrigger.show();
         }
           //验证码

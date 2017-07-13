@@ -76,7 +76,10 @@ class questionmodel
             if ($question['askuid'] > 0) {
                 $question['askuser'] = $this->get_by_uid($question['askuid']);
             }
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo =  $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //这样无法取到值
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['author_avartar'] = get_avatar_dir($question['authorid']);
             $question['title'] = checkwordsglobal($question['title']);
             $question['description'] = checkwordsglobal($question['description']);
@@ -101,8 +104,12 @@ class questionmodel
     {
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            return $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE `title`='$title' and `description`='$desc' AND `authoritycontrol` = 2");
-        } else {
+            if($this->base->user['identity'] == 3){
+                return $this->db->fetch_first("SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . " category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and `title`='$title' and `description`='$desc' AND `authoritycontrol` = 2");
+            }else {
+                return $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE `title`='$title' and `description`='$desc' AND `authoritycontrol` = 2");
+            }
+        }else {
             return $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE `title`='$title' and `description`='$desc'");
         }
         //return $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "question WHERE `title`='$title' and `description`='$desc'");
@@ -113,13 +120,20 @@ class questionmodel
         $questionlist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE authoritycontrol=2 AND limit $start , $limit");
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            if($this->base->user['identity'] == 3) {
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` as q, " . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and q.authoritycontrol=2 AND limit $start , $limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE authoritycontrol=2 AND limit $start , $limit");
+            }
         } else {
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE 1=1 limit $start , $limit");
         }
         //$query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE 1=1 limit $start , $limit");
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $question['url'] = url('question/view/' . $question['id'], $question['url']);
             $question['title'] = checkwordsglobal($question['title']);
@@ -144,13 +158,20 @@ class questionmodel
         $questionlist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE authoritycontrol = 2 AND $condition order by time desc limit $start , $limit");
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            if($this->base->user['identity'] == 3){
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` as q ," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and q.authoritycontrol = 2 AND $condition order by time desc limit $start , $limit");
+            }else {
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE authoritycontrol = 2 AND $condition order by time desc limit $start , $limit");
+            }
         } else {
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE $condition order by time desc limit $start , $limit");
         }
         //$query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` WHERE $condition order by time desc limit $start , $limit");
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $question['url'] = url('question/view/' . $question['id'], $question['url']);
             $question['title'] = checkwordsglobal($question['title']);
@@ -167,13 +188,20 @@ class questionmodel
         $timeend = $this->base->time;
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "question WHERE `authoritycontrol` = 2 AND status in (1,2) AND  `time`>$timestart AND `time`<$timeend  ORDER BY answers DESC,views DESC, `time` DESC LIMIT $start,$limit");
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            if($this->base->user['identity'] ==3){
+                $query = $this->db->query("SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . "category as ca  WHERE q.cid = ca.id and ca.isFOSS = 1 and q.authoritycontrol = 2 AND q.status in (1,2) AND  `q.time`>$timestart AND `q.time`<$timeend  ORDER BY answers DESC,views DESC, `q.time` DESC LIMIT $start,$limit");
+            }else {
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "question WHERE `authoritycontrol` = 2 AND status in (1,2) AND  `time`>$timestart AND `time`<$timeend  ORDER BY answers DESC,views DESC, `time` DESC LIMIT $start,$limit");
+            }
         } else {
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "question WHERE status in (1,2) AND  `time`>$timestart AND `time`<$timeend  ORDER BY answers DESC,views DESC, `time` DESC LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "question WHERE status in (1,2) AND  `time`>$timestart AND `time`<$timeend  ORDER BY answers DESC,views DESC, `time` DESC LIMIT $start,$limit");
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $question['title'] = checkwordsglobal($question['title']);
             $question['description'] = checkwordsglobal($question['description']);
@@ -196,7 +224,8 @@ class questionmodel
             $condition .= " AND `authoritycontrol`=2 ";
         }
         if ($cid) {
-            $category = $this->base->category[$cid];
+            $category =  $this->base->getcategory($cid);
+            //$category = $this->base->category[$cid];
             $condition .= " AND `cid" . $category['grade'] . "`= $cid ";
         }
         isset($this->statustable[$status]) && $condition .= $this->statustable[$status];
@@ -217,7 +246,8 @@ class questionmodel
         $datestart && ($sql .= " AND `time` >= " . strtotime($datestart));
         $dateend && ($sql .= " AND `time` <= " . strtotime($dateend));
         if ($cid) {
-            $category = $this->base->category[$cid];
+            $category =  $this->base->getcategory($cid);
+            //$category = $this->base->category[$cid];
             $sql .= " AND `cid" . $category['grade'] . "`= $cid ";
         }
         isset($this->statustable[$status]) && $sql .= $this->statustable[$status];
@@ -225,7 +255,9 @@ class questionmodel
         $questionlist = array();
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo =  $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $question['url'] = url('question/view/' . $question['id'], $question['url']);
             $question['title'] = checkwordsglobal($question['title']);
@@ -241,16 +273,21 @@ class questionmodel
         $questionlist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 AND q.status IN ($status) ORDER BY q.answers DESC,q.time DESC LIMIT $start,$limit");
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            if($this->base->user['identity']==3) {
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 AND q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 AND q.status IN ($status) ORDER BY q.answers DESC,q.time DESC LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 AND q.status IN ($status) ORDER BY q.answers DESC,q.time DESC LIMIT $start,$limit");
+            }
         } else {
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.status IN ($status) ORDER BY q.answers DESC,q.time DESC LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.status IN ($status) ORDER BY q.answers DESC,q.time DESC LIMIT $start,$limit");
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
-
-
             $question['avatar'] = get_avatar_dir($question['authorid']);
             $question['url'] = url('question/view/' . $question['id'], $question['url']);
             $question['title'] = checkwordsglobal($question['title']);
@@ -266,7 +303,11 @@ class questionmodel
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 AND q.status IN ($status) ORDER BY q.answers DESC");
-        } else {
+        } else if($this->base->user['identity'] == 3 ){
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t ," . DB_TABLEPRE . "category AS ca
+            WHERE q.id=t.qid AND t.name='$name' AND q.cid = ca.id and ca.isFOSS = 1 AND q.status IN ($status) ORDER BY q.answers DESC");
+        }else{
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.status IN ($status) ORDER BY q.answers DESC");
         }
         //$query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.status IN ($status) ORDER BY q.answers DESC");
@@ -331,7 +372,7 @@ class questionmodel
 
     }
 
-    /* 问题列表记录数目 */
+    /* 问题列表记录数目 todo*/
 
     function rownum_by_cfield_cvalue_status($cfield = 'cid1', $cvalue = 0, $status = 0)
     {
@@ -342,8 +383,13 @@ class questionmodel
         }
         ($cfield && $cvalue != 'all') && $condition .= " AND $cfield=$cvalue ";
 
-
         isset($this->statustable[$status]) && $condition .= $this->statustable[$status];
+        //如果是客户，只选择属于它的分类
+        if ($this->base->user['identity'] == 3){
+            $sql =  "SELECT COUNT(*) num FROM ".DB_TABLEPRE."question as q,".DB_TABLEPRE."category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and ";
+            $sql .=$condition;
+            return $this->db->result_first($sql);
+        }
         return $this->db->fetch_total('question', $condition);
     }
 
@@ -352,19 +398,26 @@ class questionmodel
     function list_by_cfield_cvalue_status($cfield = 'cid1', $cvalue = 0, $status = 0, $start = 0, $limit = 10)
     {
         $questionlist = array();
-        $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE 1=1 ";
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if($this->base->user['identity'] == 3) {
+            $sql = "SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and 1=1 ";
+        }else{
+            $sql = "SELECT * FROM " . DB_TABLEPRE . "question as q WHERE 1=1 ";
+        }
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $sql .= " AND authoritycontrol=2 ";
+            $sql .= " AND q.authoritycontrol=2 ";
         }
 
-        ($cfield && $cvalue != 'all') && ($sql .= " AND $cfield=$cvalue ");
+        ($cfield && $cvalue != 'all') && ($sql .= " AND q.".$cfield."=$cvalue ");
 
         isset($this->ordertable[$status]) && $sql .= $this->ordertable[$status];
         $sql .= " LIMIT $start,$limit";
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['sortime'] = $question['time'];//用于排序
             $question['format_time'] = tdate($question['time']);
             $question['avatar'] = get_avatar_dir($question['authorid']);
@@ -376,8 +429,6 @@ class questionmodel
             if ($question['askuid'] > 0) {
                 $question['askuser'] = $this->get_by_uid($question['askuid']);
             }
-
-
             $questionlist[] = $question;
         }
         return $questionlist;
@@ -388,17 +439,24 @@ class questionmodel
     function list_by_shangjin($start = 0, $limit = 10)
     {
         $questionlist = array();
-        $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE 1=1 and  shangjin>0";
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if($this->base->user['identity'] == 3) {
+            $sql = "SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and q.shangjin>0 ";
+        }else {
+            $sql = "SELECT * FROM " . DB_TABLEPRE . "question as q WHERE 1=1 and  shangjin>0";
+        }
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $sql .= " AND authoritycontrol=2 ";
+            $sql .= " AND q.authoritycontrol=2 ";
         }
 
 
-        $sql .= " order by time desc LIMIT $start,$limit";
+        $sql .= " order by q.time desc LIMIT $start,$limit";
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $question['avatar'] = get_avatar_dir($question['authorid']);
             $question['url'] = url('question/view/' . $question['id'], $question['url']);
@@ -419,17 +477,23 @@ class questionmodel
     function list_by_yuyin($start = 0, $limit = 10)
     {
         $questionlist = array();
-        $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE 1=1 and  hasvoice>0";
-
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if($this->base->user['identity'] == 3) {
+            $sql = "SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and q.hasvoice>0 ";
+        }else {
+            $sql = "SELECT * FROM " . DB_TABLEPRE . "question as q WHERE 1=1 and  hasvoice>0";
+        }
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $sql .= " AND authoritycontrol=2 ";
+            $sql .= " AND q.authoritycontrol=2 ";
         }
 
-        $sql .= " order by time desc LIMIT $start,$limit";
+        $sql .= " order by q.time desc LIMIT $start,$limit";
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $question['avatar'] = get_avatar_dir($question['authorid']);
             $question['url'] = url('question/view/' . $question['id'], $question['url']);
@@ -444,7 +508,31 @@ class questionmodel
         }
         return $questionlist;
     }
-
+    //某个用户的文章总数
+    function rownumbycondition($condition){
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity']==2){
+            $condition .=" and authoritycontrol=2 ";
+            return $this->db->fetch_total('question', $condition);
+        }else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
+            return $this->db->fetch_total('question',$condition);
+        }else if($this->base->user['identity']==3){
+            //如果是客户，只选择属于它的分类
+            $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "question as t," . DB_TABLEPRE . "category as ca WHERE t.cid = ca.id and ca.isFOSS = 1 and ";
+            $sql .= $condition;
+            return $this->db->result_first($sql);
+        }
+        return $this->db->fetch_total('topic',$condition);
+    }
+    function checkisallowed($question){
+        if($this->base->user['identity']==3) {
+            $ca = $this->base->getcategory($question['cid']);
+            if ($ca['isFOSS'] != 1) {
+                return false;
+            }
+        }
+        return true;
+    }
     /* 标签 */
     function get_by_qid($qid)
     {
@@ -461,16 +549,24 @@ class questionmodel
     function list_by_uid($uid, $status, $start = 0, $limit = 10)
     {
         $questionlist = array();
-        $sql = 'SELECT * FROM ' . DB_TABLEPRE . 'question WHERE `authorid` = ' . $uid;
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if($this->base->user['identity'] == 3) {
+            $sql = 'SELECT q.* FROM ' . DB_TABLEPRE . 'question as q," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and q.authorid = ' . $uid;
+        }else {
+            $sql = 'SELECT * FROM ' . DB_TABLEPRE . 'question WHERE `authorid` = ' . $uid;
+        }
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['uid'] != $uid && $this->base->user['username'] != 'admin') {
             $sql .= " AND `authoritycontrol`=2 ";
         }
 
         $sql .= $this->statustable[$status] . " ORDER BY `time` DESC LIMIT $start , $limit";
+
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo =  $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             if (intval($question['endtime'])) {
                 $question['format_endtime'] = tdate($question['endtime']);
             }
@@ -831,6 +927,12 @@ class questionmodel
             }else if($this->base->user['identity']==0&&$this->base->user['username']!='admin'){ //未认证的用户
                 $condition.= " AND  authoritycontrol=0 ";
             }
+            if($this->base->user['identity'] == 3){
+                //如果是客户，只选择属于它的分类
+                $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "question as t," . DB_TABLEPRE . "category as ca WHERE t.cid = ca.id and ca.isFOSS = 1 and ";
+                $sql .= $condition;
+                return $this->db->result_first($sql);
+            }
             $questionnum = $this->db->fetch_total('question', $condition);
         }
         return $questionnum;
@@ -848,34 +950,26 @@ class questionmodel
             $from = $statusarr[0];
             $result = $this->search->setQuery($title)->addRange('status', $from, $to)->setLimit($limit, $start)->search();
             foreach ($result as $doc) {
+                $isAdd = false;
+                $cainfo =  $this->base->getcategory($doc->cid);
                 //用户是顾问则只查询 authoritycontrol = 2
                 if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin' ) {
                     if($doc->authoritycontrol ==2) {
-                        $question = array();
-                        $question['id'] = $doc->id;
-                        $question['cid'] = $doc->cid;
-                        $question['category_name'] = $this->base->category[$question['cid']]['name'];
-                        $question['cid1'] = $doc->cid1;
-                        $question['cid2'] = $doc->cid2;
-                        $question['cid3'] = $doc->cid3;
-                        $question['author'] = $doc->author;
-                        $question['authorid'] = $doc->authorid;
-                        $question['authoravatar'] = get_avatar_dir($doc->authorid);
-                        $question['answers'] = $doc->answers;
-                        $question['status'] = $doc->status;
-                        $question['format_time'] = tdate($doc->time);
-                        $question['title'] = $this->search->highlight($doc->title);
-
-                        $question['avatar'] = get_avatar_dir($question['authorid']);
-                        $question['description'] = $this->search->highlight(cutstr(checkwordsglobal(strip_tags($question['description'])), 240, '...'));
-
-                        $questionlist[] = $question;
+                        $isAdd = true;
+                    }
+                }else if($this->base->user['identity'] == 3){
+                    if($cainfo['isFOSS'] ==1){
+                        $isAdd = true;
                     }
                 }else{
+                    $isAdd = true;
+                }
+                if ($isAdd==true) {
                     $question = array();
                     $question['id'] = $doc->id;
                     $question['cid'] = $doc->cid;
-                    $question['category_name'] = $this->base->category[$question['cid']]['name'];
+                    $question['category_name'] = $cainfo['name'];
+                    //$question['category_name'] = $this->base->category[$question['cid']]['name'];
                     $question['cid1'] = $doc->cid1;
                     $question['cid2'] = $doc->cid2;
                     $question['cid3'] = $doc->cid3;
@@ -899,8 +993,12 @@ class questionmodel
 
 
         } else {
-
-            $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE STATUS IN ($status) AND title LIKE '%$title%' ";
+            if($this->base->user['identity'] == 3) {
+                $sql = "SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and STATUS IN ($status) AND title LIKE '%$title%' ";
+            }else{
+                $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE STATUS IN ($status) AND title LIKE '%$title%' ";
+            }
+            //$sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE STATUS IN ($status) AND title LIKE '%$title%' ";
             ($cfield&&$cid!='all')&& $sql.=" AND $cfield=$cid ";
             
             //用户是顾问则只查询 authoritycontrol = 2
@@ -913,7 +1011,9 @@ class questionmodel
             $sql .= " LIMIT $start,$limit";
             $query = $this->db->query($sql);
             while ($question = $this->db->fetch_array($query)) {
-                $question['category_name'] = $this->base->category[$question['cid']]['name'];
+                $cainfo = $this->base->getcategory($question['cid']);
+                $question['category_name'] = $cainfo['name'];
+                //$question['category_name'] = $this->base->category[$question['cid']]['name'];
                 $question['format_time'] = tdate($question['time']);
                 $question['authoravatar'] = get_avatar_dir($question['authorid']);
                 $addbestanswer && $question['bestanswer'] = $this->db->result_first("SELECT content FROM `" . DB_TABLEPRE . "answer` WHERE qid=" . $question['id'] . " AND adopttime>0 ");
@@ -930,15 +1030,22 @@ class questionmodel
     function get_question_bytitle($title, $status = '1,2,6', $addbestanswer = 0, $start = 0, $limit = 20)
     {
         $questionlist = array();
-        $sql = "SELECT * FROM " . DB_TABLEPRE . "question WHERE STATUS IN ($status) AND title LIKE '%$title%' ";
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if($this->base->user['identity'] == 3) {
+            $sql = "SELECT q.* FROM " . DB_TABLEPRE . "question as q," . DB_TABLEPRE . "category as ca WHERE q.cid = ca.id and ca.isFOSS = 1 and STATUS IN ($status) AND title LIKE '%$title%' ";
+        }else {
+            $sql = "SELECT * FROM " . DB_TABLEPRE . "question as q WHERE STATUS IN ($status) AND title LIKE '%$title%' ";
+        }
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $sql .= " AND authoritycontrol=2 ";
+            $sql .= " AND q.authoritycontrol=2 ";
         }
         $sql .= " LIMIT $start,$limit";
         $query = $this->db->query($sql);
         while ($question = $this->db->fetch_array($query)) {
-            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $cainfo = $this->base->getcategory($question['cid']);
+            $question['category_name'] = $cainfo['name'];
+            //$question['category_name'] = $this->base->category[$question['cid']]['name'];
             $question['format_time'] = tdate($question['time']);
             $addbestanswer && $question['bestanswer'] = $this->db->result_first("SELECT content FROM `" . DB_TABLEPRE . "answer` WHERE qid=" . $question['id'] . " AND adopttime>0 ");
             $question['avatar'] = get_avatar_dir($question['authorid']);

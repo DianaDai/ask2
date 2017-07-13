@@ -63,9 +63,14 @@
           </div>
 
           <div class="col-md-11">
+              <!--{if $userinfo['identity'] == 3}-->
+              <span data-toggle="tooltip" title="若允许非产中人员查看内容，请勾选 研发&顾问" ><input class="normal_checkbox" id="duinei" type="checkbox" value="1" disabled="disabled" checked name="duinei" />研发&nbsp;&nbsp;</span>
+              <span data-toggle="tooltip" title="若允许非产中人员查看内容，请勾选 研发&顾问" ><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" disabled="disabled" checked name="duiwai" />顾问</span>
+              <!--{else}-->
               <span data-toggle="tooltip" title="若允许非产中人员查看内容，请勾选 研发&顾问" ><input class="normal_checkbox" id="duinei" type="checkbox" value="1" checked name="duinei" />研发&nbsp;&nbsp;</span>
               <span data-toggle="tooltip" title="若允许非产中人员查看内容，请勾选 研发&顾问" ><input class="normal_checkbox" id="duiwai"  type="checkbox" value="2" checked name="duiwai" />顾问</span>
-             <span style="margin-left: 7px;">积分悬赏&nbsp;<select name="givescore" id="scorelist"><option selected="selected" value="0">0</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="30">30</option><option value="50">50</option><option value="80">80</option><option value="100">100</option></select></span>
+              <!--{/if}-->
+              <span style="margin-left: 7px;">积分悬赏&nbsp;<select name="givescore" id="scorelist"><option selected="selected" value="0">0</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="30">30</option><option value="50">50</option><option value="80">80</option><option value="100">100</option></select></span>
                         <!--{if $user['uid']}-->
 <!--                        <span><input type="checkbox" name="hidanswer" id="hidanswer" value="1" />&nbsp;匿名</span>-->
                         <!--{/if}-->
@@ -412,7 +417,7 @@ window.onload=function(){
 	$("#askform .title ").focus();
 }
 	var category1 = {$categoryjs[category1]};
-    var category22 = {$categoryjs[category2]};
+    var category2 = {$categoryjs[category2]};
     var category3 = {$categoryjs[category3]};
         $(document).ready(function() {
        

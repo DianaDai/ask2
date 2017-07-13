@@ -42,7 +42,11 @@ class topicmodel
     {
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $topic = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title='$title' AND authoritycontrol = 2 ");
+            if($this->base->user['identity']==3){
+                $topic = $this->db->fetch_first("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.title='$title' AND t.authoritycontrol = 2 ");
+            }else{
+                $topic = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title='$title' AND authoritycontrol = 2 ");
+            }
         } else {
             $topic = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title='$title'");
         }
@@ -65,47 +69,37 @@ class topicmodel
            
             $result = $this->search->setQuery($word) ->setLimit($limit, $start)->search();
             foreach ($result as $doc) {
+                $isAdd = false;
+                $cainfo =  $this->base->getcategory($doc->articleclassid);
                 //用户是顾问则只查询 authoritycontrol = 2
-
-                if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+                if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin' ) {
                     if($doc->authoritycontrol ==2) {
-                        $topic = array();
-                        $topic['id'] = $doc->id;
-                        $question['cid'] = $doc->articleclassid;
-                        $question['category_name'] = $this->base->category[$question['articleclassid']]['name'];
-                        $topic['articleclassid']=$doc->articleclassid;
-                        $topic['author'] = $doc->author;
-                        $topic['authorid'] = $doc->authorid;
-                        $topic['image'] = $topic->image;
-                        $topic['title'] = $this->search->highlight($doc->title);
-                        $topic['describtion'] = $this->search->highlight($doc->describtion);
-                        $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
-                        $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-                        
-                        $topic['avatar'] = get_avatar_dir($topic['authorid']);
-                        $topic['views'] = $doc->views;
-                        $topic['articles'] = $doc->articles;
-                        $topic['likes'] = $doc->likes;
-                        $topic['format_time'] =tdate($doc->viewtime);
-                        $topic['viewtime'] = tdate($doc->viewtime);
-                        $topiclist[] = $topic;
-                      
+                        $isAdd = true;
+                    }
+                }else if($this->base->user['identity'] == 3){
+                    if($cainfo['isFOSS'] ==1){
+                        $isAdd = true;
                     }
                 }else{
+                    $isAdd = true;
+                }
+                if ($isAdd==true) {
                     $topic = array();
                     $topic['id'] = $doc->id;
                     $question['cid'] = $doc->articleclassid;
-                    $question['category_name'] = $this->base->category[$question['articleclassid']]['name'];
-                    $topic['articleclassid']=$doc->articleclassid;
+                    $question['category_name'] =$cainfo['name'];
+                    //$question['category_name'] = $this->base->category[$question['articleclassid']]['name'];
+                    $topic['articleclassid'] = $doc->articleclassid;
                     $topic['author'] = $doc->author;
                     $topic['authorid'] = $doc->authorid;
                     $topic['image'] = $topic->image;
 
                     $topic['title'] = $this->search->highlight($doc->title);
                     $topic['describtion'] = $this->search->highlight($doc->describtion);
-                    $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+                    $topic['category_name'] =$cainfo['name'];
+                    //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
                     $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-               
+
                     $topic['avatar'] = get_avatar_dir($topic['authorid']);
                     $topic['views'] = $doc->views;
                     $topic['articles'] = $doc->articles;
@@ -113,9 +107,6 @@ class topicmodel
                     $topic['format_time'] = tdate($doc->viewtime);
                     $topic['viewtime'] = tdate($doc->viewtime);
                     $topiclist[] = $topic;
-                    
-
-                   
                 }
             }
             if (count($topiclist) == 0) {
@@ -129,10 +120,12 @@ class topicmodel
             ($cid!='all')&&  $condition=" and $cfield='$cid' ";
             //用户是顾问则只查询 authoritycontrol = 2
             if ($this->base->user['identity'] == 2 ) {
-               
                 $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 2   $condition order by id desc LIMIT $start,$limit");
             } else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
                 $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
+            }else if($this->base->user['identity']==3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and ( title like '%$word%' or describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
             }else {
                 //未登录用户
                 $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 0   $condition order by id desc LIMIT $start,$limit");
@@ -140,11 +133,12 @@ class topicmodel
             //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
 
             while ($topic = $this->db->fetch_array($query)) {
+                $cainfo = $this->base->getcategory($topic['articleclassid']);
                 $topic['title'] = checkwordsglobal($topic['title']);
                 $topic['describtion'] = checkwordsglobal($topic['describtion']);
                 $topic['title'] = highlight($topic['title'], $word);
-
-                $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+                $topic['category_name'] = $cainfo['name'];
+                //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
                 $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
                 $topic['format_time'] = tdate($topic['viewtime']);
                 $topic['avatar'] = get_avatar_dir($topic['authorid']);
@@ -152,8 +146,6 @@ class topicmodel
                 $topiclist[] = $topic;
             }
         }
-
-
         return $topiclist;
     }
 
@@ -163,29 +155,31 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' AND authoritycontrol = 2 order by id desc LIMIT $start,$limit");
+            if($this->base->user['identity'] ==3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.title like '%$word%' or t.describtion like '%$word%' AND t.authoritycontrol = 2 order by t.id desc LIMIT $start,$limit");
+            }else {
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' AND authoritycontrol = 2 order by id desc LIMIT $start,$limit");
+            }
         } else {
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE title like '%$word%' or describtion like '%$word%' order by id desc LIMIT $start,$limit");
 
         while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
             $topic['title'] = checkwordsglobal($topic['title']);
             $topic['describtion'] = checkwordsglobal($topic['describtion']);
             $topic['title'] = highlight($topic['title'], $word);
-
-            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['category_name'] = $cainfo['name'];
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['describtion'] = highlight(cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...'), $word);
-
-            
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['avatar'] = get_avatar_dir($topic['authorid']);
             $topic['viewtime'] = tdate($topic['viewtime']);
 
             $topiclist[] = $topic;
         }
-
-
         return $topiclist;
     }
 
@@ -248,7 +242,12 @@ class topicmodel
             $condition.=" AND authoritycontrol=2"; 
         }
         ($cfield && $cid != 'all') && $condition .= " AND $cfield=$cid ";
-
+        //如果是客户，只选择属于它的分类
+        if ($this->base->user['identity'] == 3){
+            $sql =  "SELECT COUNT(*) num FROM ".DB_TABLEPRE."topic as q,".DB_TABLEPRE."category as ca WHERE q.articleclassid = ca.id and ca.isFOSS = 1 and ";
+            $sql .=$condition;
+            return $this->db->result_first($sql);
+        }
         return $this->db->fetch_total('topic',$condition);
         
     }
@@ -263,23 +262,28 @@ class topicmodel
     function get_topic_byarticle($cfield='cid1' ,$cid=0, $start = 0, $limit = 6){
     
         $topiclist= array();
-        $condition='where 1=1';
+        $condition=' 1=1';
         ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid";
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') { //权限=2的用户查看少数的
-
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  $condition and authoritycontrol = 2   order by id desc LIMIT $start,$limit");
+            if($this->base->user['identity'] ==3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND $condition and t.authoritycontrol = 2   order by t.id desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where  $condition and authoritycontrol = 2   order by id desc LIMIT $start,$limit");
+            }
         }else{
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic $condition order by id desc LIMIT $start,$limit");
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where $condition order by id desc LIMIT $start,$limit");
         }
-        while ($topic =$this->db->fetch_array($query))
-        {
+        while ($topic =$this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
             $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
             $topic['sortime'] = $topic['viewtime'];//用于排序
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['viewtime'] = tdate($topic['viewtime']);
 
             $topic['title'] = checkwordsglobal($topic['title']);
-            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
             $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
             $topic['answers'] = $topic['articles'];
@@ -288,9 +292,6 @@ class topicmodel
             $topiclist[] = $topic;
         }
         return $topiclist;
-        
-
-        
     }
     
     
@@ -304,12 +305,15 @@ class topicmodel
 
     function get_article_by_uid($uid)
     {
-        $sql = "SELECT COUNT(t.id) as num ,c.name ,c.id ,t.authorid,u.username FROM `" . DB_TABLEPRE . "topic` as t ," . DB_TABLEPRE . "category as c," . DB_TABLEPRE . "user as u where c.id=t.articleclassid and t.authorid=$uid and t.authorid=u.uid GROUP BY t.articleclassid HAVING COUNT(t.id)>0 ORDER BY num DESC LIMIT 0,15";
+        if($this->base->user['identity'] == 3){
+            $sql = "SELECT COUNT(t.id) as num ,ca.name ,ca.id ,t.authorid,u.username FROM `" . DB_TABLEPRE . "topic` as t ," . DB_TABLEPRE . "category as ca," . DB_TABLEPRE . "user as u where ca.id=t.articleclassid and ca.isFOSS = 1 and t.authorid=$uid and t.authorid=u.uid GROUP BY t.articleclassid HAVING COUNT(t.id)>0 ORDER BY num DESC LIMIT 0,15";
+        }else{
+            $sql = "SELECT COUNT(t.id) as num ,ca.name ,ca.id ,t.authorid,u.username FROM `" . DB_TABLEPRE . "topic` as t ," . DB_TABLEPRE . "category as ca," . DB_TABLEPRE . "user as u where ca.id=t.articleclassid and t.authorid=$uid and t.authorid=u.uid GROUP BY t.articleclassid HAVING COUNT(t.id)>0 ORDER BY num DESC LIMIT 0,15";
+        }
+
         $modellist = array();
         $query = $this->db->query($sql);
         while ($model = $this->db->fetch_array($query)) {
-
-
             $modellist[] = $model;
         }
         return $modellist;
@@ -320,13 +324,19 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and articleclassid in($catid) order by id desc LIMIT $start,$limit");
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            if($this->base->user['identity'] == 3){
+                $sql = "select t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 and t.articleclassid in($catid) order by t.id desc LIMIT $start,$limit";
+                $query = $this->db->query($sql);
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and articleclassid in($catid) order by id desc LIMIT $start,$limit");
+            }
+
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where articleclassid in($catid) order by id desc LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where articleclassid in($catid) order by id desc LIMIT $start,$limit");
         while ($topic = $this->db->fetch_array($query)) {
-
             $topic['title'] = checkwordsglobal($topic['title']);
             $topic['avatar'] = get_avatar_dir($topic['authorid']);
             $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
@@ -346,20 +356,26 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 order by id desc LIMIT $start,$limit");
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 order by t.id desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 order by id desc LIMIT $start,$limit");
+            }
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic order by id desc LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic order by id desc LIMIT $start,$limit");
         while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
             ($showquestion == 1) && $topic['questionlist'] = $this->get_questions($topic['id'], 0, $questionsize); //首页专题掉用
             ($showquestion == 2) && $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
             $topic['sortime'] = $topic['viewtime'];//用于排序
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['viewtime'] = tdate($topic['viewtime']);
-
             $topic['title'] = checkwordsglobal($topic['title']);
-            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
             $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
             $topic['answers'] = $topic['articles'];
@@ -375,19 +391,27 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and ispc=1 order by id desc LIMIT $start,$limit");
+            if($this->base->user['identity'] == 3) {
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 and t.ispc=1 order by t.id desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and ispc=1 order by id desc LIMIT $start,$limit");
+            }
+
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where ispc=1 order by id desc LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where ispc=1 order by id desc LIMIT $start,$limit");
         while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
             ($showquestion == 1) && $topic['questionlist'] = $this->get_questions($topic['id'], 0, $questionsize); //首页专题掉用
             ($showquestion == 2) && $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
             $topic['sortime'] = $topic['viewtime'];//用于排序
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['viewtime'] = tdate($topic['viewtime']);
             $topic['title'] = checkwordsglobal($topic['title']);
-            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
 
             $topic['avatar'] = get_avatar_dir($topic['authorid']);
@@ -398,7 +422,15 @@ class topicmodel
 
     function rownum_by_tag($name)
     {
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND t.name='$name' ORDER BY q.views DESC");
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 ORDER BY q.views DESC");
+        } else if($this->base->user['identity'] == 3 ) {
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t, " . DB_TABLEPRE . "category as ca WHERE q.articleclassid = ca.id AND ca.isFOSS = 1 AND q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 ORDER BY q.views DESC");
+        }else{
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND t.name='$name' ORDER BY q.views DESC");
+        }
         return $this->db->num_rows($query);
     }
     /* 搜索数量   */
@@ -409,37 +441,65 @@ class topicmodel
         } else {
             $condition='1=1';
             ($cfield&&$cid!='all')&&$condition.=" and $cfield=$cid ";
-            
-            if ($this->base->user['identity']==2) //用户是顾问则只查询 authoritycontrol = 2
-            {
+            //用户是顾问则只查询 authoritycontrol = 2
+            if ($this->base->user['identity']==2){
                 $rownum = $this->db->fetch_total('topic', " $condition and authoritycontrol=2  and (title like '%$word%' or describtion like '%$word%') ");
-
-            }else if($this->base->user['identity']==1||$this->base->user['username']=='admin')
-            {
-                $rownum = $this->db->fetch_total('topic', " $condition and    (title like '%$word%' or describtion like '%$word%') ");
+            }else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
+                $rownum = $this->db->fetch_total('topic', " $condition and authoritycontrol=2  and (title like '%$word%' or describtion like '%$word%') ");
+            }else if($this->base->user['identity']==3){
+                //如果是客户，只选择属于它的分类
+                $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and (t.title like '%$word%' or t.describtion like '%$word%') and ";
+                $sql .= $condition;
+                $rownum = $this->db->result_first($sql);
             }else{ //如果用户没有登录 查询authoritycontrol=0
                 $rownum = $this->db->fetch_total('topic', " $condition and  authoritycontrol=0 and  (title like '%$word%' or describtion like '%$word%') ");
             }
-            
-
-           
-
         }
         return $rownum;
     }
-
+    function checkisallowed($topic){
+        if($this->base->user['identity']==3) {
+            $ca = $this->base->getcategory($topic['articleclassid']);
+            if ($ca['isFOSS'] != 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    //某个用户的文章总数
+    function rownumbycondition($condition){
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity']==2){
+           return $this->db->fetch_total('topic', " $condition and authoritycontrol=2");
+        }else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
+            return $this->db->fetch_total('topic',$condition);
+        }else if($this->base->user['identity']==3){
+            //如果是客户，只选择属于它的分类
+            $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and ";
+            $sql .= $condition;
+            return $this->db->result_first($sql);
+        }
+        return $this->db->fetch_total('topic',$condition);
+    }
     function list_by_tag($name, $start = 0, $limit = 20)
     {
         $toipiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND q.authoritycontrol = 2 AND t.name='$name'  ORDER BY q.views  DESC LIMIT $start,$limit");
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t , " . DB_TABLEPRE . "category as ca WHERE q.articleclassid = ca.id AND ca.isFOSS = 1 AND q.id=t.aid AND q.authoritycontrol = 2 AND t.name='$name'  ORDER BY q.views  DESC LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND q.authoritycontrol = 2 AND t.name='$name'  ORDER BY q.views  DESC LIMIT $start,$limit");
+            }
         }else{
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND t.name='$name'  ORDER BY q.views  DESC LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "topic` AS q," . DB_TABLEPRE . "topic_tag AS t WHERE q.id=t.aid AND t.name='$name'  ORDER BY q.views  DESC LIMIT $start,$limit");
         while ($topic = $this->db->fetch_array($query)) {
-            $topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
             $topic['format_time'] = tdate($topic['viewtime']);
             $topic['description'] = checkwordsglobal(strip_tags($topic['describtion']));
             $topic['title'] = highlight(checkwordsglobal($topic['title']), $name);
@@ -454,7 +514,12 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['uid'] !=$uid && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and authorid=$uid order by id desc LIMIT $start,$limit");
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 and t.authorid=$uid order by t.id desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and authorid=$uid order by id desc LIMIT $start,$limit");
+            }
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authorid=$uid order by id desc LIMIT $start,$limit");
         }
@@ -557,16 +622,22 @@ class topicmodel
 
     function list_by_search2($title = '', $author = '', $cid = 0, $start = 0, $limit = 10)
     {
-        $sql = "SELECT * FROM `" . DB_TABLEPRE . "topic` WHERE 1=1 ";
-        $title && ($sql .= " AND `title` like '%$title%' ");
-        $author && ($sql .= " AND `author`='$author'");
+        if($this->base->user['identity'] == 3) {
+            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+            $sql = "SELECT * FROM `" . DB_TABLEPRE . "topic` as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND 1=1 ";
+        }else{
+            $sql = "SELECT * FROM `" . DB_TABLEPRE . "topic` as t WHERE 1=1 ";
+        }
+
+        $title && ($sql .= " AND t.title like '%$title%' ");
+        $author && ($sql .= " AND t.author ='$author'");
         //用户是顾问并且不是管理员则只查询 authoritycontrol = 2:
         if ($this->base->user['identity'] != 1) {
-            $sql .= " AND `authoritycontrol` = 2 ";
+            $sql .= " AND t.authoritycontrol = 2 ";
         }
         if ($cid) {
-            $category = $this->base->category[$cid];
-            $sql .= " AND `articleclassid" . "`= $cid ";
+            $category = $this->base->getcategory($cid);
+            $sql .= " AND t.articleclassid" . "= $cid ";
         }
 
         $sql .= " ORDER BY `viewtime` DESC LIMIT $start,$limit";
@@ -579,8 +650,6 @@ class topicmodel
             $topic['viewtime'] = tdate($topic['viewtime']);
             $topiclist[] = $topic;
         }
-
-
         return $topiclist;
     }
 
@@ -589,13 +658,17 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['uid'] !=$uid && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and authorid=$uid and articleclassid=$cid order by viewtime  desc LIMIT $start,$limit");
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 and t.authorid=$uid and t.articleclassid=$cid order by t.viewtime  desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and authorid=$uid and articleclassid=$cid order by viewtime  desc LIMIT $start,$limit");
+            }
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authorid=$uid and articleclassid=$cid order by viewtime  desc LIMIT $start,$limit");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authorid=$uid and articleclassid=$cid order by viewtime  desc LIMIT $start,$limit");
         while ($topic = $this->db->fetch_array($query)) {
-
             $topic['describtion'] = cutstr(strip_tags(str_replace('&nbsp;', '', $topic['describtion'])), 110, '...');
             $topic['viewtime'] = tdate($topic['viewtime']);
             $topiclist[] = $topic;
@@ -620,7 +693,12 @@ class topicmodel
         $topiclist = array();
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and isphone='1' order by displayorder asc ");
+            if($this->base->user['identity'] == 3) {
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 and t.isphone='1' order by t.displayorder asc ");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 and isphone='1' order by displayorder asc ");
+            }
         }else{
             $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where isphone='1' order by displayorder asc ");
         }
@@ -633,7 +711,6 @@ class topicmodel
             $topic['describtion'] = checkwordsglobal($topic['describtion']);
             $topiclist[] = $topic;
 
-
         }
         return $topiclist;
     }
@@ -642,9 +719,14 @@ class topicmodel
     {
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  where authoritycontrol = 2 LIMIT 0,50");
+            if($this->base->user['identity'] == 3) {
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca where t.articleclassid = ca.id and ca.isFOSS = 1  LIMIT 0,50");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  where authoritycontrol = 2 LIMIT 0,50");
+            }
         }else{
-            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic   LIMIT 0,50");
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic LIMIT 0,50");
         }
         //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic   LIMIT 0,50");
         $select = '<select name="topiclist">';

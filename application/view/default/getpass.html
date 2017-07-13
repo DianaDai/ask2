@@ -1,48 +1,131 @@
 <!--{template meta}-->
 <link rel="stylesheet" media="all" href="{SITE_URL}static/css/bianping/css/login.css" />
+<style>
+
+</style>
 <body class="no-padding reader-black-font">
 <div class="sign">
-    <div class="logo"><a href="/"><img src="{$setting['site_logo']}" alt="Logo"></a></div>
-    <div class="main">
-      
+    <div class="main" style="width: 500px;height: 320px;">
+        <h4 class="title" style="margin: 0 auto 30px;">
+            <div class="normal-title">
+                <a class="" href="{url user/login}">登录</a>
+                <b>·</b>
+                <a id="js-sign-up-btn" class="active" href="{url user/getpass}">找回密码</a>
+            </div>
+        </h4>
+        <div class="js-sign-up-container" style="margin-top: 50px">
 
+            <form class="new_user" name="getform" method="post">
 
-<h4 class="title">
-找回密码
-</h4>
-<div class="js-sign-up-container">
-  <form class="new_user" name="getpassform"  action="{url user/getpass}" method="post">
-         <input type="hidden" class="form-control"  name="authcode"  value="{$authcode}" />  
+                <div class="radio-btn">
+                    <label class="col-md-9 control-label" style="width: 160px">密码找回方式：</label>
+                    <span style="margin-left: 20px">
+                        <input type="radio" onclick="bycodeclick()" id="bycode" class="normal_radio" name="shenfen" value="1" checked/>
+                        输入用户编号</span>
+                    <span style="margin-left: 15px">
+                        <input type="radio" onclick="byemailclick()" id="byemail" class="normal_radio" name="shenfen" value="2"/>
+                        输入注册邮箱</span>
+                </div>
 
+                <div class="input-prepend ">
+                    <input style="width: initial;float: right;height: 40px;" type="text" class="form-control"
+                           id="username" name="username" placeholder="用户名"/>
+                    <i style="top: 10px;left: 190px;" id="userfa" class="fa fa-user"></i>
+                    <!--<a style="color: #00F" onclick="getCustomerCode()">如何查看客户编号</a>-->
+                </div>
+                <div class="input-prepend" id="customerCode" style="margin: 0px;float: right;">
+                    <a style="color: #00F;float: right;" onclick="getCustomerCode()">如何查看客户编号</a>
+                </div>
+                <div class="input-prepend">
+                    <input style="width: initial;float: right;height: 40px;display: none" type="text"
+                         class="form-control" id="email" name="email" placeholder="邮箱"/>
+                    <i style="top: 10px;left: 190px;display: none" id="emailfa" class="fa fa-envelope"></i>
+                </div>
 
-     
-               
-             
-       <div class="input-prepend ">
-      <input type="text" class="form-control" id="username" name="username" placeholder="用户名"/>
-      <i class="fa fa-user"></i>
+                <input onclick="submitclick()"   type="button" style="width: inherit;float: right;background: #3280fc;
+    font-size: 15px;margin-top: 15px;" name="submit" id="regsubmit"  value="下一步" class="sign-up-button">
+
+            </form>
+            <!--{template openlogin}-->
+        </div>
+
     </div>
-      <div class="input-prepend">
-      <input type="text" class="form-control" id="email" name="email" placeholder="邮箱"/>
-      <i class="fa fa-envelope"></i>
-    </div>
-      <!--<div class="input-prepend">
-         <img class="pull-right" src="{url user/code}" onclick="javascript:updatecode();" id="verifycode">
-
-                    
-             <input type="text" class="form-control" id="code" name="code" placeholder="输入验证码" onblur="check_code();"/>
-			  <i class="fa fa fa-get-pocket"></i>
-			  </div>-->
-    <input type="submit" name="submit" id="regsubmit"  value="提交" class="sign-up-button">
-   
-</form>
-<!--{template openlogin}-->
+    <script type="text/javascript">
+        function getCustomerCode(){
+            var url=g_site_url+"index.php?user/ajaxviewcustomercode";
+            var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
+            myModalTrigger.show();
+        }
+        function bycodeclick() {
+            document.getElementById("username").style.display = "block";
+            document.getElementById("userfa").style.display = "block";
+            document.getElementById("customerCode").style.display = "block";
+            document.getElementById("email").style.display = "none";
+            document.getElementById("emailfa").style.display = "none";
+        }
+        function byemailclick() {
+            document.getElementById("username").style.display = "none";
+            document.getElementById("userfa").style.display = "none";
+            document.getElementById("customerCode").style.display = "none";
+            document.getElementById("email").style.display = "block";
+            document.getElementById("emailfa").style.display = "block";
+        }
+        function submitclick() {
+            var userradio = $("#bycode").is(':checked');
+            var emailradio = $("#byemail").is(':checked');
+            var parameter = '';
+            var type = '';
+            if(userradio == true){
+                var username = $("#username").val();
+                if(username ==''){
+                   alert('请输入用户编号')
+                    return;
+                }
+                parameter = username;
+                type  = 1;
+            }
+            if(emailradio == true){
+                var email = $("#email").val();
+                if(email ==''){
+                    alert('请输入邮箱号');
+                    return;
+                }
+                parameter = email;
+                type  = 2;
+            }
+            $.ajax({
+                type: "POST",
+                async: false,
+                cache: false,
+                //提交的网址
+                url:"{SITE_URL}/?user/querypass",
+                //提交的数据
+                data:{parameter:parameter,type:type},
+                //返回数据的格式
+                datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+                success: function(data) {
+                    data = $.trim(data);
+                    if(data =='error'){
+                        new $.zui.Messager('您输入的用户编号或者注册邮箱不存在，请核对！', {
+                            type: 'danger',
+                            close: true,
+                            time: 0,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+                    }else {
+                        var url=g_site_url+"index.php?user/ajaxcustomerpasstip/"+data;
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false});
+                        myModalTrigger.show();
+                    }
+                },
+                //调用出错执行的函数
+                error: function () {
+                    //请求出错处理
+                }
+            });
+        }
+    </script>
 </div>
-
-    </div>
-  </div>
-
 
 
 <!--{template footer}-->
-

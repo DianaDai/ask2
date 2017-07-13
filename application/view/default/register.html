@@ -3,62 +3,55 @@
 <link rel="stylesheet" media="all" href="{SITE_URL}static/css/bianping/css/login.css" />
 <body class="no-padding reader-black-font">
 <div class="sign">
-    <div class="logo"><a href="/"><img src="{$setting['site_logo']}" alt="Logo"></a></div>
-    <div class="main">
-      
+    <!--<div class="logo"><a href="/"><img src="{$setting['site_logo']}" alt="Logo"></a></div>-->
+    <div class="main" style="height: 500px;padding: 0px;">
 
-
-<h4 class="title">
+<h4 class="title" style="margin: 0 auto 30px;">
   <div class="normal-title">
     <a class="" href="{url user/login}">登录</a>
     <b>·</b>
     <a id="js-sign-up-btn" class="active" href="{url user/register}">注册</a>
   </div>
 </h4>
-<div class="js-sign-up-container">
+<div class="js-sign-up-container" style="padding: 0 20px 0;">
   <form class="new_user" method="post">
       <input type="hidden" name="usersid" value='{$_SESSION["userid"]}'/>
       <input type="hidden" id="apikey" name="apikey" value='{$_SESSION["apikey"]}'/>  
-    <div class="input-prepend ">
-        <input placeholder="你的昵称" type="text" value="" id="username" name="user_name" >
+    <div class="input-prepend " style="margin-bottom:0px">
+        <input placeholder="请输入许可证里的客户编号(必填)" type="text" value="" id="username" name="user_name" >
       <i class="fa fa-user"></i>
+        <div class="forget-btn" style="margin: 0px">
+            <a style="color: #00F" onclick="getCustomerCode()">如何查看客户编号</a>
+        </div>
     </div>
-    <div class="input-prepend ">
-        <input placeholder="你的邮箱" type="text" value="" id="email"  name="email"  >
-      <i class="fa fa-envelope"></i>
-    </div>
-   {if $setting['smscanuse']==1}
-      <div class="input-prepend  no-radius js-normal ">
-       
-          <input placeholder="手机号" type="tel"  oninput="listerphone()" onpropertychange="listerphone()" id="userphone" name="userphone" >
-        <i class="fa fa-phone"></i>
+      <div class="error-tips" id="showname"></div>
+      <div class="input-prepend " style="margin-bottom:0px">
+          <input placeholder="设置密码，请输入8位数英文+数字密码(必填)" type="password" minlength="8" id="password" name="password" autocomplete="off" maxlength="20">
+          <i class="fa fa-lock"></i>
       </div>
+      <div class="error-tips" id="show_pass"></div>
+      <div class="input-prepend" style="margin-bottom:0px">
+          <input placeholder="确认密码(必填)" type="password" id="repassword" name="repassword" autocomplete="off" maxlength="20">
+          <i class="fa fa-lock"></i>
+      </div>
+      <div class="error-tips" id="show_repass"></div>
+    <div class="input-prepend " style="margin-bottom:0px">
+        <input placeholder="你的邮箱(必填)" type="text" value="" id="email"  name="email"  >
+      <i class="fa fa-envelope"></i>
 
-    <div class="input-prepend  no-radius security-up-code js-security-number hide">
-        <input type="text" id="seccode_verify" name="seccode_verify"  placeholder="手机验证码" onblur="check_phone();">
-      <i class="fa fa-get-pocket"></i>
-     <a  id="testbtn" onclick="gosms()" class="btn-up-resend js-send-code-button" href="javascript:;">发送验证码</a>
-      <div><div class="captcha"><input name="captcha[validation][challenge]" autocomplete="off" type="hidden" value="a025bd170ffad53e107ed83f4fb7e916"> <input name="captcha[validation][gt]" autocomplete="off" type="hidden" value="a10ea6a23a441db3d956598988dff3c4"> <input name="captcha[validation][validate]" autocomplete="off" type="hidden" value=""> <input name="captcha[validation][seccode]" autocomplete="off" type="hidden" value=""> <input name="captcha[id]" autocomplete="off" type="hidden" value="1ad70a1e-f61a-4665-a1bd-f29a05cabe89"> <div id="geetest-area" class="geetest"><div class="gt_input"><input class="geetest_challenge" type="hidden" name="geetest_challenge"><input class="geetest_validate" type="hidden" name="geetest_validate"><input class="geetest_seccode" type="hidden" name="geetest_seccode"></div></div></div></div>
     </div>
-    {else}
-      <div class="input-prepend  no-radius js-normal ">
-                    <img  src="{url user/code}" onclick="javascript:updatecode();" id="verifycode">
-
-                    <input type="text" class="form-control" id="seccode_verify" name="seccode_verify" placeholder="验证码">
-              <i class="fa fa fa-get-pocket"></i>
-                  </div>
-                {/if}
-       <div class="input-prepend ">
-      <input placeholder="设置密码" type="password" id="password" name="password" autocomplete="off" maxlength="20">
-      <i class="fa fa-lock"></i>
-    </div>
-      <div class="input-prepend">
-      <input placeholder="确认密码" type="password" id="repassword" name="repassword" autocomplete="off" maxlength="20">
-      <i class="fa fa-lock"></i>
-    </div>
-    
-    <input type="button" id="regsubmit" onclick="cheklogin()"  value="注册" class="sign-up-button">
-    <p class="sign-up-msg">点击 “注册” 即表示您同意并愿意遵守协议<br> <a target="_blank" href="#">用户协议</a> 和 <a target="_blank" href="#">隐私政策</a> 。</p>
+      <div class="error-tips" id="show_email"></div>
+      <div class="input-prepend  no-radius js-normal " style="margin-bottom:0px">
+          <input placeholder="手机号(选填)" type="tel" id="userphone" name="userphone">
+          <i class="fa fa-phone"></i>
+      </div>
+      <div class="error-tips" id="show_phone"></div>
+      <!--<div id="being_login" style="width:100%;text-align:center;display:none;position:relative">-->
+          <!--<p style="margin:0px;padding:0px;">正在登录...-->
+          <!--<p/>-->
+          <!--<img src="{SITE_URL}static/css/images/load.gif"></img>-->
+      <!--</div>-->
+    <input type="button" id="regsubmit" onclick="chekregister()"  value="提交注册" class="sign-up-button">
 </form>
 <!--{template openlogin}-->
 </div>
@@ -69,117 +62,162 @@
 
 
       <script type="text/javascript">
-    var usernameok = 1;
-    var password = 1;
-    var repasswdok = 1;
-    var emailok = 1;
-    var codeok = 1;
-   
-   
 
-	 function listerphone(){
-    	 var _phone=$("#userphone").val();
-    	 if(_phone.length>0){
-    		
-    		 $(".js-security-number").removeClass("hide");
-    	 }else{
-    		 $(".js-security-number").addClass("hide");
-    	 }
+    function getCustomerCode(){
+        var url=g_site_url+"index.php?user/ajaxviewcustomercode";
+        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
+        myModalTrigger.show();
+    }
+    function check_passwd(password) {
+        if(password === '') {
+            return "请输入您的密码";
+        }
+        if (bytes(password) < 8) {
+            return "密码最少8个字符";
+        } else{
+            return "";
+        }
     }
 
-   
+    function check_repasswd(repassword,password) {
+        if(repassword === '') {
+            return "请重复输入您的密码";
+        }
+        if (repassword!= password) {
+           return "两次密码输入不一致";
+        }
+        return '';
+    }
 
-    function cheklogin(){
-
-    	
+    function check_email(email) {
+        email = $.trim(email);
+        if(email === '') {
+            return "请输入您的邮箱";
+        }
+        if (!email.match(/^[\w\.\-]+@([\w\-]+\.)+[a-z]{2,4}$/ig)) {
+            return "邮件格式不正确";
+        };
+        return '';
+    }
+    function chekregister(){
         var _uname=$("#username").val();
         var _upwd=$("#password").val();
         var _rupwd=$("#repassword").val();
-        var _code=$("#seccode_verify").val();
         var _email=$("#email").val();
-     
-        var _apikey=$("#apikey").val();
-        
-        {if $setting['smscanuse']==1}
         var _phone=$("#userphone").val();
-       
-      	  var _rs=check_phone(_phone);
-      	if(!_rs){
-      		 alert("手机号码有误");  
-      		 return false;
-      	}
-        var _data={phone:_phone,uname:_uname,upwd:_upwd,rupwd:_rupwd,email:_email,apikey:_apikey,seccode_verify:_code};
-        {else}
-        var _data={uname:_uname,upwd:_upwd,rupwd:_rupwd,email:_email,apikey:_apikey,seccode_verify:_code};
-        {/if}
-      
+        var _apikey=$("#apikey").val();
+        if($.trim(_uname) === ''){
+            new $.zui.Messager("请输入您的编号", {
+                type: 'danger',
+                time:"3000",
+                close: true,
+                placement: 'center' // 定义显示位置
+            }).show();
+
+            $("#username").focus();
+            return false;
+        }
+        var upwderror = check_passwd(_upwd);
+        if(upwderror != ''){
+            new $.zui.Messager(upwderror, {
+                type: 'danger',
+                time:"3000",
+                close: true,
+                placement: 'center' // 定义显示位置
+            }).show();
+
+            $("#password").focus();
+            return false;
+        }
+        var rupwderror = check_repasswd(_rupwd,_upwd);
+        if(rupwderror!= ''){
+            new $.zui.Messager(rupwderror, {
+                type: 'danger',
+                time:"3000",
+                close: true,
+                placement: 'center' // 定义显示位置
+            }).show();
+
+            $("#repassword").focus();
+            return false;
+        }
+        var emailerror = check_email(_email);
+        if(emailerror != ''){
+            new $.zui.Messager(emailerror, {
+                type: 'danger',
+                time:"3000",
+                close: true,
+                placement: 'center' // 定义显示位置
+            }).show();
+
+            $("#email").focus();
+            return false;
+        }
+        if(_phone) {
+            var _rs = check_phone(_phone);
+            if (!_rs) {
+                new $.zui.Messager("手机号码有误", {
+                    type: 'danger',
+                    time:"3000",
+                    close: true,
+                    placement: 'center' // 定义显示位置
+                }).show();
+                $("#userphone").focus();
+                return false;
+            }
+        }
+        var _data={phone:_phone,uname:_uname,upwd:_upwd,rupwd:_rupwd,email:_email,apikey:_apikey};
+
         $.ajax({
             //提交数据的类型 POST GET
             type:"POST",
             //提交的网址
-            url:"{SITE_URL}?api_user/registerapi",
+            url:"{SITE_URL}?user/registercustomer",
             //提交的数据
             data:_data,
             //返回数据的格式
             datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
             beforeSend: function () {
-                
-                ajaxloading("提交中...");
+                ajaxloading("验证中...");
              },
             //成功返回之后调用的函数
-            success:function(data){
-              
-            	data=$.trim(data);
-                if(data=='reguser_ok'){
-                	
-              
-                
-                	
-                	
-                  window.location.href="{SITE_URL}?user/default";
-                  
-                 
-                	
-                }else if(data=='reguser_ok1'){
-                	
-                	alert("注册成功，系统已发送注册邮件，24小时之内请进行邮箱验证，在您没激活邮件之前你不能发布问题和文章等操作！");
-                	   window.location.href="{SITE_URL}?user/default";
-                }else{
-                	switch(data){
-                	
-                
-                	case 'reguser_cant_null':
-                		
-                		
-                		alert("用户名或者密码不能为空");
-                		break;
-                	case 'regemail_Illegal':
-                		
-                		alert("注册邮箱不合法");
-                		break;
-                	case 'regemail_has_exits':
-                		
-                		alert("邮箱已注册");
-                		break;
-                	case 'regemail_cant_use':
-                		
-                		alert("此邮箱不能注册使用");
-                		break;
-                	case 'reguser_has_exits':
-                	
-                		alert("注册用户名已经存在");
-                		break;
-                	case 'Illegal':
-                		
-                		alert("用户名或者密码包含特殊字符");
-                		break;
-                	default:
-                		
-                		alert(data);
-                		break;
-                	}
+            success:function(data) {
+                data = $.trim(data);
+                switch (data) {
+                    case 'reguser_cant_null':
+                        alert("用户名或者密码不能为空");
+                        break;
+                    case 'regemail_Illegal':
+                        alert("注册邮箱不合法");
+                        break;
+                    case 'regemail_has_exits':
+                        alert("邮箱已注册");
+                        break;
+                    case 'regemail_cant_use':
+                        alert("此邮箱不能注册使用");
+                        break;
+                    case 'reguser_has_exits':
+                        //弹窗提示
+                        var url=g_site_url+"index.php?user/ajaxexistcustomer/"+_uname;
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
+                        myModalTrigger.show();
+                        break;
+                    case 'Illegal':
+                        alert("用户名或者密码包含特殊字符");
+                        break;
+                    case 'exist_in_DS':
+                        var url=g_site_url+"index.php?user/ajaxquerycustomer_result/"+_uname+'/'+_upwd+'/'+_phone+'/'+_email;
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false});
+                        myModalTrigger.show();
+                        break;
+                    case 'not_exist_in_DS':
+                        alert("该客户编号无效，请检查是否已经输入正确的客户编号！");
+                        break;
+                    default:
+                        alert(data);
+                        break;
                 }
-            }   ,
+            },
             complete: function () {
                 removeajaxloading();
              },
@@ -189,11 +227,6 @@
             }
         });
     }
-
-   
-
-    
-    
 </script>
 
 <!--{template footer}-->
