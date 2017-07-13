@@ -184,6 +184,104 @@ function attentto_cat(cid) {
         }
     });
 }
+
+
+//usercard弹出层
+function pop_user_on(popobj, uid, type) {
+    var myalign = "left-27 bottom-30";
+    if (type == 'text') {
+        myalign = "left-21 bottom-10";
+    } else if (type == 'image_active') {
+        myalign = "left-40 bottom-43";
+    } else if (type == 'image_follow') {
+        myalign = "left-10 bottom-20";
+    }
+
+    if (popusertimer) {
+        clearTimeout(popusertimer);
+    }
+
+    popusertimer = setTimeout(function () {
+        $("#usercard").show();
+
+    }, 300);
+    $("#usercard").load(g_site_url + "index.php" + query + "user/ajaxuserinfo/" + uid, function (data) {
+        $(this).html(data);
+        var offset = $(popobj).offset();
+
+        $(this).css({ "position": "absolute", "left": offset.left + 37, "top": offset.top });
+
+
+    });
+}
+function pop_user_out() {
+    if (popusertimer) {
+        clearTimeout(popusertimer);
+    }
+    popusertimer = setTimeout(function () {
+        $("#usercard").hide();
+        var userinfo = ' <div class="usercard_in clearfix"><div class="loading"></div></div>';
+        $("#usercard").html(userinfo);
+    }, 300);
+}
+////usercard关闭
+//$("#usercard").hover(function () {
+//    if (popusertimer) {
+//        clearTimeout(popusertimer);
+//    }
+//    $("#usercard").show();
+//}, function () {
+//    if (popusertimer) {
+//        clearTimeout(popusertimer);
+//    }
+//    popusertimer = setTimeout(function () {
+//        $("#usercard").hide();
+//    }, 300);
+//});
+
+function usercard_on() {
+    if (popusertimer) {
+        clearTimeout(popusertimer);
+    }
+    $("#usercard").show();
+}
+
+
+function usercard_out() {
+    if (popusertimer) {
+        clearTimeout(popusertimer);
+    }
+    popusertimer = setTimeout(function () {
+        $("#usercard").hide();
+    }, 300);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function checkall(checkname) {
     var chkall = $("#chkall:checked").val();
     if (chkall && (chkall === 'chkall')) {

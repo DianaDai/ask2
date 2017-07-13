@@ -59,12 +59,12 @@ class admin_expertcontrol extends base {
                 $lymc =$_ENV['category']->get($cid);
                 foreach ($follwers as $fol)
                 {
-                    $msginfo =$_ENV['email_msg']->speacial_pro($fol['username'],$lymc['name'],$user['username'],$qurl);
+                    $msginfo =$_ENV['email_msg']->speacial_pro($fol['realname'],$lymc['name'],$user['realname'],$qurl);
                     $this->send_msg_all($fol,$msginfo['title'],$msginfo['content']);
                 }
                 //通知专家自己
               
-                $msginfo= $_ENV['email_msg']->sepeacial_uppro($user['username'],$lymc['name']);
+                $msginfo= $_ENV['email_msg']->sepeacial_uppro($user['realname'],$lymc['name']);
                 $this->send_msg_all($user,$msginfo['title'],$msginfo['content']);
             }
             

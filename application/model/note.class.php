@@ -38,7 +38,7 @@ class notemodel {
     }
 
     function add($title, $url, $content) {
-        $username = $this->base->user['username'];
+        $username = $this->base->user['realname'];
         $uid = $this->base->user['uid'];
         $this->db->query('INSERT INTO ' . DB_TABLEPRE . "note(title,authorid,author,url,content,time) values ('$title','$uid','$username','$url','$content','{$this->base->time}')");
         return $this->db->insert_id();

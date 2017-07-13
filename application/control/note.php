@@ -67,7 +67,7 @@ class notecontrol extends base {
             $touser = $_ENV['user']->get_by_uid($note['authorid']);
             $viewurl = url('note/view/'.$noteid,2);
             $qurl='<br /> <a href="' .$viewurl . '">点击查看公告</a>'; //站内url都使用这个
-            $msginfo =$_ENV['email_msg']->notice_comment($touser['username'],$note['title'],$qurl);
+            $msginfo =$_ENV['email_msg']->notice_comment($touser['realname'],$note['title'],$qurl);
             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
             

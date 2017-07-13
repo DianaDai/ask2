@@ -286,8 +286,8 @@ class questionmodel
         $this->db->query("DELETE FROM `" . DB_TABLEPRE . "answer_comment ` WHERE `aid` IN (SELECT id FROM " . DB_TABLEPRE . "answer WHERE `qid` IN($qids))");
         $this->db->query("DELETE FROM `" . DB_TABLEPRE . "answer_support ` WHERE `aid` IN (SELECT id FROM " . DB_TABLEPRE . "answer WHERE `qid` IN($qids))");
         $this->db->query("DELETE FROM `" . DB_TABLEPRE . "answer` WHERE `qid` IN ($qids)");
-
-
+        //删除问题和回答后，用户信息的也同步更新
+       
         if ($this->base->setting['xunsearch_open']) {
             $this->index->del(explode(",", $qids));
         }
@@ -330,6 +330,108 @@ class questionmodel
 
 
     }
+    /*问题列表追问未回答的信息*/
+
+    function rownum_by_asknosove_list($cfield='cid1',$cvalue =0){
+        $condition ="  where  qus.id = ans.qid AND ans.askflag=2   AND qus.status =1 and qus.answers >0 "; //未解决的问题并且问题有回答
+        if ($this->base->user['identity']==2&&$this->base->user['username']!='admin')
+        {
+        	$condition.=" AND qus.authoritycontrol=2 ";
+        }
+        ($cfield&&$cvalue!='all')&& $condition.=" AND qus.$cfield=$cvalue";
+        $sql = "select count(*) num FROM ".DB_TABLEPRE."question qus , ".DB_TABLEPRE."answer ans".$condition;
+        return $this->db->result_first($sql);
+    
+    }
+    /*获取问题追问未回答列表*/
+    function list_by_asknosove_list($cfield='cid1',$cvalue=0,$start =0 ,$limit =10){
+        $questionlist = array();
+        $sql = "SELECT qus.* , ans.author as answer_name  FROM ".DB_TABLEPRE."question as qus, ".DB_TABLEPRE."answer as ans where  qus.id = ans.qid and ans.askflag =2 and qus.status=1 and qus.answers>0 ";
+        if ($this->base->user['identity']==2 && $this->base->user['username'] != 'admin')
+        {
+        	$sql.= " AND qus.authoritycontrol=2 ";
+        }
+       ($cfield && $cvalue != 'all') && ($sql .= " AND qus.$cfield=$cvalue ");
+       $sql.= " order by qus.time desc  ";
+       $sql.=" LIMIT $start ,$limit";
+ 
+       $query = $this->db->query($sql);
+       while ($question = $this->db->fetch_array($query))
+       {
+         
+           $question['category_name'] = $this->base->category[$question['cid']]['name'];
+           $question['sortime'] = $question['time'];//用于排序
+           $question['format_time'] = tdate($question['time']);
+           $question['avatar'] = get_avatar_dir($question['authorid']);
+           $question['url'] = url('question/view/' . $question['id'], $question['url']);
+           $question['title'] = checkwordsglobal($question['title']);
+           $question['image'] = getfirstimg($question['description']);
+           $question['description'] = cutstr(checkwordsglobal(strip_tags($question['description'])), 240, '...');
+           $question['tags'] = $this->get_by_qid($question['id']);
+           if ($question['askuid'] > 0) {
+               $question['askuser'] = $this->get_by_uid($question['askuid']);
+           }
+           $questionlist[] = $question;
+       	
+       }
+       
+       return $questionlist;
+       
+        
+    }
+    
+    
+    
+    
+    /*问题列表未回答的信息*/
+    
+    function rownum_by_nosove_list($cfield ='cid1',$cvalue =0){
+        $condition =" 1=1 AND answers = 0 and status = 1 ";
+        if ($this->base->user['identity']==2&&$this->base->user['username']!='admin')//用户是顾问则只查询 authoritycontrol = 2
+        {
+        	$condition .=" AND authoritycontrol=2 ";
+        }
+        ($cfield&&$cvalue!='all')&& $condition.=" AND $cfield=$cvalue";
+        return $this->db->fetch_total('question',$condition);
+        
+    }
+    /* 查询未回答的用户数量*/
+    function list_by_nosove_list($cfield='cid1',$cvalue=0,$start=0,$limit=10){
+        $questionlist = array();
+        $sql= "SELECT * FROM ".DB_TABLEPRE."question where 1=1 AND answers =0 and status =1 ";
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] == 2 && $this->base->user['username'] != 'admin') {
+            $sql .= " AND authoritycontrol=2 ";
+        }
+        ($cfield && $cvalue != 'all') && ($sql .= " AND $cfield=$cvalue ");
+        $sql.="order by time desc ";
+        $sql.=" LIMIT $start ,$limit";
+        $query = $this->db->query($sql);
+        while ($question = $this->db->fetch_array($query))
+        {
+            $question['category_name'] = $this->base->category[$question['cid']]['name'];
+            $question['sortime'] = $question['time'];//用于排序
+            $question['format_time'] = tdate($question['time']);
+            $question['avatar'] = get_avatar_dir($question['authorid']);
+            $question['url'] = url('question/view/' . $question['id'], $question['url']);
+            $question['title'] = checkwordsglobal($question['title']);
+            $question['image'] = getfirstimg($question['description']);
+            $question['description'] = cutstr(checkwordsglobal(strip_tags($question['description'])), 240, '...');
+            $question['tags'] = $this->get_by_qid($question['id']);
+            if ($question['askuid'] > 0) {
+                $question['askuser'] = $this->get_by_uid($question['askuid']);
+            }
+
+
+            $questionlist[] = $question;
+        }
+        return $questionlist;
+        
+    }
+    
+    
+    
+    
 
     /* 问题列表记录数目 */
 
@@ -494,7 +596,7 @@ class questionmodel
         $creattime = $this->base->time;
         $endtime = $this->base->time + $overdue_days * 86400;
         $uid = $this->base->user['uid'];
-        $username = $uid ? $this->base->user['username'] : $this->base->user['ip'];
+        $username = $uid ? $this->base->user['realname'] : $this->base->user['ip'];
         (!strip_tags($description, '<img>')) && $description = '';
         /* 分词索引 */
         $this->db->query("INSERT INTO " . DB_TABLEPRE . "question SET cid='$cid',cid1='$cid1',cid2='$cid2',cid3='$cid3',askuid='$askfromuid',authorid='$uid',authoritycontrol = '$authoritycontrol',shangjin='$shangjin',author='$username',title='$title',description='$description',price='$price',time='$creattime',endtime='$endtime',hidden='$hidanswer',status='$status',ip='{$this->base->ip}'");

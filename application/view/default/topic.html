@@ -65,7 +65,7 @@
                 
                    
       
-        <a class="avatar" target="_blank" href="{url user/space/$topic['authorid']}">
+        <a class="avatar" target="_blank" href="{url user/space/$topic['authorid']}" onmouseover="pop_user_on(this,$topic['authorid'],'text')" onmouseout="pop_user_out()" >
                     <img src="{$topic['avatar']}" alt="96">
                 </a>      <div class="name">
                 <a class="blue-link" target="_blank" href="{url user/space/$topic['authorid']}">{$topic['author']}</a>

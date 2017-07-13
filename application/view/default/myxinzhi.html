@@ -1,15 +1,16 @@
-<!--{template header}-->
+﻿<!--{template header}-->
 <link rel="stylesheet" media="all" href="{SITE_URL}static/css/bianping/css/space.css" />
 <div class="container person">
   <div class="row">
     <div class="col-xs-16 main">
           <!-- 用户title部分导航 -->
+          <!--{template user_title}-->
           
-           <!--{if $uid==$user['uid']}-->
-              <!--{template user_title}-->
-             <!--{else}-->
-                <!--{template space_title}-->
-               <!--{/if}-->
+              <ul class="trigger-menu" data-pjax-container="#list-container">
+                  
+      <li <!--{if $regular=="user/xinzhi"}--> class="active" <!--{/if}-->><a href="{url user/xinzhi/$user['uid']}"><i class="fa fa-rss-square"></i> 文章</a></li>
+                  </ul> 
+          
            
 
      
@@ -65,19 +66,6 @@
       <!--{else}-->
       
           <!--{/if}-->
-                    
-     
-   
-
-
-   
-   
-
-   
-
-
-   
-   
 
 </ul>
   <div class="pages" >{$departstr}</div>   
@@ -85,7 +73,7 @@
     </div>
     
 <div class="col-xs-7 col-xs-offset-1 aside">
-   <!--{template space_menu}-->
+   <!--{template user_menu}-->
 </div>
 
   </div>

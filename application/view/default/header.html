@@ -29,12 +29,17 @@
             </div>
             <ul class="dropdown-menu">
 
-                <li><a class="avatar" href="{url user/default}">
+              <li>
+                  <div class="viewimg">
+                            <a class="avatar" href="{url user/default}">
                         <img src="{$user['avatar']}" alt="120" /> </a>
-                   </li>
+                  
+                  </div>
+             </li>
                 <li class="userdetal">
                     <ul>
-                        <li>
+                          
+                        <li style="font-size:12px; font-weight:bold">
                             {$user['realname']}  
                         </li>
                <!--         <li>
@@ -46,13 +51,14 @@
                         <li>
                             {$user['phone']}
                         </li>
+                        <li style="float: right; margin-top: -70px">
+                            <a rel="nofollow" data-method="delete" href="{url user/logout}">
+                                <i class="fa fa-power-off"></i><span>退出</span>
+                            </a></li>
                     </ul>
 
                 </li>
-                        <li style ="float:right;margin-top:-85px">
-                    <a rel="nofollow" data-method="delete" href="{url user/logout}">
-                    <i class="fa fa-power-off"></i><span>退出</span>
-                 </a></li>
+                   
 
                 <hr />
                 <!--{if $user['groupid']<=3}-->
@@ -92,7 +98,7 @@
 
                 <li>
                     <a href="{url user/attention/question}">
-                        <i class="fa fa-star"></i><span>我的收藏</span>
+                        <i class="fa fa-star"></i><span>我的关注</span>
                     </a></li>
                 <li>
                     <a href="{url user/ask/1}">

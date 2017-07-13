@@ -227,7 +227,7 @@ class topicmodel
 
     function get_user_articles($start = 0, $limit = 8)
     {
-        $sql = "SELECT COUNT(wz.authorid) as num, u.uid,u.username,u.signature,u.followers,u.answers FROM `" . DB_TABLEPRE . "user` as u ," . DB_TABLEPRE . "topic as wz where u.uid=wz.authorid group by u.uid ORDER BY num DESC LIMIT $start,$limit";
+        $sql = "SELECT COUNT(wz.authorid) as num,u.realname,  u.uid,u.username,u.signature,u.followers,u.answers FROM `" . DB_TABLEPRE . "user` as u ," . DB_TABLEPRE . "topic as wz where u.uid=wz.authorid group by u.uid ORDER BY num DESC LIMIT $start,$limit";
         $modellist = array();
         $query = $this->db->query($sql);
         while ($model = $this->db->fetch_array($query)) {
@@ -817,6 +817,7 @@ class topicmodel
         $cid2 = intval($cid2);
         $cid3 = intval($cid3);
         $this->db->query("UPDATE " . DB_TABLEPRE . "category SET topics=topics+1 WHERE  id IN ($cid1,$cid2,$cid3) ");
+        $authorid&& $this->db->query("UPDATE ".DB_TABLEPRE."user SET articles=articles+1 WHERE uid=$authorid"); 
         return $aid;
     }
 

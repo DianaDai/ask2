@@ -164,15 +164,15 @@ foreach ($topiclist as $key=>$val){
   	}
     	$status=1;
     	$supports=rand(1, 5);
-    	$id=$_ENV['articlecomment']->add_seo($tid,$title,$content,$this->user['uid'],$this->user['username'],$status,$supports);
+    	$id=$_ENV['articlecomment']->add_seo($tid,$title,$content,$this->user['uid'],$this->user['realname'],$status,$supports);
     	if($id>0){
             //通知作者
             $topic = $_ENV['topic']->get($tid);
             $touser = $_ENV['user']->get_by_uid($topic['authorid']);
             $viewurl = urlmap('topic/getone/' . $tid, 2);
-            $weburl='<br /> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
+            $weburl='<br> <a href="' . SITE_URL . $this->setting['seo_prefix'] . $viewurl . $this->setting['seo_suffix'] . '">点击查看文章</a>';
 
-            $msginfo = $_ENV['email_msg']->topic_ans($touser['username'],$title,$weburl);
+            $msginfo = $_ENV['email_msg']->topic_ans($touser['realname'],$title,$weburl);
             $this->sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
             //通知关注着
@@ -181,7 +181,7 @@ foreach ($topiclist as $key=>$val){
             
             foreach ($favusers as $fav)
             {
-            	$msginfo = $_ENV['email_msg']->topic_ans_fav($fav['username'],$title,$weburl);
+            	$msginfo = $_ENV['email_msg']->topic_ans_fav($fav['realname'],$title,$weburl);
                 $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
             }
             
@@ -189,7 +189,7 @@ foreach ($topiclist as $key=>$val){
     		$message['msg']="评论成功!";
     		 $this->load("doing");
             
-              $_ENV['doing']->add($this->user['uid'], $this->user['username'], 14, $tid, $content);
+             $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 14, $tid, $content);
     	}else{
     		$message['state']=0;
     		$message['msg']="评论失败!";
@@ -588,9 +588,9 @@ foreach ($topiclist as $key=>$val){
         $topic = $_ENV['topic']->get($topicid);
         if ($this->user['uid']) {
             $this->load('doing');
-            $_ENV['doing']->add($this->user['uid'], $this->user['username'], 15, $topicid, $topic['title']);
+            $_ENV['doing']->add($this->user['uid'], $this->user['realname'], 15, $topicid, $topic['title']);
             $touser =$_ENV['user']->get_by_uid($topic['authorid']);
-            $msginfo = $_ENV['email_msg']->topic_ok($touser['username'],$topic['title']);
+            $msginfo = $_ENV['email_msg']->topic_ok($touser['realname'],$topic['title']);
             $this-> sendmsg($touser,$msginfo['title'],$msginfo['content']);
             
         }
