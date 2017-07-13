@@ -1,6 +1,6 @@
 .sign {
-	height:100%;
-	min-height:750px;
+	height:94.5%;
+	/*min-height:750px;*/
 	text-align:center;
 	font-size:14px;
 	background-color:#f1f1f1
@@ -94,6 +94,7 @@
 }
 .sign .main {
 	width:400px;
+	height: 420px;
 	margin:60px auto 0;
 	padding:50px 50px 30px;
 	background-color:#fff;
@@ -414,4 +415,78 @@
 	.sign .icheckbox_square-green {
 	background-size:200px 20px
 }
+}
+
+/*body,div,ul,li{*/
+	/*margin:0 auto;*/
+	/*padding:0;*/
+/*}*/
+/*body{*/
+	/*font:12px "宋体";*/
+	/*text-align:center;*/
+/*}*/
+a:link{
+	color:#00F;
+	text-decoration:none;
+}
+a:visited {
+	color: #00F;
+	text-decoration:none;
+}
+a:hover {
+	color: #c00;
+	text-decoration:underline;
+}
+ul{
+	list-style:none;
+}
+.mainTab{
+	clear:both;
+	padding:8px;
+	background: #FFFFff;
+	padding: 70px 50px 0;
+	text-align:center;
+}
+/*第一种形式*/
+#tabs0 {
+	height: 200px;
+	width: 400px;
+	border: 1px solid #cbcbcb;
+	background-color: #FFFFff;
+}
+.menu0{
+	width: 400px;
+}
+.menu0 li{
+	display:block;
+	float: left;
+	padding: 4px 0;
+	width:200px;
+	text-align: center;
+	cursor:pointer;
+	background: #ddd;
+	font-size: large;
+	line-height: 40px;
+}
+.menu0 li.hover{
+	background: #FFFFff;
+}
+#main0 ul{
+	display: none;
+}
+#main0 ul.block{
+	display: block;
+}
+.error-tips{
+	color:red;
+	height: 20px;
+	text-align: left;
+}
+.radio-btn{
+	width: 100%;
+	margin: 15px 0px;
+	font-size: 15px;
+}
+.altbg{
+	vertical-align: middle;
 }
