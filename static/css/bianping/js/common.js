@@ -452,7 +452,10 @@ function topickeydownlistener(e){
 function postask(){
 	 ctrdown=false;
 	 returndown=false;
-	var eidtor_content= $.trim($("#anscontent").val());
+	 var eidtor_content = $.trim($("#editor").val());
+	 if (eidtor_content=='') {
+	     eidtor_content = editor.getContent();
+	 }
 	
 	 var _chakanjine=$("#chakanjine").val();
 	 if(_chakanjine!=0){

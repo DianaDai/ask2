@@ -4247,11 +4247,24 @@
     <Folder Include="static\js\sowenda" />
     <Folder Include="static\js\uploadify" />
     <Folder Include="static\js" />
+    <Folder Include="static\js\wangeditor\" />
+    <Folder Include="static\js\wangeditor\mobile\" />
+    <Folder Include="static\js\wangeditor\mobile\dist\" />
+    <Folder Include="static\js\wangeditor\mobile\dist\css\" />
+    <Folder Include="static\js\wangeditor\mobile\dist\css\fonts\" />
+    <Folder Include="static\js\wangeditor\mobile\dist\js\" />
+    <Folder Include="static\js\wangeditor\mobile\dist\js\lib\" />
+    <Folder Include="static\js\wangeditor\pcwangeditor\" />
+    <Folder Include="static\js\wangeditor\pcwangeditor\css\" />
+    <Folder Include="static\js\wangeditor\pcwangeditor\fonts\" />
+    <Folder Include="static\js\wangeditor\pcwangeditor\js\" />
+    <Folder Include="static\js\wangeditor\pcwangeditor\js\lib\" />
     <Folder Include="static\theme\red" />
     <Folder Include="static\theme" />
     <Folder Include="static" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="application\view\default\editor.html" />
     <Content Include="application\view\default\myattention_topic.html" />
     <Content Include="application\view\default\myxinzhi.html" />
     <Content Include="application\view\default\noasknosolve.html" />
@@ -4263,5 +4276,26 @@
     <Content Include="static\css\bianping\images\cli_300_2px.png" />
     <Content Include="static\css\bianping\js\navstatus.js" />
     <Content Include="static\css\images\load.gif" />
+    <Content Include="static\js\wangeditor\mobile\dist\css\fonts\icomoon.eot" />
+    <Content Include="static\js\wangeditor\mobile\dist\css\fonts\icomoon.svg" />
+    <Content Include="static\js\wangeditor\mobile\dist\css\fonts\icomoon.ttf" />
+    <Content Include="static\js\wangeditor\mobile\dist\css\fonts\icomoon.woff" />
+    <Content Include="static\js\wangeditor\mobile\dist\css\wangEditor-mobile.css" />
+    <Content Include="static\js\wangeditor\mobile\dist\css\wangEditor-mobile.min.css" />
+    <Content Include="static\js\wangeditor\mobile\dist\js\lib\zepto.js" />
+    <Content Include="static\js\wangeditor\mobile\dist\js\lib\zepto.touch.js" />
+    <Content Include="static\js\wangeditor\mobile\dist\js\wangEditor-mobile.js" />
+    <Content Include="static\js\wangeditor\mobile\dist\js\wangEditor-mobile.min.js" />
+    <Content Include="static\js\wangeditor\pcwangeditor\css\wangEditor.css" />
+    <Content Include="static\js\wangeditor\pcwangeditor\css\wangEditor.less" />
+    <Content Include="static\js\wangeditor\pcwangeditor\css\wangEditor.min.css" />
+    <Content Include="static\js\wangeditor\pcwangeditor\fonts\icomoon.eot" />
+    <Content Include="static\js\wangeditor\pcwangeditor\fonts\icomoon.svg" />
+    <Content Include="static\js\wangeditor\pcwangeditor\fonts\icomoon.ttf" />
+    <Content Include="static\js\wangeditor\pcwangeditor\fonts\icomoon.woff" />
+    <Content Include="static\js\wangeditor\pcwangeditor\js\lib\jquery-1.10.2.min.js" />
+    <Content Include="static\js\wangeditor\pcwangeditor\js\lib\jquery-2.2.1.js" />
+    <Content Include="static\js\wangeditor\pcwangeditor\js\wangEditor.js" />
+    <Content Include="static\js\wangeditor\pcwangeditor\js\wangEditor.min.js" />
   </ItemGroup>
 </Project>
