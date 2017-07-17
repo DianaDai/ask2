@@ -75,7 +75,7 @@
                     data = $.trim(data);
                     if (data == 'successful') {
                         var url=g_site_url+"index.php?user/ajaxcustomer_emailcheck/"+_name+"/"+_email;
-                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false});
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false,keyboard:false});
                         myModalTrigger.show();
                     } else {
                         new $.zui.Messager(data, {

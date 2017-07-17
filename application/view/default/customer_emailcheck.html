@@ -72,7 +72,7 @@
                     data = $.trim(data);
                     if (data == 'successful') {
                         var url=g_site_url+"index.php?user/ajaxcustomertip";
-                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false});
                         myModalTrigger.show({hidden: function() {
                             window.location.href = _forward;
                         }});

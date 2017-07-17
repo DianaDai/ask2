@@ -65,7 +65,7 @@
 
     function getCustomerCode(){
         var url=g_site_url+"index.php?user/ajaxviewcustomercode";
-        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
+        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false});
         myModalTrigger.show();
     }
     function check_passwd(password) {
@@ -199,7 +199,7 @@
                     case 'reguser_has_exits':
                         //弹窗提示
                         var url=g_site_url+"index.php?user/ajaxexistcustomer/"+_uname;
-                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false});
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false});
                         myModalTrigger.show();
                         break;
                     case 'Illegal':
@@ -207,7 +207,7 @@
                         break;
                     case 'exist_in_DS':
                         var url=g_site_url+"index.php?user/ajaxquerycustomer_result/"+_uname+'/'+_upwd+'/'+_phone+'/'+_email;
-                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false});
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false,keyboard:false});
                         myModalTrigger.show();
                         break;
                     case 'not_exist_in_DS':
