@@ -350,7 +350,150 @@ class topicmodel
         }
         return $topiclist;
     }
-
+    //获取首页和主页置顶内容
+    function get_indextoplist($showquestion = 0, $start = 0, $limit = 6, $questionsize = 10){
+        $topiclist = array();
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 AND t.indextop = 1 order by t.viewtime desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 AND indextop = 1 order by viewtime desc LIMIT $start,$limit");
+            }
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE indextop = 1 order by viewtime desc LIMIT $start,$limit");
+        }
+        //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic order by id desc LIMIT $start,$limit");
+        while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
+            ($showquestion == 1) && $topic['questionlist'] = $this->get_questions($topic['id'], 0, $questionsize); //首页专题掉用
+            ($showquestion == 2) && $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
+            $topic['sortime'] = $topic['viewtime'];//用于排序
+            $topic['format_time'] = tdate($topic['viewtime']);
+            $topic['viewtime'] = tdate($topic['viewtime']);
+            $topic['title'] = checkwordsglobal($topic['title']);
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
+            $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
+            $topic['answers'] = $topic['articles'];
+            $topic['attentions'] = $topic['likes'];
+            $topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topiclist[] = $topic;
+        }
+        return $topiclist;
+    }
+    //获取分类置顶内容
+    function get_categorytoplist($showquestion = 0, $start = 0, $limit = 6, $questionsize = 10){
+        $topiclist = array();
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 AND t.categorytop = 1 order by t.viewtime desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 AND categorytop = 1 order by viewtime desc LIMIT $start,$limit");
+            }
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE categorytop = 1 order by viewtime desc LIMIT $start,$limit");
+        }
+        //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic order by id desc LIMIT $start,$limit");
+        while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
+            ($showquestion == 1) && $topic['questionlist'] = $this->get_questions($topic['id'], 0, $questionsize); //首页专题掉用
+            ($showquestion == 2) && $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
+            $topic['sortime'] = $topic['viewtime'];//用于排序
+            $topic['format_time'] = tdate($topic['viewtime']);
+            $topic['viewtime'] = tdate($topic['viewtime']);
+            $topic['title'] = checkwordsglobal($topic['title']);
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
+            $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
+            $topic['answers'] = $topic['articles'];
+            $topic['attentions'] = $topic['likes'];
+            $topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topiclist[] = $topic;
+        }
+        return $topiclist;
+    }
+    //通过id获取分类置顶内容
+    function get_categorytoplistbycid($showquestion = 0, $start = 0, $limit = 6, $questionsize = 10,$cid){
+        $topiclist = array();
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 AND t.categorytop = 1 AND (t.cid1 = $cid or t.cid2 = $cid or t.cid3 = $cid)  order by t.viewtime desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 AND categorytop = 1 AND (cid1 = $cid or cid2 = $cid or cid3 = $cid) order by viewtime desc LIMIT $start,$limit");
+            }
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE categorytop = 1 AND (cid1 = $cid or cid2 = $cid or cid3 = $cid) order by viewtime desc LIMIT $start,$limit");
+        }
+        //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic order by id desc LIMIT $start,$limit");
+        while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
+            ($showquestion == 1) && $topic['questionlist'] = $this->get_questions($topic['id'], 0, $questionsize); //首页专题掉用
+            ($showquestion == 2) && $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
+            $topic['sortime'] = $topic['viewtime'];//用于排序
+            $topic['format_time'] = tdate($topic['viewtime']);
+            $topic['viewtime'] = tdate($topic['viewtime']);
+            $topic['title'] = checkwordsglobal($topic['title']);
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
+            $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
+            $topic['answers'] = $topic['articles'];
+            $topic['attentions'] = $topic['likes'];
+            $topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topiclist[] = $topic;
+        }
+        return $topiclist;
+    }
+    //通过id获取文章列表置顶内容
+    function get_indextoplistbycid($showquestion = 0, $start = 0, $limit = 6, $questionsize = 10,$cid){
+        $topiclist = array();
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
+            if($this->base->user['identity'] == 3){
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 AND t.indextop = 1 AND (t.cid1 = $cid or t.cid2 = $cid or t.cid3 = $cid)  order by t.viewtime desc LIMIT $start,$limit");
+            }else{
+                $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic where authoritycontrol = 2 AND indextop = 1 AND (cid1 = $cid or cid2 = $cid or cid3 = $cid) order by viewtime desc LIMIT $start,$limit");
+            }
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE indextop = 1 AND (cid1 = $cid or cid2 = $cid or cid3 = $cid) order by viewtime desc LIMIT $start,$limit");
+        }
+        //$query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic order by id desc LIMIT $start,$limit");
+        while ($topic = $this->db->fetch_array($query)) {
+            $cainfo = $this->base->getcategory($topic['articleclassid']);
+            $topic['category_name'] = $cainfo['name'];
+            ($showquestion == 1) && $topic['questionlist'] = $this->get_questions($topic['id'], 0, $questionsize); //首页专题掉用
+            ($showquestion == 2) && $topic['questionlist'] = $this->get_questions($topic['id']); //专题列表页掉用
+            $topic['sortime'] = $topic['viewtime'];//用于排序
+            $topic['format_time'] = tdate($topic['viewtime']);
+            $topic['viewtime'] = tdate($topic['viewtime']);
+            $topic['title'] = checkwordsglobal($topic['title']);
+            //$topic['category_name'] = $this->base->category[$topic['articleclassid']]['name'];
+            $topic['describtion'] = cutstr(str_replace('&nbsp;', '', checkwordsglobal(strip_tags($topic['describtion']))), 240, '...');
+            $topic['description'] = cutstr(checkwordsglobal(strip_tags($topic['describtion'])), 240, '...');
+            $topic['answers'] = $topic['articles'];
+            $topic['attentions'] = $topic['likes'];
+            $topic['avatar'] = get_avatar_dir($topic['authorid']);
+            $topiclist[] = $topic;
+        }
+        return $topiclist;
+    }
+    //更新首页置顶
+    function update_indextop($indextop,$topicid){
+        $this->db->query("UPDATE " . DB_TABLEPRE . "topic SET `indextop`='$indextop',`viewtime`='{$this->base->time}' WHERE `id`='$topicid'");
+    }
+    //更新分类置顶
+    function update_categorytop($categorytop,$topicid){
+        $this->db->query("UPDATE " . DB_TABLEPRE . "topic SET `categorytop`='$categorytop',`viewtime`='{$this->base->time}' WHERE `id`='$topicid'");
+    }
     function get_list($showquestion = 0, $start = 0, $limit = 6, $questionsize = 10)
     {
         $topiclist = array();

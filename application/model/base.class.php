@@ -141,6 +141,24 @@ class base {
 
                 $cachedata = $_ENV['topic']->get_list(1, 0, 10, 10);
                 break;
+//            case 'topictopdata'://首页置顶缓存内容数组
+//                $this->load('topic');
+//                if(!isset($this->setting['list_topdatanum'])){
+//                    $cachedata = $_ENV['topic']->get_indextoplist(1,0,3,10);
+//                }else{
+//                    $cachedata = $_ENV['topic']->get_indextoplist(1,0,$this->setting['list_topdatanum'],10);
+//                }
+//
+//                break;
+//            case 'notetopdata'://首页置顶缓存内容数组
+//                $this->load('note');
+//                if(!isset($this->setting['list_topdatanum'])){
+//                    $cachedata = $_ENV['note']->get_toplist(0,3);
+//                }else{
+//                    $cachedata = $_ENV['note']->get_toplist(0,$this->setting['list_topdatanum']);
+//                }
+//
+//                break;
                   case 'cweixin':
                 $this->load('weixin_setting');
                 $cachedata = $_ENV['weixin_setting']->get();
@@ -352,7 +370,7 @@ WHERE  B.CUSTOMER_CODE = '$customercode' AND A.SOURCE_ID_RTK = 'DELIVERY_CUSTOME
             }
         }
           //  $pccaiji="";
-        $regulars = explode(',', 'user/customercheck,user/savecustomer,user/customerapproval,user/querypass,user/checkcustomeremailcode,user/resendcustomeremailcode,user/checkcustomerinfo,api_user/customerloginapi,user/registercustomer,user/emailcheck,user/neweditemail,user/sendemailcode,user/checkemail,chat/default,api_article/newqlist,api_article/list,api_user/editpwdapi,api_user/loginoutapi,api_user/bindloginapi,api_user/loginapi,api_user/bindregisterapi,api_user/registerapi,index/taobao,question/searchkey,pccaiji_catgory/addtopic,pccaiji_catgory/selectlist,pccaiji_catgory/list,topic/search,buy/buydetail,buy/default,download/default,tags/default,new/maketag,tag/default,user/regtip,new/default,user/deletexinzhi,user/editxinzhi,user/addxinzhi,topic/userxinzhi,topic/getone,topic/catlist,topic/hotlist,user/login,user/logout,user/code,user/getpass,user/resetpass,index/help,js/view,attach/upload,user/xinzhi,user/attention_user,' . $this->user['regulars']);
+        $regulars = explode(',', 'note/cancelindextop,note/addindextop,topic/addcategorytop,topic/cancelcategorytop,topic/addindextop,topic/cancelindextop,user/customercheck,user/savecustomer,user/customerapproval,user/querypass,user/checkcustomeremailcode,user/resendcustomeremailcode,user/checkcustomerinfo,api_user/customerloginapi,user/registercustomer,user/emailcheck,user/neweditemail,user/sendemailcode,user/checkemail,chat/default,api_article/newqlist,api_article/list,api_user/editpwdapi,api_user/loginoutapi,api_user/bindloginapi,api_user/loginapi,api_user/bindregisterapi,api_user/registerapi,index/taobao,question/searchkey,pccaiji_catgory/addtopic,pccaiji_catgory/selectlist,pccaiji_catgory/list,topic/search,buy/buydetail,buy/default,download/default,tags/default,new/maketag,tag/default,user/regtip,new/default,user/deletexinzhi,user/editxinzhi,user/addxinzhi,topic/userxinzhi,topic/getone,topic/catlist,topic/hotlist,user/login,user/logout,user/code,user/getpass,user/resetpass,index/help,js/view,attach/upload,user/xinzhi,user/attention_user,' . $this->user['regulars']);
       //  $regulars=array_merge($regulars,$this->regular);
       
         return in_array($url, $regulars);

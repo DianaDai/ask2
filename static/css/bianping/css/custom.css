@@ -13,6 +13,11 @@ nav .fa {
 .lazy {
     display: none;
 }
+.topcontent {
+	position: absolute;
+	top: -5px;
+	right: 10px;
+}
 .btn.active, .btn:active, .btn:focus, .btn:hover, .open .dropdown-toggle.btn{
 	    border-color:transparent ;
 }

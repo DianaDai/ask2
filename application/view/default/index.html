@@ -63,10 +63,114 @@
                 <a class="more-hot-collection" target="_blank" href="{url category/viewtopic/hot}">
                     更多热门专题 <i class="fa fa-angle-right mar-ly-1"></i>
                 </a></div>
+            <ul id="jquery_genr" class="nav navbar-nav"
+                style="float: none;background-color: #f5f5f5;border-radius:6px;font-size:17px;margin-bottom: 10px;">
+                <li class="selectedCss"><a class="choose-btn" href="{url index/default/all}">全部</a>
+                </li>
+                <li style="margin-left: 30px;">
+                    <a class="choose-btn"  href="{url index/default/topic}">文章</a>
+                </li>
+                <li style="margin-left:30px">
+                    <a class="choose-btn" href="{url index/default/question}">问题</a>
+                </li>
+                <li style="margin-left:30px">
+                    <a class="choose-btn" href="{url index/default/note}">公告</a>
+                </li>
+            </ul>
+            <input type="hidden" id="poptype" name="poptype" value="{$typename}"/>
             <div class="split-line"></div>
+
             <div id="list-container">
                 <!-- 文章列表模块 -->
                 <ul class="note-list">
+
+                    <!--{loop $notedatalist  $notedata}-->
+                    <li id="note-{$notedata['id']}" data-note-id="{$notedata['id']}" {if $notedata['image']!=null}  class="have-img" {else}class="" {/if}>
+                        {if $notedata['image']!=null}
+                        <a class="wrap-img"  {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}" {/if}  target="_blank">
+                        <img src="{$notedata['image']}">
+                        </a>
+                        {/if}
+                        <div class="content">
+                            <div class="author">
+                                <a class="avatar" target="_blank" href="{url user/space/$notedata['authorid']}" onmouseover="pop_user_on(this,$notedata['authorid'],'text')"  onmouseout="pop_user_out()">
+                                    <img src="{$notedata['avatar']}" alt="96">
+                                </a>      <div class="name">
+                                <a class="blue-link" target="_blank" href="{url user/space/$notedata['authorid']}">{$notedata['author']}</a>
+                                发布了一篇公告
+                                <span class="ico_point">.</span>
+                                <span class="time" data-shared-at="{$notedata['format_time']}">{$notedata['format_time']}</span>
+
+                                <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
+
+                            </div>
+                            </div>
+                            <a class="title" target="_blank" {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}" {/if} >{$notedata['title']}</a>
+                            <p class="abstract">
+                                {eval echo strip_tags($notedata['content']);}
+                            </p>
+                            <div class="meta">
+
+                                <a target="_blank" {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}" {/if}" >
+                                    <i class="fa fa-eye"></i> {$notedata['views']}
+                                </a>        <a target="_blank" {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}#comments" {/if} >
+                                <i class="fa fa-comment-o"></i> {$notedata['comments']}
+                            </a>
+                                <!--{if $user['grouptype']==1}-->
+                                <a href="{url note/cancelindextop/$notedata['id']}" >
+                                    <span>取消置顶</span>
+                                </a>
+                                <!--{/if}-->
+                            </div>
+                        </div>
+                    </li>
+                    <!--{/loop}-->
+
+
+                    <!--{loop $topicdatalist  $topicdata}-->
+                    <li id="note-{$topicdata['id']}" data-note-id="{$topicdata['id']}" {if $topicdata[
+                    'image']!=null} class="have-img" {else}class="" {/if}>
+                        {if $topicdata['image']!=null}
+                        <a class="wrap-img" href="{url topic/getone/$topicdata['id']}" target="_blank">
+                        <img src="{$topicdata['image']}">
+                        </a>
+                        {/if}
+                        <div class="content">
+                            <div class="author">
+                                <a class="avatar" target="_blank" href="{url user/space/$topicdata['authorid']}" onmouseover="pop_user_on(this,$topicdata['authorid'],'text')"  onmouseout="pop_user_out()">
+                                    <img src="{$topicdata['avatar']}" alt="96">
+                                </a>      <div class="name">
+                                <a class="blue-link" target="_blank" href="{url user/space/$topicdata['authorid']}">{$topicdata['author']}</a>
+                                发布了一篇文章
+                                <span class="ico_point">.</span>
+                                <span class="time" data-shared-at="{$topicdata['format_time']}">{$topicdata['format_time']}</span>
+
+                                <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
+
+                            </div>
+                            </div>
+                            <a class="title" target="_blank"  href="{url topic/getone/$topicdata['id']}">{$topicdata['title']}</a>
+                            <p class="abstract">
+                                {eval echo strip_tags($topicdata['description']);}
+                            </p>
+                            <div class="meta">
+                                <a class="collection-tag" target="_blank"
+                                href="{url topic/catlist/$topicdata['articleclassid']}">$topicdata['category_name']</a>
+                                <a target="_blank" href="{url topic/getone/$topicdata['id']}"  >
+                                    <i class="fa fa-eye"></i> {$topicdata['views']}
+                                </a>        <a target="_blank"  href="{url topic/getone/$topicdata['id']}#comments"  >
+                                <i class="fa fa-comment-o"></i> {$topicdata['answers']}
+                            </a>      <span><i class=" fa fa-heart-o"></i>  {$topicdata['attentions']}</span>
+                                <span ><i class=" fa fa-thumbs-o-up"></i>  {$topicdata['supports']}</span>
+                                {if $user['grouptype']==1}
+                                <a href="{url topic/cancelindextop/$topicdata['id']}" >
+                                    <span>取消置顶</span>
+                                </a>
+                                {/if}
+                            </div>
+                        </div>
+                    </li>
+                    <!--{/loop}-->
 
 
                     <!--{loop $nosolvelist $index $question}-->
@@ -104,11 +208,7 @@
                                     {if $question['askuid']>0}
                                     对<span class="text-danger">{$question['askuser']['realname']}</span>
                                     {/if}
-                                    {if $question['articleclassid']!=null}
-                                    发布了一篇文章
-                                    {else}
-                                    提了一个问题
-                                    {/if}
+                                    {$question['temptitle']}
                                     <span class="ico_point">.</span>
                                     <span class="time" data-shared-at="{$question['format_time']}">{$question['format_time']}</span>
 
@@ -120,26 +220,33 @@
                                     {/if}
                                 </div>
                             </div>
-                            <a class="title" target="_blank" {if $question['articleclassid']!=null} href="{url
-                            topic/getone/$question['id']}" {else} href="{url question/view/$question['id']}" {/if}
-                            > <h3>{$question['title']} <small >{$question['srcs']}</small></h3> </a>
+                            <a class="title" target="_blank" href="{$question['tempurl']}"> <h3>{$question['title']} <small >{$question['srcs']}</small></h3> </a>
+                            {if $question['flag']!=2}
                             <p class="abstract">
                                 {eval echo strip_tags($question['description']);}
-
                             </p>
+                            {else}
+                            <p class="abstract">
+                                {eval echo strip_tags($question['content']);}
+                            </p>
+                            {/if}
                             <div class="meta">
+                                {if $question['flag']!=2}
                                 <a class="collection-tag" target="_blank" {if $question['articleclassid']!=null}
                                 href="{url topic/catlist/$question['articleclassid']} {else} href="{url
                                 category/view/$question['cid']} {/if} ">$question['category_name']</a>
-                                <a target="_blank" {if $question['articleclassid']!=null} href="{url
-                                topic/getone/$question['id']}" {else} href="{url question/view/$question['id']}" {/if}>
+                                {/if}
+                                <a target="_blank" href="{$question['tempurl']}">
                                 <i class="fa fa-eye"></i> {$question['views']}
-                                </a>        <a target="_blank" {if $question['articleclassid']!=null} href="{url
-                                topic/getone/$question['id']}#comments" {else} href="{url
-                                question/view/$question['id']}#comments" {/if}>
+                                </a>
+                                <a target="_blank" href="{$question['tempcomments']}">
                                 <i class="fa fa-comment-o"></i> {$question['answers']}
-                                </a>      <span><i class=" fa fa-heart-o"></i>  {$question['attentions']}</span>
+                                </a>
+                                {if $question['flag']!=2}
+                                <span><i class=" fa fa-heart-o"></i>  {$question['attentions']}</span>
                                 <span ><i class=" fa fa-thumbs-o-up"></i>  {$question['supports']}</span>
+                                {/if}
+
                             </div>
                         </div>
                         </li>
@@ -266,5 +373,23 @@
     #NavTop ul li a:hover {
         background: #70ce1a;
     }
-
+    .navbar-nav>.selectedCss>a,.navbar-nav>.selectedCss>a:focus,.navbar-nav>.selectedCss>a:hover{
+        color: #ea6f5a !important;
+    }
+    .selectedCss{
+        color: #ea6f5a !important;
+    }
 </style>
+<script>
+    function changeColor() {
+        var typename = $("#poptype").val();
+        $('.choose-btn').each(function () {
+            if ($.trim($(this).text()) == $.trim(typename)) {
+                $('ul li.selectedCss').removeClass('selectedCss');
+                $(this).parent().addClass('selectedCss');
+                return false;
+            }
+        });
+    }
+    changeColor();
+</script>

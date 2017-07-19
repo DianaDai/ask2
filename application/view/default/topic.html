@@ -47,8 +47,46 @@
         <!--{/if}-->
     <!-- 文章列表模块 -->
     <ul class="note-list" >
-    
-                 
+        <!--{loop $topictoplist $index $topictop}-->
+        <li id="note-{$topictop['id']}" data-note-id="{$topictop['id']}" {if $topictop['image']!=null}  class="have-img" {else}class="" {/if}>
+        {if $topictop['image']!=null}
+        <a class="wrap-img"  href="{url topic/getone/$topictop['id']}"  target="_blank">
+            <img src="{$topictop['image']}">
+        </a>
+        {/if}
+        <div class="content">
+            <div class="author">
+                <a class="avatar" target="_blank" href="{url user/space/$topictop['authorid']}" onmouseover="pop_user_on(this,$topictop['authorid'],'text')" onmouseout="pop_user_out()" >
+                    <img src="{$topictop['avatar']}" alt="96">
+                </a>      <div class="name">
+                <a class="blue-link" target="_blank" href="{url user/space/$topictop['authorid']}">{$topictop['author']}</a>
+                <span class="time" data-shared-at="{$topictop['format_time']}">{$topictop['format_time']}</span>
+                <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
+            </div>
+            </div>
+            <a class="title" target="_blank"   href="{url topic/getone/$topictop['id']}"  > <h3>  {$topictop['title']} <small>{$topictop['srcs']}</small></h3> </a>
+            <p class="abstract">
+                {eval echo strip_tags($topictop['describtion']);}
+
+            </p>
+            <div class="meta">
+
+                <a target="_blank"  href="{url topic/getone/$topictop['id']}" >
+                    <i class="fa fa-eye"></i> {$topictop['views']}
+                </a>        <a target="_blank"   href="{url topic/getone/$topictop['id']}#comments" >
+                <i class="fa fa-comment-o"></i> {$topictop['articles']}
+            </a>      <span><i class=" fa fa-heart-o"></i>  {$topictop['likes']}</span>
+                <!--{if $user['grouptype']==1}-->
+                <a href="{url topic/cancelindextop/$topicdata['id']}" >
+                    <span>取消置顶</span>
+                </a>
+                <!--{/if}-->
+            </div>
+        </div>
+        </li>
+        <!--{/loop}-->
+
+
              <!--{loop $topiclist $index $topic}-->   
                 
    <li id="note-{$topic['id']}" data-note-id="{$topic['id']}" {if $topic['image']!=null}  class="have-img" {else}class="" {/if}>
@@ -59,20 +97,10 @@
             {/if}
         <div class="content">
             <div class="author">
-            
-            
-               
-                
-                   
-      
         <a class="avatar" target="_blank" href="{url user/space/$topic['authorid']}" onmouseover="pop_user_on(this,$topic['authorid'],'text')" onmouseout="pop_user_out()" >
                     <img src="{$topic['avatar']}" alt="96">
                 </a>      <div class="name">
                 <a class="blue-link" target="_blank" href="{url user/space/$topic['authorid']}">{$topic['author']}</a>
-                
-   
-        
-                
                 <span class="time" data-shared-at="{$topic['format_time']}">{$topic['format_time']}</span>
             </div>
             </div>

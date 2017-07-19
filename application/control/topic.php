@@ -288,6 +288,8 @@ foreach ($topiclist as $key=>$val){
   */
 
  function ondefault(){
+
+
      $cid =intval($this->get[2])?$this->get[2]:'all';
      @$page =max(1,intval($this->get[3]));
      $pagesize =$this->setting['list_default'];
@@ -297,14 +299,24 @@ foreach ($topiclist as $key=>$val){
          $category=$this->category[$cid]; //获取分类信息
          $navtitle= $category['name'];
          $cfield ='cid'.$category['grade']; //获取当前分类的节点
-         
-     	
+         //置顶内容显示
+         if(!isset($this->setting['list_topdatanum'])){
+             $topictoplist = $_ENV['topic']->get_indextoplistbycid(1,0,3,10,$cid);
+         }else{
+             $topictoplist = $_ENV['topic']->get_indextoplistbycid(1,0,$this->setting['list_topdatanum'],10,$cid);
+         }
      }else
      {
          $category=$this->category;
          $category['pid']=0;
          $cfield ='';
-         $navtitle = '文章列表';   
+         $navtitle = '文章列表';
+         //置顶内容显示
+         if(!isset($this->setting['list_topdatanum'])){
+             $topictoplist = $_ENV['topic']->get_indextoplist(1,0,3,10);
+         }else{
+             $topictoplist = $_ENV['topic']->get_indextoplist(1,0,$this->setting['list_topdatanum'],10);
+         }
      }
      
      if ($cid != 'all') {
@@ -455,6 +467,13 @@ foreach ($topiclist as $key=>$val){
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize;
          $rownum = $this->db->fetch_total('topic',"articleclassid in($cid)");
+         //分类置顶
+        if(!isset($this->setting['list_topdatanum'])){
+            $topictoplist = $_ENV['topic']->get_categorytoplistbycid(1,0,3,10,$catid);
+        }else{
+            $topictoplist = $_ENV['topic']->get_categorytoplistbycid(1,0,$this->setting['list_topdatanum'],10,$catid);
+        }
+
         $topiclist = $_ENV['topic']->get_bycatid($cid, $startindex, $pagesize);
          
 
@@ -642,6 +661,34 @@ foreach ($topiclist as $key=>$val){
        
     }
 
+    //取消首页置顶
+    function oncancelindextop(){
+        $id=intval($this->get[2]);
+        $_ENV['topic']->update_indextop(0,$id);
+        //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
+        $this->message("取消文章首页置顶成功!");
+    }
+    //首页置顶
+    function onaddindextop(){
+        $id=intval($this->get[2]);
+        $_ENV['topic']->update_indextop(1,$id);
+        //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
+        $this->message("文章首页置顶成功!");
+    }
+    //取消分类置顶
+    function oncancelcategorytop(){
+        $id=intval($this->get[2]);
+        $_ENV['topic']->update_categorytop(0,$id);
+        //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
+        $this->message("取消文章分类置顶成功!");
+    }
+    //分类置顶
+    function onaddcategorytop(){
+        $id=intval($this->get[2]);
+        $_ENV['topic']->update_categorytop(1,$id);
+        //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
+        $this->message("文章分类置顶成功!");
+    }
 }
 
 ?>

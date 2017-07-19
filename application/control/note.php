@@ -16,6 +16,11 @@ class notecontrol extends base {
     /* 前台查看公告列表 */
 
     function onlist() {
+        if(!isset($this->setting['list_topdatanum'])){
+            $notetoplist = $_ENV['note']->get_toplist(0,3);
+        }else{
+            $notetoplist = $_ENV['note']->get_toplist(0,$this->setting['list_topdatanum']);
+        }
        $navtitle = "本站公告列表";
         $seo_description= "发布".$this->setting['site_name']."最新公告，包括问答升级，维护更新，修改，以及重大变更。";
         $seo_keywords= "公告";
@@ -93,7 +98,20 @@ class notecontrol extends base {
         $_ENV['note_comment']->remove($commentid, $noteid);
         $this->message("评论删除成功", "note/view/$noteid");
     }
-
+    //取消首页置顶
+    function oncancelindextop(){
+        $id=intval($this->get[2]);
+        $_ENV['note']->update_indextop(0,$id);
+        //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
+        $this->message("取消公告首页置顶成功!");
+    }
+    //首页置顶
+    function onaddindextop(){
+        $id=intval($this->get[2]);
+        $_ENV['note']->update_indextop(1,$id);
+        //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
+        $this->message("公告首页置顶成功!");
+    }
 }
 
 ?>
