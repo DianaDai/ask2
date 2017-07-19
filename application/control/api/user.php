@@ -389,7 +389,9 @@ class api_usercontrol extends base
         }
 
         $user = $_ENV['user']->get_by_username($username);
-
+        if ($user['identity'] == 3) {
+            exit('该用户名属于客户类，请使用E10客户登录界面进行登录!');//登录参数为空
+        }
         $cookietime = 2592000;
         if (is_array($user)) //登录用户存在
         {
@@ -489,10 +491,15 @@ class api_usercontrol extends base
                 if ($user['approvestatus'] != 'y') {
                     exit('未生效用户，非法登录,请等待审核通过后再登录！');
                 }
+                if ($user['identity'] != 3) {
+                    exit('该账号不属于客户账号，请使用内部员工登录界面进行登录!');//登录参数为空
+                }
                 $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
                 $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                 exit('login_ok');//登录成功
             }
+        }else{
+            exit('login_notexist');
         }
         exit('login_user_or_pwd_error');//用户名或者密码错误
     }

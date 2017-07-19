@@ -949,7 +949,7 @@ class usercontrol extends base
         $user = $_ENV['user']->get_by_customername($username);
         $user && exit("reguser_has_exits");//注册用户已经存在
         // 如果查不到(未注册过)，则进去DS系统验证客户编号
-        $obj=$this->get_sqlDB($username);
+        $obj=$this->get_sqlDB_linux($username);
         if ($obj!=null){
             exit("exist_in_DS");
         }else{
@@ -959,7 +959,7 @@ class usercontrol extends base
     //客户确认信息页面
     function onajaxquerycustomer_result(){
         $uname = $this->get[2];
-        $customerinfo=$this->get_sqlDB($uname);
+        $customerinfo=$this->get_sqlDB_linux($uname);
         $upwd = $this->get[3];
         $phone = $this->get[4];
         $email = $this->get[5];

@@ -314,7 +314,7 @@ class base {
                
     }
     
-    function get_sqlDB($customercode=''){
+    function get_sqlDB_windows($customercode=''){
         $serverName = "172.16.1.218"; //数据库服务器地址
         $uid = "readuser";     //数据库用户名
         $pwd = "readuser"; //数据库密码
@@ -348,7 +348,33 @@ WHERE  B.CUSTOMER_CODE = '$customercode' AND A.SOURCE_ID_RTK = 'DELIVERY_CUSTOME
             return $row;
         }
     }
-
+    function get_sqlDB_linux($customercode=''){
+        $serverName = "172.16.1.218"; //数据库服务器地址
+        $uid = "readuser";     //数据库用户名
+        $pwd = "readuser"; //数据库密码
+        $conn = mssql_connect($serverName, $uid,$pwd);
+        if (!$conn) {
+            echo "connect sqlserver error";
+            exit;
+        }else{
+            $sql = "SELECT TOP 1 A.DELIVERY_LISENCE_NO,B.CUSTOMER_CODE,B.CUSTOMER_NAME,B.SHIP_TO_CONTACT,B.SHIP_TO_CONTACT_TEL													
+FROM DELIVERY_LISENCE A	LEFT JOIN DELIVERY_CUSTOMER B ON A.SOURCE_ID_ROid = B.DELIVERY_CUSTOMER_ID													
+WHERE  B.CUSTOMER_CODE = '$customercode' AND A.SOURCE_ID_RTK = 'DELIVERY_CUSTOMER' AND A.ApproveStatus = 'Y' AND B.ApproveStatus = 'Y'";
+            mssql_select_db("DS_10",$conn);
+            $result = mssql_query($sql, $conn);
+            if( $result === false ) {
+                die( print_r( sqlsrv_errors(), true));
+            }
+            $row = mssql_fetch_array($result);
+//            if($row!=null) {
+//                $row['CUSTOMER_NAME'] = iconv('GBK', 'UTF-8', $row['CUSTOMER_NAME']);
+//                $row['SHIP_TO_CONTACT'] = iconv('GBK', 'UTF-8', $row['SHIP_TO_CONTACT']);
+//            }
+            // 关闭连接
+            mssql_free_result($result);
+            return $row;
+        }
+    }
     /* 权限检测 */
 
     function checkable($url,$querystring='') {
