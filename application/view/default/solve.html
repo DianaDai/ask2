@@ -47,7 +47,11 @@
                 <!-- 如果是当前作者，加入编辑按钮 -->
                 <a href="javascript:void(0)"  data-toggle="dropdown" class="edit dropdown-toggle">操作 <i class="fa fa-angle-down mar-lr-05"></i> </a>
                  <ul class="dropdown-menu" role="menu">
-
+                     <li>
+                         <a id="invitationanswer">
+                             <i class="fa fa-commenting-o"></i><span>邀请回答</span>
+                         </a>
+                     </li>
                      <li>
                   
                     <a id="changecategory" data-toggle="modal" data-target="#catedialog" >
@@ -80,7 +84,18 @@
                       </li>
                       
                              </ul>
-                               <!--{/if}-->   
+                <!--{else}-->
+                <a href="javascript:void(0)"  data-toggle="dropdown" class="edit dropdown-toggle">操作 <i class="fa fa-angle-down mar-lr-05"></i> </a>
+                <ul class="dropdown-menu" role="menu">
+
+                    <li>
+                        <a id="invitationanswer">
+                            <i class="fa fa-commenting-o"></i><span>邀请回答</span>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--{/if}-->
             </div>
             <!-- -->
 
@@ -465,7 +480,51 @@ $("#adoptbtn").click(function(){
 	    }         
 	 });
 })
+$("#invitationanswer").click(function(){
+    var _qid = $("#adopt_qid").val();
+    var data={
+        qid:_qid
+    }
 
+    $.ajax({
+        //提交数据的类型 POST GET
+        type:"POST",
+        //提交的网址
+        url:"{url question/ajaxinvitationanswer}",
+        //提交的数据
+        data:data,
+        //返回数据的格式
+        datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+        //在请求之前调用的函数
+        beforeSend:function(){},
+        //成功返回之后调用的函数
+        success:function(data){
+            if(data=='exist'){
+                var url=g_site_url+"index.php?question/ajaxinvite_tip/"+_qid;
+                var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false,showHeader:false});
+                myModalTrigger.show();
+            }else if(data=='notexist'){
+                var url=g_site_url+"index.php?question/ajaxinvite_form/"+_qid;
+                var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false,showHeader:false});
+                myModalTrigger.show();
+            }else{
+                new $.zui.Messager(data, {
+                    type: 'info',
+                    close: true,
+                    placement: 'center' // 定义显示位置
+                }).show();
+            }
+        },
+        //调用执行后调用的函数
+        complete: function(XMLHttpRequest, textStatus){
+
+        },
+        //调用出错执行的函数
+        error: function(){
+            //请求出错处理
+        }
+    });
+})
 </script>
 </div>
 <!-- 编辑标签 -->

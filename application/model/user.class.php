@@ -336,13 +336,13 @@ class usermodel {
         if ($userinfo!=null){
             $md5password = md5($password);
             $uid = $userinfo['uid'];
-            $this->db->query("REPLACE INTO  " . DB_TABLEPRE . "user (uid,username,realname,password,psw,email,credit1,`identity`,approvestatus,regip,regtime,`lastlogin`,groupid,phone) 
-            VALUES ('$uid','$username','$realname','$md5password','$password','$email',50,3,'n','" . getip() . "',{$this->base->time},{$this->base->time},'$groupid','$phone')");
+            $this->db->query("REPLACE INTO  " . DB_TABLEPRE . "user (uid,username,realname,password,psw,email,credit1,`identity`,approvestatus,regip,regtime,`lastlogin`,groupid,phone,`domain`) 
+            VALUES ('$uid','$username','$realname','$md5password','$password','$email',50,3,'n','" . getip() . "',{$this->base->time},{$this->base->time},'$groupid','$phone',1)");
             return $uid;
         }else {
             $md5password = md5($password);
-            $this->db->query("INSERT INTO " . DB_TABLEPRE . "user (username,realname,password,psw,email,credit1,`identity`,approvestatus,regip,regtime,`lastlogin`,groupid,phone)
-             values ('$username','$realname','$md5password','$password','$email',50,3,'n','" . getip() . "',{$this->base->time},{$this->base->time},'$groupid','$phone')");
+            $this->db->query("INSERT INTO " . DB_TABLEPRE . "user (username,realname,password,psw,email,credit1,`identity`,approvestatus,regip,regtime,`lastlogin`,groupid,phone,`domain`)
+             values ('$username','$realname','$md5password','$password','$email',50,3,'n','" . getip() . "',{$this->base->time},{$this->base->time},'$groupid','$phone',1)");
             $uid = $this->db->insert_id();
             return $uid;
         }

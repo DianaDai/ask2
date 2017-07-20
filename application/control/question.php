@@ -2060,8 +2060,54 @@ class questioncontrol extends base
         $departstr = page($rownum, $pagesize, $page, "question/follow/$qid");
         include template("question_follower");
     }
-    
 
+    function onajaxinvitationanswer(){
+        $qid = $this->post['qid'];
+        if (!$qid) {
+            $this->message("问题不存在!");
+        }
+        if ($this->user['uid'] == 0) {
+            $this->message("游客不能邀请回答问题!");
+        }
+        $question = $_ENV['question']->get_askname_byid($qid);
+        if($question) {
+            exit('exist');
+        }else{
+            exit('notexist');
+        }
+    }
+
+    function onajaxinvite_tip(){
+        $qid = $this->get[2];
+        $question = $_ENV['question']->get_askname_byid($qid);
+        $askname = $question['realname'];
+        include template("invite_tip");
+    }
+
+    function onajaxinvite_form(){
+        $qid = $this->get[2];
+        include template("invite_form");
+    }
+    function onupdateinvite_askuid(){
+        $qid = $this->post[2];
+        $question = taddslashes($_ENV['question']->get($qid), 1);
+        $askuid = $this->post[3];
+        $_ENV['question']->updateaskuid($qid,$askuid);
+        $askuser = $_ENV['user']->get_by_uid($askuid, 2);//被邀请的人
+        $url =SITE_URL . 'index.php?q-'.$qid.'html';
+        $title = 'E问待办：有人在E问上向你求助了，请您协助解答！';
+        $message = '<p>尊敬的' . $askuser['realname'] . '您好！</p>';
+        //邀请者是否和问题拥有者一样
+        if($this->user['realname'] == $question['author']){
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$this->user['realname'].'有邀请您回答他的求助：<br/>';
+        }else{
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$this->user['realname'].'有邀请您回答'.$question['author'].'的求助：<br/>';
+        }
+        $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$question['title'].'，感谢您的协助！<br/>';
+        $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$url.'">点此答复</a><br/>';
+        $this->sendmsg($askuser,$title,$message);
+        $this->message("邀请回答成功");
+    }
 }
 
 ?>

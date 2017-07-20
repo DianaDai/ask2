@@ -620,6 +620,9 @@ class usercontrol extends base
 
 
         $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+        if(strpos($forward,'user/logout') !== false){
+            $forward = SITE_URL;
+        }
         include template('login');
         //}
     }

@@ -1251,7 +1251,13 @@ class questionmodel
             }
         }
     }
-
+    function get_askname_byid($qid){
+        $question = $this->db->fetch_first("SELECT b.realname FROM " . DB_TABLEPRE . "question as q left join " . DB_TABLEPRE . "user as b on q.askuid = b.uid WHERE q.id='$qid'");
+        return $question;
+    }
+    function updateaskuid($qid,$askuid){
+        $this->db->query("UPDATE `" . DB_TABLEPRE . "question` SET `askuid`='$askuid' WHERE `id`=$qid");
+    }
 }
 
 ?>

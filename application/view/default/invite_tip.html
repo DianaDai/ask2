@@ -1,0 +1,45 @@
+<!--{eval global $starttime,$querynum;$mtime = explode(' ', microtime());$runtime=number_format($mtime[1] + $mtime[0] - $starttime,6); $setting=$this->setting;$user=$this->user;$headernavlist=$this->nav;$regular=$this->regular;}-->
+<link href="{SITE_URL}static/css/dist/css/zui.min.css" rel="stylesheet">
+<div class="poploginform">
+    <div class="form-group" style ="margin-bottom:0px;font-size: 20px">
+        该问题已邀请{$askname}回答！
+    </div>
+    <input type="hidden" id="qid" name="qid" value='{$qid}'/>
+    <div class="form-group" style="margin-top: 20px;margin-left: 60px">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" onclick="submitform();" id="submit" class="sign-up-button btn" value="重新求助">
+            <input type="button" style="margin-left: 20px;" onclick="closeform();" id="submit1" class="sign-up-button btn" value="取消">
+        </div>
+    </div>
+    <script type="text/javascript">
+        function submitform() {
+            var _qid = $("#qid").val();
+            var url=g_site_url+"index.php?question/ajaxinvite_form/"+_qid;
+            var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false,showHeader:false});
+            myModalTrigger.show();
+        }
+        function closeform() {
+            new $.zui.closeModal();
+        }
+    </script>
+
+</div>
+<style>
+    .sign-up-button {
+        padding: 3px 10px;
+        font-size: 17px;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        background: #3280fc;
+        cursor: pointer;
+        outline: none;
+        clear: both;
+        width: 100px;
+    }
+    label{
+        color: #333;
+        font-family: 'Microsoft YaHei';
+        font-size: 15px;
+    }
+</style>

@@ -1,0 +1,69 @@
+<!--{eval global $starttime,$querynum;$mtime = explode(' ', microtime());$runtime=number_format($mtime[1] + $mtime[0] - $starttime,6); $setting=$this->setting;$user=$this->user;$headernavlist=$this->nav;$regular=$this->regular;}-->
+<link href="{SITE_URL}static/css/dist/css/zui.min.css" rel="stylesheet">
+<div class="poploginform">
+    <form  class="form-horizontal" name="loginform" method="post">
+        <div class="form-group">
+            <label class="col-md-4 control-label">求助对象：</label>
+            <div class="col-md-6">
+                <input  type="text"  id="askid" name="askid" class="form-control">
+            </div>
+        </div>
+        <input type="hidden" id="qid" name="qid" value='{$qid}'/>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" onclick="submitform();" id="submit" class="sign-up-button" value="确定">
+                <input type="button" style="margin-left: 20px;" onclick="closeform();" id="submit1" class="sign-up-button" value="取消">
+            </div>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        function submitform() {
+            var _qid = $("#qid").val();
+            var _askuid = $("#askid").val();
+            $.ajax({
+                type: "POST",
+                async: false,
+                cache: false,
+                //提交的网址
+                url: "{SITE_URL}/?question/updateinvite_askuid",
+                //提交的数据
+                data: {qid: _qid, askuid: $.trim(_askuid)},
+                //返回数据的格式
+                datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+                success: function (data) {
+                    data = $.trim(data);
+                    new $.zui.Messager(data, {
+                        type: 'danger',
+                        close: true,
+                        time: 0,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }
+            })
+        }
+        function closeform() {
+            new $.zui.closeModal();
+        }
+    </script>
+
+</div>
+<style>
+    .sign-up-button {
+        padding: 3px 10px;
+        font-size: 17px;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        background: #3280fc;
+        cursor: pointer;
+        outline: none;
+        clear: both;
+        width: 100px;
+    }
+    label{
+        color: #333;
+        font-family: 'Microsoft YaHei';
+        font-size: 15px;
+    }
+</style>
