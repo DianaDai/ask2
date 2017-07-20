@@ -275,7 +275,9 @@ try{
     function append($answerid, $author, $authorid, $content ) {
     	 $content=checkwordsglobal( $content);
     	   $content=checkwordsglobal( $content);
+           $this->db->query("UPDATE `".DB_TABLEPRE."user` SET answers =answers+1 WHERE uid ='$authorid'");
         $this->db->query("INSERT INTO " . DB_TABLEPRE . "answer_append(appendanswerid,answerid,author,authorid,content, time) VALUES (NULL,$answerid,'$author',$authorid,'$content',{$this->base->time})");
+        
         return $this->db->insert_id();
     }
 

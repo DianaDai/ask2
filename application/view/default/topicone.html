@@ -104,9 +104,10 @@
             <!--  -->
 
             <div class="show-foot">
-                <a class="notebook" href="{url cat-$cat_model['id']}" data-toggle="tooltip" data-html="true" data-original-title="问题归属分类">
+             <!--   <a class="notebook" href="{url cat-$cat_model['id']}" data-toggle="tooltip" data-html="true" data-original-title="问题归属分类">
                     <i class="fa fa-file-text"></i> <span>{$cat_model['name']}</span>
-                </a>          <div class="copyright" data-toggle="tooltip" data-html="true" data-original-title="转载请联系作者获得授权，并标注“文章作者”。">
+                </a>  -->      
+                  <div class="copyright" data-toggle="tooltip" data-html="true" data-original-title="转载请联系作者获得授权，并标注“文章作者”。">
                 © 著作权归作者所有
             </div>
                 <div class="modal-wrap" data-report-note="">
@@ -145,8 +146,8 @@
  <a class="avatar">
  <img src="{$user['avatar']}">
  </a> 
- <textarea onkeydown="return topickeydownlistener(event)"  placeholder="写下你的评论..." class="comment-area"></textarea> 
- <div class="write-function-block"> <div class="hint">Ctrl+Enter 提交</div>
+    <!--{template editor}-->
+ <div class="write-function-block"> <div class="hint"></div>
  <a class="btn btn-send btn-cm-submit" name="comments" id="comments">提交</a> <a class="cancel">取消</a></div>
  </form>
    {else}
@@ -281,12 +282,26 @@
 <script type="text/javascript" src="{SITE_URL}static/ckplayer/ckplayer.js" charset="utf-8"></script>
 <script type="text/javascript" src="{SITE_URL}static/ckplayer/video.js" charset="utf-8"></script>
 <script>
-if(typeof($(".art-content").find("img").attr("data-original"))!="undefined"){
-	var imgurl=$(".art-content").find("img").attr("data-original");
-	$(".art-content").find("img").attr("src",imgurl);
-}
-$(".art-content").find("img").attr("data-toggle","lightbox");
-$(".art-content").find("img").attr("class","img-thumbnail").css({"display":"block","margin-top":"3px"});
+
+
+    function changelightbox(attr) {
+        if (typeof ($(attr).find("img").attr("data-original")) != "undefined") {
+            var imgurl = $(attr).find("img").attr("data-original");
+            $(attr).find("img").attr("src", imgurl);
+        }
+        $(attr).find("img").attr("data-toggle", "lightbox");
+        $(attr).find("img").attr("class", "img-thumbnail").css({ "display": "block", "margin-top": "3px" });
+    }
+
+    changelightbox(".art-content");
+    changelightbox(".comment-wrap");
+
+
+
+
+
+
+
 $(function(){
 
 		//微信二维码生成

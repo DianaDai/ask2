@@ -396,3 +396,16 @@ nav .fa {
 .web-footer a:hover{
 	color:#333;
 }
+
+.comment-wrap table {
+  border: none;
+  border-collapse: collapse;
+  width:100%;
+}
+.comment-wrap table td,
+.comment-wraptable th {
+  border: 1px solid #999;
+  padding: 3px 5px;
+ 
+  height: 20px;
+}

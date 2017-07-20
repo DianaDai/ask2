@@ -108,18 +108,7 @@
     <div class="meta-bottom">
       <div class="like"><div class="btn like-group"><div class="btn-like"><a href="{url question/attentto/$question['id']}"><i class="fa fa-heart-o"></i>关注</a></div> <div class="modal-wrap"><a>{$question['attentions']}</a></div></div> <!----></div>
       <div class="share-group">
-        <!--<a class="share-circle share-weixin" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
-          <i class="fa fa-wechat"></i>
-        </a>-->
-        <!--<a class="share-circle" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f='http://v.t.sina.com.cn/share/share.php?appkey=1515056452',u=z||d.location,p=['&amp;url=',e(u),'&amp;title=',e(t||d.title),'&amp;source=',e(r),'&amp;sourceUrl=',e(l),'&amp;content=',c||'gb2312','&amp;pic=',e(p||'')].join('');function%20a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width-440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,'','','{$setting['site_logo']}', '推荐 {$question['author']} 的问题《{$question['title']}》（ 分享自 @Ask2问答平台创始人）','{url question/view/$question[id]}','页面编码gb2312|utf-8默认gb2312'));" data-original-title="分享到微博">
-          <i class="fa fa-weibo"></i>
-        </a>-->
-         
-           
-         
-  
-<!--  <script type="text/javascript">document.write(['<a class="share-circle" data-toggle="tooltip"  target="_blank" data-original-title="分享到qq空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=',encodeURIComponent(location.href),'&title=',encodeURIComponent(document.title),'" target="_blank"   title="分享到QQ空间"> <i class="fa fa-qq"></i><\/a>'].join(''));</script>
--->    
+
       </div>
     </div>
 
@@ -133,9 +122,11 @@
                 <input type="hidden" value="{$question['title']}" id="ans_title" name="title">
  <a class="avatar">
  <img src="{$user['avatar']}">
- </a> <textarea placeholder="写下你的评论..." onkeydown="return keydownlistener(event)"  id="anscontent" name="content" oninput="listertext()" onpropertychange="listertext()"></textarea>
+ </a> 
+     <!--{template editor}-->
+     <!--<textarea placeholder="写下你的评论..." onkeydown="return keydownlistener(event)"  id="anscontent" name="content" oninput="listertext()" onpropertychange="listertext()"></textarea>-->
   <div class="write-function-block">
-  <div class="hint">Ctrl+Enter 提交</div>
+<!--  <div class="hint">Ctrl+Enter 提交</div>-->
   
   <div class="emoji-modal-wrap">
 
@@ -656,13 +647,22 @@ $("#adoptbtn").click(function(){
   function edittag() {
  	 $('#dialog_tag').modal('show');
       
- }
-  if(typeof($(".show-content").find("img").attr("data-original"))!="undefined"){
-		var imgurl=$(".show-content").find("img").attr("data-original");
-		$(".show-content").find("img").attr("src",imgurl);
-	}
-	$(".show-content").find("img").attr("data-toggle","lightbox");
-	$(".show-content").find("img").attr("class","img-thumbnail").css({"display":"block","margin-top":"3px"});
+  }
+
+  function changelightbox(val) {
+      if(typeof($(val).find("img").attr("data-original"))!="undefined"){
+          var imgurl=$(val).find("img").attr("data-original");
+          $(val).find("img").attr("src",imgurl);
+      }
+      $(val).find("img").attr("data-toggle","lightbox");
+      $(val).find("img").attr("class","img-thumbnail").css({"display":"block","margin-top":"3px"});
+  }
+  changelightbox(".show-content");
+  changelightbox(".comment-wrap");//回答也需要用到
+
+    
+
+
   var category1 = {$categoryjs[category1]};
   var category2 = {$categoryjs[category2]};
   var category3 = {$categoryjs[category3]};
