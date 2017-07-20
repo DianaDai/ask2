@@ -43,6 +43,12 @@ class usermodel {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE email='$email' and uid!='$uid'");
         return $user;
     }
+    /*daixy查找客户邮箱是否已经被注册*/
+    function get_by_emailanduname($email,$username)
+    {
+        $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE email='$email' and username!='$username'");
+        return $user;
+    }
     function get_by_uid($uid, $loginstatus = 1) {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE uid='$uid'");
         $user['avatar'] = get_avatar_dir($uid);
@@ -68,6 +74,10 @@ class usermodel {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE username='$username' or email='$username' or phone='$username'");
         return $user;
     }
+    function get_by_customername($username) {
+        $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE username='$username' and active =1");
+        return $user;
+    }
   function get_by_openid($openid) {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE openid='$openid'");
         return $user;
@@ -86,7 +96,11 @@ class usermodel {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE email='$email' AND `username`='$name'");
         return $user;
     }
-
+//找回密码
+    function get_by_onlyusername($name) {
+        $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE `username`='$name'");
+        return $user;
+    }
     /* 采纳率 */
 
     function adoptpercent($user) {
@@ -107,7 +121,27 @@ class usermodel {
         }
         return $userlist;
     }
- 
+
+    function getFOSSapprove(){
+        $userlist = array();
+        $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "user  WHERE FOSSapprove=1 AND approvestatus='y'");
+        while ($user = $this->db->fetch_array($query)) {
+//            $user['lastlogintime'] = tdate($user['lastlogin']);
+//            $user['regtime'] = tdate($user['regtime']);
+            $userlist[] = $user;
+        }
+        return $userlist;
+    }
+    function getapprovestatuslist(){
+        $userlist = array();
+        $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "user  WHERE approvestatus='n'");
+        while ($user = $this->db->fetch_array($query)) {
+//            $user['lastlogintime'] = tdate($user['lastlogin']);
+//            $user['regtime'] = tdate($user['regtime']);
+            $userlist[] = $user;
+        }
+        return $userlist;
+    }
     function get_active_list($start = 0, $limit = 10) {
         $userlist = array();
         $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "user ORDER BY answers DESC,articles DESC LIMIT $start,$limit");
@@ -296,7 +330,28 @@ class usermodel {
         }
         return $uid;
     }
-
+    function addcustomerapi($username,$realname, $password, $email = '',$groupid=7,$phone = 0)
+    {
+        $userinfo = $this->get_by_resname($username);
+        if ($userinfo!=null){
+            $md5password = md5($password);
+            $uid = $userinfo['uid'];
+            $this->db->query("REPLACE INTO  " . DB_TABLEPRE . "user (uid,username,realname,password,psw,email,credit1,`identity`,approvestatus,regip,regtime,`lastlogin`,groupid,phone) 
+            VALUES ('$uid','$username','$realname','$md5password','$password','$email',50,3,'n','" . getip() . "',{$this->base->time},{$this->base->time},'$groupid','$phone')");
+            return $uid;
+        }else {
+            $md5password = md5($password);
+            $this->db->query("INSERT INTO " . DB_TABLEPRE . "user (username,realname,password,psw,email,credit1,`identity`,approvestatus,regip,regtime,`lastlogin`,groupid,phone)
+             values ('$username','$realname','$md5password','$password','$email',50,3,'n','" . getip() . "',{$this->base->time},{$this->base->time},'$groupid','$phone')");
+            $uid = $this->db->insert_id();
+            return $uid;
+        }
+    }
+    //获取注册过但是还没验证的用户
+    function get_by_resname($username) {
+        $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE username='$username' and active =0");
+        return $user;
+    }
     //ip地址限制
     function is_allowed_register() {
         $starttime = strtotime("-1 day");
@@ -357,7 +412,14 @@ class usermodel {
     function update_username($uid, $username,$useremail) {
         $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `username`='$username' ,email='$useremail'  WHERE `uid`=$uid");
     }
-
+    //更新客户资料
+    function update_customer($uid,$username ,$realname, $email, $phone) {
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `realname`='$realname',`email`='$email',`phone`='$phone',`username`='$username' WHERE `uid`=$uid");
+    }
+    //审核客户生效
+    function update_customerapproval($uid) {
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `approvestatus`='y' WHERE `uid`=$uid");
+    }
     /* 删除用户 */
 
     function remove($uids, $all = 0) {

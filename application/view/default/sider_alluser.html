@@ -1,7 +1,7 @@
 ﻿
  <link href="{SITE_URL}static/css/bianping/css/credit.css" rel="stylesheet">
 <div class="recommend" >
-    <span></span>
+
     <div  class="title"><span>冠军排行榜</span></div>
       <div class="know_star">
            
@@ -12,14 +12,12 @@
                             <!--{eval $index++;}-->
                             <li class="b-b-line number{$index}">
                                 <span class="ic_num">{$index}</span>
-                                <a href="{url user/space/$alluser['uid']}" class="img" target="_blank" data-bn-ipg="21-2-1-1" onmouseover="pop_user_on(this,$alluser['uid'],'text')" onmouseout="pop_user_out()" ><img width="30" height="30" src="{$alluser['avatar']}" alt="{$alluser['username']}" title="{$alluser['username']}"></a>
+                                <a href="{url user/space/$alluser['uid']}" class="img" target="_blank" data-bn-ipg="21-2-1-1" ><img width="30" height="30" src="{$alluser['avatar']}" alt="{$alluser['username']}" title="{$alluser['username']}"></a>
                                 <a title="{$alluser['username']}" href="{url user/space/$alluser['uid']}" class="text" target="_blank" data-bn-ipg="21-2-1-2">
-                                    {$alluser['realname']}
-<!--                                    {eval echo cutstr(strip_tags(str_replace('&nbsp;','',$alluser['username'])),8,'..');}-->
+
+                                    {eval echo cutstr(strip_tags(str_replace('&nbsp;','',$alluser['username'])),8,'..');}
                                 </a>
-                            
-                                <span class="nm"><em>{$alluser['grouptitle']}   {$alluser['credit2']}</em>分</span><p></p>
-                                
+                                <span class="nm"><em>{$alluser['credit2']}</em>分</span><p></p>
 
                             </li>
                             <!--{/loop}-->

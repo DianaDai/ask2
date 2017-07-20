@@ -123,7 +123,8 @@ var $whitelist;
      $seo_keywords= $word;
      $condition =" ";
      ($cid!='all')&&$condition.="  AND pid =$cid ";
-     $rownum = $this->db->fetch_total('category', " `name` like '%$word%' $condition  ");
+        $rownum = $_ENV['category']->rownumbycondition(" `name` like '%$word%' $condition  ");
+        //$rownum = $this->db->fetch_total('category', " `name` like '%$word%' $condition  ");
          $catlist = $_ENV['category']->list_by_name($word, $startindex, $pagesize,$cid);
          
          foreach ($catlist as $key=>$val)
@@ -146,10 +147,12 @@ var $whitelist;
            $sublist = $_ENV['category']->query_list_by_cid_pid($cid); //获取子分类 
            foreach ($sublist as $key=> $val)
            {
-               $relrownum = $this->db->fetch_total('category'," `name` like '%$word%' and `pid`=".$val['id']); //特殊处理下如果按照分类获取不到 总数
+               $relrownum = $_ENV['category']->rownumbycondition(" `name` like '%$word%' and `pid`=".$val['id']);
+              // $relrownum = $this->db->fetch_total('category'," `name` like '%$word%' and `pid`=".$val['id']); //特殊处理下如果按照分类获取不到 总数
                if ($relrownum<=0)
                {
-               	$relrownum= $this->db->fetch_total('category'," `name like '%$word%' and `id` =".$val['id']);
+                   $relrownum = $_ENV['category']->rownumbycondition(" `name like '%$word%' and `id` =".$val['id']);
+               	//$relrownum= $this->db->fetch_total('category'," `name like '%$word%' and `id` =".$val['id']);
                }
                
                $sublist[$key]['relrownum']=$relrownum;

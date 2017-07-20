@@ -21,7 +21,48 @@
         <!--{/if}-->
     <!-- 文章列表模块 -->
     <ul class="note-list" >
-    
+        <!-- 置顶模块 -->
+        <!--{loop $notetoplist $index $notetop}-->
+
+        <li id="note-{$notetop['id']}" data-note-id="{$notetop['id']}" {if $notetop['image']!=null}  class="have-img" {else}class="" {/if}>
+        {if $notetop['image']!=null}
+        <a class="wrap-img"  {if $notetop['url']} href="{$notetop['url']}"  {else}  href="{url note/view/$notetop['id']}" {/if}  target="_blank">
+        <img src="{$notetop['image']}">
+        </a>
+        {/if}
+        <div class="content">
+            <div class="author">
+                <a class="avatar" target="_blank" href="{url user/space/$notetop['authorid']}"  onmouseover="pop_user_on(this,$notetop['authorid'],'text')"  onmouseout="pop_user_out()" >
+                    <img src="{$notetop['avatar']}" alt="96">
+                </a>      <div class="name">
+                <a class="blue-link" target="_blank" href="{url user/space/$notetop['authorid']}">{$notetop['author']}</a>
+
+                <span class="time" data-shared-at="{$notetop['format_time']}">{$notetop['format_time']}</span>
+                <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
+            </div>
+            </div>
+            <a class="title" target="_blank"   {if $notetop['url']} href="{$notetop['url']}"  {else}  href="{url note/view/$notetop['id']}" {/if} >{$notetop['title']}</a>
+            <p class="abstract">
+                {$notetop['content']}
+
+            </p>
+            <div class="meta">
+
+                <a target="_blank"  {if $notetop['url']} href="{$notetop['url']}"  {else}  href="{url note/view/$notetop['id']}" {/if} >
+                <i class="fa fa-eye"></i> {$notetop['views']}
+                </a>        <a target="_blank"   {if $notetop['url']} href="{$notetop['url']}"  {else}  href="{url note/view/$notetop['id']}#comments" {/if} >
+                <i class="fa fa-comment-o"></i> {$notetop['comments']}
+                </a>
+                <!--{if $user['grouptype']==1}-->
+                <a href="{url note/cancelindextop/$notetop['id']}" >
+                    <span>取消置顶</span>
+                </a>
+                <!--{/if}-->
+            </div>
+        </div>
+        </li>
+
+        <!--{/loop}-->
                  
              <!--{loop $notelist $index $note}-->
                 
@@ -61,7 +102,19 @@
                     <i class="fa fa-eye"></i> {$note['views']}
                 </a>        <a target="_blank"   {if $note['url']} href="{$note['url']}"  {else}  href="{url note/view/$note['id']}#comments" {/if} >
                 <i class="fa fa-comment-o"></i> {$note['comments']}
-            </a>     
+            </a>
+                <!--{if $user['grouptype']==1}-->
+                <!--{if $note['indextop']==1}-->
+                <a href="{url note/cancelindextop/$notetop['id']}" >
+                    <span>取消置顶</span>
+                </a>
+                <!--{else}-->
+                <a href="{url note/addindextop/$notetop['id']}" >
+                    <span>置顶</span>
+                </a>
+                <!--{/if}-->
+
+                <!--{/if}-->
             </div>
         </div>
     </li>

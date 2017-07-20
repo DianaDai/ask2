@@ -48,6 +48,47 @@
             沙发正空，不想<a>发表一点想法</a>咩~
           </div>
           <!--{/if}-->
+    <!-- 文章分类置顶模块 -->
+    <!--{loop $topictoplist $index $toptopic}-->
+
+    <li id="note-{$toptopic['id']}" data-note-id="{$toptopic['id']}" {if $toptopic['image']!=null}  class="have-img" {else}class="" {/if}>
+    {if $toptopic['image']!=null}
+    <a class="wrap-img"  href="{url topic/getone/$toptopic['id']}"  target="_blank">
+        <img src="{$toptopic['image']}">
+    </a>
+    {/if}
+    <div class="content">
+        <div class="author">
+            <a class="avatar" target="_blank" href="{url user/space/$toptopic['authorid']}"  onmouseover="pop_user_on(this,$toptopic['authorid'],'text')" onmouseout="pop_user_out()"  >
+                <img src="{$toptopic['avatar']}" alt="96">
+            </a>      <div class="name">
+            <a class="blue-link" target="_blank" href="{url user/space/$toptopic['authorid']}">{$toptopic['author']}</a>
+            <span class="time" data-shared-at="{$toptopic['viewtime']}">{$toptopic['viewtime']}</span>
+            <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
+        </div>
+        </div>
+        <a class="title" target="_blank"  href="{url topic/getone/$toptopic['id']}"   >{$toptopic['title']}</a>
+        <p class="abstract">
+            {eval echo strip_tags($toptopic['description']);}
+
+        </p>
+        <div class="meta">
+
+            <a target="_blank"  href="{url topic/getone/$toptopic['id']}"  >
+                <i class="fa fa-eye"></i> {$toptopic['views']}
+            </a>        <a target="_blank"  href="{url topic/getone/$toptopic['id']}#comments" >
+            <i class="fa fa-comment-o"></i> {$toptopic['articles']}
+        </a>      <span><i class=" fa fa-heart-o"></i>  {$toptopic['attentions']}</span>
+            <!--{if $user['grouptype']==1}-->
+            <a href="{url topic/cancelcategorytop/$toptopic['id']}" >
+                <span>取消置顶</span>
+            </a>
+            <!--{/if}-->
+        </div>
+    </div>
+    </li>
+
+    <!--{/loop}-->
               <!--{loop $topiclist $index $topic}-->    
                 
     <li id="note-{$topic['id']}" data-note-id="{$topic['id']}" {if $topic['image']!=null}  class="have-img" {else}class="" {/if}>

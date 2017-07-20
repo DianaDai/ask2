@@ -306,8 +306,12 @@ class usercontrol extends base
             if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
                 $this->message('您还没有登录！', 'user/login');
             }
-
-            $categoryjs = $_ENV['category']->get_js();
+            $userinfo = $this->user;
+            if($userinfo['identity']==3){
+                $categoryjs = $_ENV['category']->get_jsforcustomer();
+            }else {
+                $categoryjs = $_ENV['category']->get_js();
+            }
             include template('addxinzhi');
         }
 
@@ -458,7 +462,7 @@ class usercontrol extends base
                 $this->message('您还没有登录！', 'user/login');
             }
 
-
+            $userinfo = $this->user;
             $tagmodel = $_ENV['topic_tag']->get_by_aid($topic['id']);
 
 
@@ -466,7 +470,12 @@ class usercontrol extends base
 
             $_SESSION["userid"] = getRandChar(56);
             $catmodel = $_ENV['category']->get($topic['articleclassid']);
-            $categoryjs = $_ENV['category']->get_js();
+            if($userinfo['identity']==3){
+                $categoryjs = $_ENV['category']->get_jsforcustomer();
+            }else {
+                $categoryjs = $_ENV['category']->get_js();
+            }
+            //$categoryjs = $_ENV['category']->get_js();
             include template('editxinzhi');
         }
 
@@ -788,32 +797,50 @@ class usercontrol extends base
     function ongetpass()
     {
         $navtitle = '找回密码';
-        if (isset($this->post['submit'])) {
-            $email = $this->post['email'];
-            $name = $this->post['username'];
-            //$this->checkcode(); //检查验证码
-//            if (strtolower(trim($this->post['code'])) != $_ENV['user']->get_code()) {
-//                $this->message($this->post['state'] . "验证码错误!", 'BACK');
-//            }
-            $touser = $_ENV['user']->get_by_name_email($name, $email);
-            if ($touser) {
-                $activecode = md5(rand(10000, 50000));
-                $getpassurl = SITE_URL . 'index.php?user/resetpass/' . encode($touser['uid']) . '/' . $activecode;
-
-
-                $_ENV['user']->update_emailandactive($email, $activecode, $touser['uid']);
-
-
-                $subject = "找回您在" . $this->setting['site_name'] . "的密码";
-                $message = '<p>如果是您在<a swaped="true" target="_blank" href="' . SITE_URL . '">' . $this->setting['site_name'] . '</a>的密码丢失，请点击下面的链接找回：</p><p><a swaped="true" target="_blank" href="' . $getpassurl . '">' . $getpassurl . '</a></p><p>如果直接点击无法打开，请复制链接地址，在新的浏览器窗口里打开。</p>';
-                sendmail($touser, $subject, $message);
-                $this->message("找回密码的邮件已经发送到你的邮箱，请查收!", 'BACK');
-            }
-            $this->message("用户名或邮箱填写错误，请核实!", 'BACK');
-        }
         include template('getpass');
     }
-
+    function onquerypass()
+    {
+        $parameter = $this->post['parameter'];
+        if ($parameter ==''){
+            exit("error");
+        }
+        $type = $this->post['type'];
+        if ($type ==''){
+            exit("error");
+        }
+        if ($type==1) {
+            $touser = $_ENV['user']->get_by_onlyusername($parameter);
+        }else{
+            $touser = $_ENV['user']->get_by_email($parameter);
+        }
+        if ($touser) {
+            $name = $touser['username'];
+            $subject = "E问通知：" . $name . "的E问账户详细资料！";
+            $message = '<p>'.$name.'申请的E问账户资料如下：</p>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录账户：' . $name . '<br/>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录密码：' . $touser['psw'] . '<br/>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名称：' . $touser['realname'] . '<br/>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户邮箱：' . $touser['email'] . '<br/>';
+            if ($touser['phone']!='') {
+                $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系方式：' . $touser['phone'] . '<br/>';
+            }
+            $forward = SITE_URL;
+            $message .= '请牢记用户名、密码。E问网址：<a href="'.$forward.'">ewen.digiwin.biz:9999 </a><br/>';
+            $message .= '登录时，请选择 ”E10客户登录“ <br/>';
+            $_ENV['email']->sendmail($touser['email'], $subject, $message);
+            exit($name);
+        }else {
+            exit("error");
+        }
+    }
+    function onajaxcustomerpasstip()
+    {
+        $uname = $this->get[2];
+        $uinfo = $_ENV['user']->get_by_username($uname);
+        $email = $uinfo['email'];
+        include template("customerpasstip");
+    }
     /* 重置密码 */
 
     function onresetpass()
@@ -849,7 +876,258 @@ class usercontrol extends base
         }
         include template('resetpass');
     }
+    //检查特殊字符函数
+    function checkdeepstring($str)
+    {
+        if (preg_match("/[\',:;*?~`!#$%^&+=)(<>{}]|\]|\[|\/|\\\|\"|\|/", $str)) {
+            exit('用户名或者密码不能包含特殊字符');//参数不合法
+        }
+    }
+    //检查特殊字符函数
+    function checkstring($str)
+    {
+        if (preg_match("/[\'<>{}]|\]|\[|\/|\\\|\"|\|/", $str)) {
+            exit('用户名或者密码不能包含特殊字符');//参数不合法
+        }
 
+    }
+    //如何查看客户编号页面
+    function onajaxviewcustomercode()
+    {
+        $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+        include template("viewcustomer");
+    }
+    //客户注册
+    function onregistercustomer()
+    {
+        if (!$this->setting['allow_register']) {
+            exit("系统注册功能暂时处于关闭状态!");
+        }
+        if (isset($this->setting['max_register_num']) && $this->setting['max_register_num'] && !$_ENV['user']->is_allowed_register()) {
+            exit("您的当前的IP已经超过当日最大注册数目，如有疑问请联系管理员!");
+        }
+        $username = strip_tags(trim($this->post['uname']));//用户注册名字，strip_tags第一层过滤
+        $password = trim($this->post['upwd']);//用户注册密码
+        $phone = trim($this->post['phone']);//用户注册密码
+        $repassword = trim($this->post['rupwd']);//用户注册密码
+
+        $this->checkdeepstring($username);
+        $usernamecensor = $_ENV['user']->check_usernamecensor($username);
+        if ($phone!='') {
+            if (!preg_match("/^1[34578]{1}\d{9}$/", $phone)) {
+                exit("手机号码不正确");
+            }
+        }
+
+        if (FALSE == $usernamecensor)
+            exit('用户包含敏感词');
+        $this->checkstring($password);
+        $this->checkstring($repassword);
+        $email = $this->post['email'];//用户邮箱
+
+        if ($repassword != $password) {
+            exit("两次输入密码不一样");//用户密码不能为空
+        }
+        if ('' == $username || '' == $password) {
+            exit("reguser_cant_null");//用户密码不能为空
+        } else if (!preg_match("/^[a-z'0-9]+([._-][a-z'0-9]+)*@([a-z0-9]+([._-][a-z0-9]+))+$/", $email)) {
+            exit("regemail_Illegal");//注册邮箱不合法
+        }else if (!$_ENV['user']->check_usernamecensor($username)) {
+            exit("regemail_cant_use");//注册邮箱不能使用
+        }
+        $euser = $_ENV['user']->get_by_emailanduname($email, $username);
+        if (is_array($euser)) {
+            exit("regemail_has_exits");
+        }
+        if ($phone!='') {
+            $userone = $_ENV['user']->get_by_phone($phone);
+            if ($userone != null) {
+                exit("手机号已存在!");
+            }
+        }
+        //先查看客户是否已经注册
+        $user = $_ENV['user']->get_by_customername($username);
+        $user && exit("reguser_has_exits");//注册用户已经存在
+        // 如果查不到(未注册过)，则进去DS系统验证客户编号
+        $obj=$this->get_sqlDB_linux($username);
+        if ($obj!=null){
+            exit("exist_in_DS");
+        }else{
+            exit("not_exist_in_DS");
+        }
+    }
+    //客户确认信息页面
+    function onajaxquerycustomer_result(){
+        $uname = $this->get[2];
+        $customerinfo=$this->get_sqlDB_linux($uname);
+        $upwd = $this->get[3];
+        $phone = $this->get[4];
+        $email = $this->get[5];
+        include template("querycustomer_result");
+    }
+    //审核客户，并添加一条记录
+    function  oncheckcustomerinfo(){
+
+        //保存注册信息
+        $username = strip_tags(trim($this->post['uname']));//用户注册名字，strip_tags第一层过滤
+        $realname = trim($this->post['realname']);
+        $password = trim($this->post['upwd']);
+        $email = trim($this->post['email']);
+        $phone = trim($this->post['phone']);
+        $groupid = 7;
+        $uid = $_ENV['user']->addcustomerapi($username,$realname, $password, $email, $groupid, $phone);//插入model/user.class.php里adduserapi函数里
+        //发送邮件验证
+        $this->sendcheckcodeemail($email,$uid);
+       //if($info==true){
+        exit("successful");
+//       }else{
+//           exit("邮箱验证发送失败，请返回检查邮箱是否填写正确！");
+//       }
+    }
+
+    function onajaxexistcustomer()
+    {
+//        $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+        $customername = $this->get[2];
+        include template("existcustomer");
+    }
+    function onajaxcustomertip()
+    {
+        include template("customertip");
+    }
+    function onajaxcustomer_emailcheck(){
+        $uname = $this->get[2];
+        $email = $this->get[3];
+        $forward = SITE_URL . $this->setting['seo_prefix'] . 'user/login' . $this->setting['seo_suffix'];
+        include template("customer_emailcheck");
+    }
+    function onresendcustomeremailcode(){
+        $email = trim($this->post['email']);
+        $userinfo= $_ENV['user']->get_by_email($email);
+        if ($_COOKIE['emailsend'] != null) {
+            exit("已发送过激活邮箱，请1分钟之后再试，不要恶意发送!");
+        }
+        //发送邮件验证
+        $this->sendcheckcodeemail($email,$userinfo['uid']);
+        exit("邮箱验证发送成功，请前往您的邮箱查看验证码！");
+    }
+    function sendcheckcodeemail($email,$userid)
+    {
+//        $userinfo = $_ENV['user']->get_by_uid($userid);
+//        $sitename = $this->setting['site_name'];
+        $activecode = getfourStr(4);
+        $message = "这是一封邮箱验证激活邮件，24小时之内请进行邮箱验证，您的验证码是$activecode";
+        //$state = sendmailto($email, "邮箱验证提醒-$sitename", $message, $userinfo['username']);
+        $_ENV['email']->sendmail($email, '邮箱验证提醒', $message);
+        $_ENV['user']->update_emailandactive($email, $activecode, $userid);
+        $v1 = md5("yanzhengask2time");
+        $expire1 = time() + 60; // 设置1分钟的有效期
+        setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+        $expire = time() + 86400; // 设置24小时的有效期
+        setcookie("useremailcheck", $activecode, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+        return true;
+    }
+
+    function oncheckcustomeremailcode(){
+        $email = $this->post['email'];
+        $activecode = $this->post['code'];
+        $uname = $this->post['uname'];
+        if($uname==''){
+            exit("用户查找错误");
+        }
+        $user = $_ENV['user']->get_by_username($uname);
+        if ($activecode == $user['activecode']) {
+            $_ENV['user']->update_emailactive($email, $user['uid']);
+            //然后发送邮件给审核人
+            $userlist =$_ENV['user']->getFOSSapprove();
+            foreach ($userlist as $FOSSapprove) {
+                $FOSSemail = $FOSSapprove['email'];
+                if ($FOSSemail != null) {
+                    $realname = $FOSSapprove['realname'];
+                    $customername = $user['realname'];
+                    $regtime = tdate($user['regtime']);
+                    $phone = $user['phone'];
+                    $url = SITE_URL . 'index.php?user/customercheck';
+                    $message = $realname.'，你好！<br/>';
+                    $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$customername.' 于'.$regtime.'有提交E问注册申请，请审核！<br/>';
+                    $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户联系方式：【'.$email.'】';
+                    if ($phone!='') {
+                        $message .= '【'.$phone.'】<br/>';
+                    }else{
+                        $message .= '<br/>';
+                    }
+                    $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$url.'">请点此审核</a>';
+                    $this->sendmsg($FOSSapprove, "E问待办：你有一条注册申请待审核！",$message);
+                    //$_ENV['email']->sendmail($FOSSemail, "E问待办：你有一条注册申请待审核！", $message);
+                }
+            }
+            exit("successful");
+        }else{
+            exit("填写的验证码不对，请重新填写");
+        }
+    }
+    //审核客户页面
+    function  oncustomercheck(){
+        if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+            $this->message('您还没有登录！', 'user/login');
+        }
+        //如果没有登录，进行登录
+        $customerlist =$_ENV['user']->getapprovestatuslist();
+        include template("customercheck");
+    }
+    //保存客户数据修改
+    function onsavecustomer(){
+        $uid = $this->post['uid'];
+        $uname = $this->post['uname'];
+        $realname = $this->post['realname'];
+        $email = $this->post['email'];
+        $phone = $this->post['phone'];
+        if($uid!=''){
+            $_ENV['user']->update_customer($uid,$uname,$realname,$email,$phone);
+            exit("successful");
+        }else{
+            exit("保存失败！");
+        }
+    }
+    //客户审核审批
+    function oncustomerapproval()
+    {
+        $uidlist = $this->post['uid'];
+        if (is_array($uidlist)) {
+            foreach ($uidlist as $uid) {
+                $_ENV['user']->update_customerapproval($uid);
+                //发邮件通知审核通过
+                $this->sendapprovalemail($uid);
+            }
+            exit("successful");
+        } else {
+            if ($uidlist!=''){
+                $_ENV['user']->update_customerapproval($uidlist);
+                //发邮件通知审核通过
+                $this->sendapprovalemail($uidlist);
+                exit("successful");
+            }
+        }
+    }
+    function sendapprovalemail($uid){
+        $touser = $_ENV['user']->get_by_uid($uid);
+        if ($touser) {
+            $name = $touser['realname'];
+            $subject = "E问通知：" . $name . "申请的E问账户审核通过！";
+            $message = '<p>' . $name . '申请的E问账户审核通过！账户资料如下：</p>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录账户：' . $touser['username'] . '<br/>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录密码：' . $touser['psw'] . '<br/>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名称：' . $touser['realname'] . '<br/>';
+            $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户邮箱：' . $touser['email'] . '<br/>';
+            if ($touser['phone'] != '') {
+                $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系方式：' . $touser['phone'] . '<br/>';
+            }
+            $url = SITE_URL;
+            $message .= '请牢记用户名、密码。E问网址：<a target="_blank" href="'.$url.'">ewen.digiwin.biz:9999</a><br/>';
+            $message .= '登录时，请选择 ”E10客户登录“ <br/>';
+            $_ENV['email']->sendmail($touser['email'], $subject, $message);
+        }
+    }
     function onask()
     {
         $navtitle = '我的问题';
@@ -895,7 +1173,8 @@ class usercontrol extends base
         $questionlist = $_ENV['question']->list_by_uid($uid, $status, $startindex, $pagesize);
         // print_r($questionlist);
         // exit();
-        $questiontotal = $this->db->fetch_total('question', 'authorid=' . $uid . $_ENV['question']->statustable[$status]);
+        $questiontotal = $_ENV['question']->rownumbycondition('authorid=' . $uid . $_ENV['question']->statustable[$status]);
+        //$questiontotal = $this->db->fetch_total('question', 'authorid=' . $uid . $_ENV['question']->statustable[$status]);
         $departstr = page($questiontotal, $pagesize, $page, "user/space_ask/$uid/$status"); //得到分页字符串
         include template('space_ask');
     }
@@ -928,7 +1207,8 @@ class usercontrol extends base
         $pagesize = $this->setting['list_default'];
         $startindex = ($page - 1) * $pagesize; //每页面显示$pagesize条
         $answerlist = $_ENV['answer']->list_by_uid($uid, $status, $startindex, $pagesize);
-        $answersize = intval($this->db->fetch_total('answer', 'authorid=' . $uid . $_ENV['answer']->statustable[$status]));
+        $answersize = $_ENV['answer']->rownumbycondition($uid,$status);
+        //$answersize = intval($this->db->fetch_total('answer', 'authorid=' . $uid . $_ENV['answer']->statustable[$status]));
         $departstr = page($answersize, $pagesize, $page, "user/space_answer/$uid/$status"); //得到分页字符串
         include template('space_answer');
     }
@@ -1218,7 +1498,7 @@ class usercontrol extends base
         $seo_keywords = "站点用户列表";
         include template("activelist");
     }
-
+    //没有用到
     function oncheckemail()
     {
 
@@ -1253,7 +1533,7 @@ class usercontrol extends base
 
     }
 
-    //发送邮件验证
+    //发送邮件验证没有用到
     function onsendcheckmail()
     {
 
@@ -1303,7 +1583,7 @@ class usercontrol extends base
 
     }
 
-    //邮箱激活验证
+    //邮箱激活验证没有用到
     function onvertifyemail()
     {
         //验证是否登录
@@ -1345,7 +1625,7 @@ class usercontrol extends base
 
     /*
      * 
-     * 修改邮箱
+     * 修改邮箱没有用到
      */
     function oneditemail()
     {
@@ -1475,14 +1755,18 @@ class usercontrol extends base
     function onajaxpopcheck()
     {
         $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+        $uname = $this->get[2];
         include template("popcheck");
     }
 
     /*daixy add 发送邮件验证码*/
     function onsendemailcode()
     {
-        if ($this->user['uid'] > 0) {
+        $uname = trim($this->post['uname']); //邮箱
+        $userinfo = $_ENV['user']->get_by_username($uname);
+        if ($userinfo!=null) {
             $email = trim($this->post['email']); //邮箱
+
             if ($_COOKIE['emailsend'] != null) {
                 exit("已发送过激活邮箱，请1分钟之后再试，不要恶意发送!");
             }
@@ -1490,57 +1774,43 @@ class usercontrol extends base
             if (empty($email)) {
                 exit("抱歉，邮箱不能为空！");
             }
-            if ($this->user['active'] == 1 && $this->user['email'] == $email) {
+            if ($userinfo['active'] == 1 && $userinfo['email'] == $email) {
                 exit("您激活过该邮箱了,您是不是想修改邮箱!");
             }
-            $emailaccess = $_ENV['user']->check_emailaccess($email);
-            if (FALSE == $emailaccess) {
-                exit("邮箱后缀被系统列入黑名单，禁止注册!");
-            }
-            $euser = $_ENV['user']->get_by_emailanduid($email, $this->user['uid']);
+//            $emailaccess = $_ENV['user']->check_emailaccess($email);
+//            if (FALSE == $emailaccess) {
+//                exit("邮箱后缀被系统列入黑名单，禁止注册!");
+//            }
+            $euser = $_ENV['user']->get_by_emailanduid($email, $userinfo['uid']);
             if (is_array($euser)) {
                 exit("此邮箱已经被他人注册了!");
             }
-            $sitename = $this->setting['site_name'];
-            $activecode = getfourStr(4);
-            $message = "这是一封邮箱验证激活邮件，24小时之内请进行邮箱验证，您的验证码是$activecode";
-            $state = sendmailto($email, "邮箱验证提醒-$sitename", $message, $this->user['username']);
-            if ($state == TRUE) {
-                $_ENV['user']->update_emailandactive($email, $activecode, $this->user['uid']);
-                $_ENV['user']->refresh($this->user['uid'], 1);
-                //$v = md5("yanzhengask2email");
-                $v1 = md5("yanzhengask2time");
-//                setcookie("emailsend");
-//                setcookie("useremailcheck");
-//                setcookie("emailsend", "OKadmin", time() - 1);
-//                setcookie("emailsend", "OKadmin", 0); //浏览器关闭 是自动失效
-//                setcookie("useremailcheck", "OKadmin", time() - 1);
-//                setcookie("useremailcheck", "OKadmin", 0); //浏览器关闭 是自动失效
-                $expire1 = time() + 60; // 设置1分钟的有效期
-                setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
-                $expire = time() + 86400; // 设置24小时的有效期
-                setcookie("useremailcheck", $activecode, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+           $info = $this->sendemail($email,$userinfo['uid']);
+            if ($info == true){
                 exit("邮箱验证发送成功，请前往您的邮箱查看验证码！");
-            } else {
+            }else{
                 exit("邮箱验证发送失败，请检查邮箱是否填写正确！");
             }
-//        }
+        }else{
+            exit("您还没有登录！");
         }
     }
 
     /*daixy add 进行验证*/
     function onemailcheck()
     {
-        $uid = $this->user['uid'];
+        $uname = $this->post['uname'];
         $email = $this->post['email'];
         $activecode = $this->post['activecode'];
         //$code = $_COOKIE['useremailcheck'];
         $identity = $this->post['identity'];
-        $user = $_ENV['user']->get_by_uid($uid);
+        $user = $_ENV['user']->get_by_username($uname);
         //已经激活了就不需要激活
-        if ($this->user['active'] == 1) {
-            $_ENV['user']->update_identity($identity, $uid);
-            $_ENV['user']->refresh($this->user['uid'], 1);
+        $cookietime = 2592000;
+        if ($user['active'] == 1) {
+            $_ENV['user']->update_identity($identity, $user['uid']);
+            $_ENV['user']->refresh($user['uid'], 1,$cookietime);
+            $this->credit($user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
             exit("activation successful");
         } else {
             if (empty($email)) {
@@ -1550,9 +1820,10 @@ class usercontrol extends base
 //                exit("验证码已过期，请重新发送验证码!");
 //            }
             if ($activecode == $user['activecode']) {
-                $_ENV['user']->update_identity($identity, $uid);
-                $_ENV['user']->update_emailactive($email, $uid);
-                $_ENV['user']->refresh($this->user['uid'], 1);
+                $_ENV['user']->update_identity($identity, $user['uid']);
+                $_ENV['user']->update_emailactive($email, $user['uid']);
+                $_ENV['user']->refresh($user['uid'], 1,$cookietime);
+                $this->credit($user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
                 exit("activation successful");
             } else {
                 exit("邮箱激活失败，请重新输入验证码!");
@@ -1719,8 +1990,38 @@ class usercontrol extends base
         exit('ok');
     }
 
-    
-  
+    /**
+     * @param $email
+     */
+    function sendemail($email,$userid)
+    {
+        $userinfo = $_ENV['user']->get_by_uid($userid);
+        $sitename = $this->setting['site_name'];
+        $activecode = getfourStr(4);
+        $message = "这是一封邮箱验证激活邮件，24小时之内请进行邮箱验证，您的验证码是$activecode";
+        $_ENV['email']->sendmail($email, "邮箱验证提醒-$sitename", $message);
+        //$state = sendmailto($email, "邮箱验证提醒-$sitename", $message, $userinfo['username']);
+        //if ($state == TRUE) {
+        $_ENV['user']->update_emailandactive($email, $activecode, $userid);
+        //$v = md5("yanzhengask2email");
+        $v1 = md5("yanzhengask2time");
+//                setcookie("emailsend");
+//                setcookie("useremailcheck");
+//                setcookie("emailsend", "OKadmin", time() - 1);
+//                setcookie("emailsend", "OKadmin", 0); //浏览器关闭 是自动失效
+//                setcookie("useremailcheck", "OKadmin", time() - 1);
+//                setcookie("useremailcheck", "OKadmin", 0); //浏览器关闭 是自动失效
+        $expire1 = time() + 60; // 设置1分钟的有效期
+        setcookie("emailsend", $v1, $expire1); // 设置一个名字为var_name的cookie，并制定了有效期
+        $expire = time() + 86400; // 设置24小时的有效期
+        setcookie("useremailcheck", $activecode, $expire); // 设置一个名字为var_name的cookie，并制定了有效期
+        return true;
+//        } else {
+//            return false;
+//        }
+    }
+
+
 }
 
 ?>

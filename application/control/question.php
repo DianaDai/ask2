@@ -242,7 +242,13 @@ class questioncontrol extends base
         if (0 == $this->user['uid']) {
             $this->setting["ucenter_open"] && $this->message("UCenter开启后游客不能提问!", 'BACK');
         }
-        $categoryjs = $_ENV['category']->get_js();
+        $userinfo = $this->user;
+        if($userinfo['identity']==3){
+            $categoryjs = $_ENV['category']->get_jsforcustomer();
+        }else {
+            $categoryjs = $_ENV['category']->get_js();
+        }
+        //$categoryjs = $_ENV['category']->get_js();
 
         $askfromuid = intval($this->get['2']);
         if ($askfromuid) {
@@ -613,6 +619,8 @@ class questioncontrol extends base
 
     function onview()
     {
+        //先检查是否有权限查看
+
         $useragent = $_SERVER['HTTP_USER_AGENT'];
 
 
@@ -625,7 +633,9 @@ class questioncontrol extends base
         //  exit();
         $_ENV['question']->add_views($qid); //更新问题浏览次数
         $question = $_ENV['question']->get($qid);
-
+        if(!$_ENV['question']->checkisallowed($question)){
+            $this->message('您没有权限查看此问题！');
+        }
         $topiclist = $_ENV['topic']->get_bycatid($question['cid'], 0, 8);
         empty($question) && $this->message('问题已经被删除！');
         (0 == $question['status']) && $this->message('问题正在审核中,请耐心等待！');
@@ -1833,6 +1843,7 @@ class questioncontrol extends base
             }
             $this->message('问题编辑成功!', $viewurl);
         }
+        $userinfo = $this->user;
         include template("editquestion");
     }
 

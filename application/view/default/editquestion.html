@@ -46,10 +46,17 @@
           </div>
         </div>
                 <div class="form-group">
+                    <!--{if $userinfo['identity'] == 3}-->
+                    <div class=" col-md-20">
+                        <span><input class="normal_checkbox" id="duinei" type="checkbox" disabled="disabled" checked value="1" name="duinei" />研发&nbsp;&nbsp;</span>
+                        <span><input class="normal_checkbox" id="duiwai"  type="checkbox" disabled="disabled" checked value="2" name="duiwai" />顾问</span>
+                    </div>
+                    <!--{else}-->
                     <div class=" col-md-20">
                         <span><input class="normal_checkbox" id="duinei" type="checkbox" <!--{if 1==$question['authoritycontrol']||$question['authoritycontrol']==2}-->checked<!--{/if}--> value="1" name="duinei" />研发&nbsp;&nbsp;</span>
                         <span><input class="normal_checkbox" id="duiwai"  type="checkbox" <!--{if 2==$question['authoritycontrol']}-->checked<!--{/if}--> value="2" name="duiwai" />顾问</span>
                     </div>
+                    <!--{/if}-->
                 </div>
             
                   <!--if $user['grouptype']!=1&&$user['credit1']<$setting['jingyan']-->

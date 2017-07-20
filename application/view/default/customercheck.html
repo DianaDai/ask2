@@ -1,0 +1,248 @@
+
+<!--{template header}-->
+<!--<link rel="stylesheet" media="all" href="{SITE_URL}static/css/bianping/css/login.css" />-->
+<style>
+    .canedit{
+
+    }
+    .sign {
+        height:94.5%;
+        /*min-height:750px;*/
+        text-align:center;
+        font-size:14px;
+        background-color:#f1f1f1
+    }
+    .sign .main {
+        width:400px;
+        height: 420px;
+        margin:60px auto 0;
+        padding:50px 50px 30px;
+        background-color:#fff;
+        border-radius:4px;
+        box-shadow:0 0 8px rgba(0,0,0,.1);
+        vertical-align:middle;
+        display:inline-block
+    }
+
+</style>
+
+<div class="sign">
+    <div class="main" style="width: 65%;height: 80%;position: relative;overflow:auto">
+        <div style="color:#000;margin:0px 0px 50px -40px;font-size: 20px">
+            <div style="float:left;">客户审核</div>
+        </div>
+        <form action="" name="giftform" method="post">
+            <table class="table table-hover table-bordered">
+                <tr class="header" style="background-color: #f1f1f1;">
+                    <td width="5%">
+                        <input class="checkbox" value="chkall" id="chkall" onclick="checkall('checkcustomer')" type="checkbox" name="chkall">
+                    </td>
+                    <td  width="15%">客户编号</td>
+                    <td  width="20%">客户中文名</td>
+                    <td  width="15%">客户邮箱</td>
+                    <td  width="15%">联系方式</td>
+                    <td  width="10%">操作</td>
+                </tr>
+                <!--{loop $customerlist $customer}-->
+                <tr id="tr1">
+                    <td style="vertical-align: middle;">
+                        <input class="checkbox" type="checkbox" id="{$customer['uid']}" value="{$customer['uid']}" name="checkcustomer">
+                    </td>
+                    <td class="altbg2" style="vertical-align: middle;">{$customer['username']}</td>
+                    <td class="altbg2" style="vertical-align: middle;">{$customer['realname']}</td>
+                    <td class="altbg2" style="vertical-align: middle;">{$customer['email']}</td>
+                    <td class="altbg2" style="vertical-align: middle;">{$customer['phone']}</td>
+                    <td class="altbg3">
+                        <input type="button" id="editdata" onclick="edittb(this)" value="编辑"/>
+                        <!--<input type="button" id="savedata" onclick="savetb()" value="保存"/>-->
+                    </td>
+                </tr>
+                <!--{/loop}-->
+
+                <tr>
+                    <td colspan="12" class="altbg1" align="left">
+                        <input class="btn" style="font-size: 18px;width: 100px;background-color: #6fce18;color: white;"
+                               type="button" name="check" onclick="oncheck();" value="审核" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#tr1 td.altbg2").click(function(event){
+        //td中已经有了input,则不需要响应点击事件
+        if($(this).children("input").length > 0)
+            return false;
+        var tdObj = $(this);
+        var parentObj = tdObj.parent();
+        if(!parentObj.hasClass('canedit')) {
+            return false;
+        }
+        var preText = tdObj.html();
+        tdObj.data("oldtxt",preText);//将单元格原文本保存在其缓存中，便修改失败或取消时用
+        //得到当前文本内容
+        var inputObj = $("<input type='text' onblur='chkvalue(this)' />");
+        //创建一个文本框元素
+        tdObj.html(""); //清空td中的所有元素
+        inputObj
+            .width(tdObj.width())
+            //设置文本框宽度与td相同
+            .height(tdObj.height())
+            .css({border:"1px,solid",fontSize:"14px", font:"宋体"})
+            .val(preText)
+            .appendTo(tdObj)
+            //把创建的文本框插入到tdObj子节点的最后
+            .trigger("focus")
+            //用trigger方法触发事件
+            .trigger("select");
+        inputObj.keyup(function(event){
+            if(13 == event.which)
+            //用户按下回车
+            {
+                var text = $(this).val();
+                tdObj.html(text);
+            }
+            else if(27 == event.which)
+            //ESC键
+            {
+                tdObj.html(preText);
+            }
+        });
+        //已进入编辑状态后，不再处理click事件
+        inputObj.click(function(){
+            return false;
+        });
+    });
+    function chkvalue(input) {
+        var text = $(input).val();
+        $(input).parent().html(text);
+    }
+    //编辑
+    function edittb(input) {
+        var b = $(input).parent(); //td
+        //将编辑改成 保存和取消两个按钮
+        b[0].innerHTML="<input id='savedata' type='button' onclick='savetb(this);' value='保存'/><input style='margin-left: 10px' type='button' onclick='resertEditTd(this);' value='取消'/>";
+        //把当前行设置为可编辑
+        b.parent().addClass("canedit");
+    }
+    //保存
+    function savetb(input) {
+        var b = $(input).parent(); //td
+        var a = b.siblings(); //td的兄弟节点
+        var td_id = $($(a[0]).html()).val(); //客户id
+        var td_code = $(a[1]).html(); //客户编号
+        var td_name = $(a[2]).html(); //客户名称
+        var td_email = $(a[3]).html(); //客户邮件
+        var td_phone = $(a[4]).html(); //电话
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "POST",
+            //提交的网址
+            url: "{SITE_URL}/?user/savecustomer",
+            //提交的数据
+            data: {uid:td_id,uname: td_code, realname: td_name, email: td_email,phone:td_phone},
+            //返回数据的格式
+            datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+            //成功返回之后调用的函数
+            success: function (data) {
+                data = $.trim(data);
+                if (data == 'successful') {
+                    new $.zui.Messager('保存成功！', {
+                        type: 'info',
+                        time: "5000",
+                        close: true,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                    b.parent().removeClass("canedit");//tr
+                    b[0].innerHTML="<input type='button' id='editdata' onclick='edittb(this)' value='编辑'/>";
+                }else {
+                    new $.zui.Messager(data, {
+                        type: 'danger',
+                        time:"5000",
+                        close: true,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }
+            },
+            //调用出错执行的函数
+            error: function () {
+                //请求出错处理
+            }
+        });
+    }
+    //取消
+    function resertEditTd(input) {
+        var b = $(input).parent(); //td
+        var a = b.siblings(); //td的兄弟节点
+        var td_code =  $(a[1]).data("oldtxt"); //客户编号
+        if(td_code !=undefined){
+            $(a[1]).html(td_code);
+        }
+        var td_name = $(a[2]).data("oldtxt"); //客户名称
+        if(td_name !=undefined){
+            $(a[2]).html(td_name);
+        }
+
+        var td_email = $(a[3]).data("oldtxt"); //客户邮件
+        if(td_email !=undefined){
+            $(a[3]).html(td_email);
+        }
+
+        var td_phone = $(a[4]).data("oldtxt"); //电话
+        if(td_phone !=undefined){
+            $(a[4]).html(td_phone);
+        }
+
+    }
+
+    function oncheck() {
+        var id_array=new Array();
+        $('input[name="checkcustomer"]:checked').each(function(){
+            id_array.push($(this).val());//向数组中添加元素
+        });
+        if(id_array.length==0){
+            alert('你还没有选择任何内容！');
+        }else {
+            $.ajax({
+                //提交数据的类型 POST GET
+                type: "POST",
+                //提交的网址
+                url: "{SITE_URL}/?user/customerapproval",
+                //提交的数据
+                data: {uid: id_array},
+                //返回数据的格式
+                datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+                //成功返回之后调用的函数
+                success: function (data) {
+                    data = $.trim(data);
+                    if (data == 'successful') {
+                        new $.zui.Messager('审核成功！', {
+                            type: 'info',
+                            time: "5000",
+                            close: true,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+
+                    } else {
+                        new $.zui.Messager(data, {
+                            type: 'danger',
+                            time: "5000",
+                            close: true,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+                    }
+                },
+                complete: function () {
+                    setTimeout('window.location.href = "{SITE_URL}/?user/customercheck"',3000)
+                },
+                //调用出错执行的函数
+                error: function () {
+                    //请求出错处理
+                }
+            });
+        }
+    }
+</script>
+
+<!--{template footer}-->

@@ -10,24 +10,103 @@ var $whitelist;
         
     }
 
-    
+    function  checkexist($topdata,$data){
+        foreach ($topdata as $key=> $value)
+        {
+            if($value['id'] == $data['id']){
+                return true;
+            }
+        }
+        return false;
+    }
     function ondefault() {
-       
+        $choosetype=$this->get[2]?$this->get[2]:'all';
     	$this->load('setting');
         $this->load('category');
+        $this->load('topic');
+        $this->load('note');
+        //显示置顶内容
+        if(!isset($this->setting['list_topdatanum'])){
+            $topicdatalist = $_ENV['topic']->get_indextoplist(1,0,3,10);
+        }else{
+            $topicdatalist = $_ENV['topic']->get_indextoplist(1,0,$this->setting['list_topdatanum'],10);
+        }
+
+        if(!isset($this->setting['list_topdatanum'])){
+            $notedatalist = $_ENV['note']->get_toplist(0,3);
+        }else{
+            $notedatalist = $_ENV['note']->get_toplist(0,$this->setting['list_topdatanum']);
+        }
+
+//        $topictoplist=$this->fromcache('topictopdata');
+//        $notetoplist=$this->fromcache('notetopdata');
 
     	// if(!is_mobile()){
-    	 	$tnosolvelist=$this->fromcache('nosolvelist');
-          
+
+        $tnosolvelist=$this->fromcache('nosolvelist');
+        foreach ($tnosolvelist as $key=> $value)
+        {
+            $tnosolvelist[$key]['flag']=1;//1 代表问题
+            $tnosolvelist[$key]['temptitle']='提了一个问题';
+            $tnosolvelist[$key]['tempurl']="?question/view/".$value['id'];
+            $tnosolvelist[$key]['tempcomments']="?question/view/".$value['id'] ."#comments";
+        }
     	// }else{
     	 	//$nosolvelist=$this->fromcache('nosolvelist');
     	// }
+         $temp_notelist=$this->fromcache('notelist');
+        $notelist = array();
+        foreach ($temp_notelist as $key=> $value)
+        {
+            $temp_notelist[$key]['flag']=2;//2 代表公告
+            $temp_notelist[$key]['temptitle']='发布了一篇公告';
+            //$note['url']} href="{$note['url']}"  {else}  href="{url note/view/$note['id']}"
+            if($temp_notelist[$key]['url']){
+                $temp_notelist[$key]['tempurl']=$value['url'];
+                $temp_notelist[$key]['tempcomments']=$value['url'];
+            }else{
+                $temp_notelist[$key]['tempurl']="?note/view/".$value['id'];
+                $temp_notelist[$key]['tempcomments']="?note/view/".$value['id'] ."#comments";
+            }
+            $temp_notelist[$key]['answers'] = $value['comments'];
+            //不是首页置顶的加入
+            if($this->checkexist($notedatalist,$temp_notelist[$key])) {
+                $notelist[] = $temp_notelist[$key];
+            }
+        }
+    	 $temp_topiclist=$this->fromcache('topiclist');
+        $topiclist = array();
+        foreach ($temp_topiclist as $key=> $value)
+        {
+            $temp_topiclist[$key]['flag']=3;//3 代表文章
+            $temp_topiclist[$key]['temptitle']='发布了一篇文章';
+            $temp_topiclist[$key]['tempurl']="?topic/getone/".$value['id'];
+            $temp_topiclist[$key]['tempcomments']="?topic/getone/".$value['id']."#comments";
+            //不是首页置顶的加入
+            if($this->checkexist($topicdatalist,$temp_topiclist[$key])) {
+                $topiclist[] = $temp_topiclist[$key];
+            }
+        }
+    	// if(!is_mobile()){
 
-    	 $topiclist=$this->fromcache('topiclist');
-
-    	// if(!is_mobile()){  
-
-    	 	 $nosolvelist=array_merge($tnosolvelist,$topiclist);
+        switch ($choosetype) {
+            case 'all':
+                $nosolvelist=array_merge($tnosolvelist,$topiclist,$notelist);
+                $typename = "全部";
+                break;
+            case 'topic':
+                $nosolvelist=$topiclist;
+                $typename = "文章";
+                break;
+            case 'question':
+                $nosolvelist=$tnosolvelist;
+                $typename = "问题";
+                break;
+            case 'note':
+                $nosolvelist=$notelist;
+                $typename = "公告";
+                break;
+        }
 
     	$nosolvelist=$this->getnewlist_bytime($nosolvelist);
     	// }
@@ -43,7 +122,6 @@ var $whitelist;
             }
             $nosolvelist[$key]['srcs']=$navtemp;
         }
-       
 
 //    	foreach ($nosolvelist as $key=>$val){
 //    		
@@ -57,7 +135,7 @@ var $whitelist;
         $this->setting['seo_index_keywords'] && $seo_keywords = str_replace("{wzmc}", $this->setting['site_name'], $this->setting['seo_index_keywords']);
         $navtitle = $this->setting['site_alias'];
 
-    	$this->load('topic');
+
     	$art_rownum=$_ENV['topic']->rownum_by_user_article();
     	$userarticle=$_ENV['topic']->get_user_articles(0,5);
 

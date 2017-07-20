@@ -23,10 +23,15 @@ class categorymodel {
 
     function get_list() {
         $categorylist = array();
-        $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "category");
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if ($this->base->user['identity'] == 3 ) {
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "category  WHERE isFOSS=1");
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "category");
+        }
         while ($cate = $this->db->fetch_array($query)) {
-        	   	 	$category['image']=get_cid_dir($category['id'],'small');
-        	 	$category['bigimage']=get_cid_dir($category['id'],'big');
+            $cate['image']=get_cid_dir($cate['id'],'small');
+            $cate['bigimage']=get_cid_dir($cate['id'],'big');
             $categorylist[] = $cate;
         }
         return $categorylist;
@@ -44,7 +49,12 @@ class categorymodel {
     	    		break;
     	    		
     	    }
-        $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "category $order  LIMIT $start,$limit");
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if ($this->base->user['identity'] == 3 ) {
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "category WHERE isFOSS=1 $order  LIMIT $start,$limit");
+        }else{
+            $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "category $order  LIMIT $start,$limit");
+        }
         while ($category = $this->db->fetch_array($query)) {
         	   	 	$category['image']=get_cid_dir($category['id'],'small');
         	 	$category['bigimage']=get_cid_dir($category['id'],'big');
@@ -61,9 +71,14 @@ class categorymodel {
     /* 用于首页导航但是获取top10文章和问题最多的分类*/
     
     function list_by_gradetop(){
-    
+
         $categorylist = array();
-        $query =$this->db->query("select id ,name ,questions,grade ,image ,questions+topics as num from ".DB_TABLEPRE."category where  grade in( 1,2)  order by  num desc limit 0 ,10 ");
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if ($this->base->user['identity'] == 3 ) {
+            $query = $this->db->query("select id ,name ,questions,grade ,image ,questions+topics as num from " . DB_TABLEPRE . "category where isFOSS=1 and grade in( 1,2)  order by  num desc limit 0 ,10 ");
+        }else{
+            $query = $this->db->query("select id ,name ,questions,grade ,image ,questions+topics as num from " . DB_TABLEPRE . "category where  grade in( 1,2)  order by  num desc limit 0 ,10 ");
+        }
         while ($category1= $this->db->fetch_array($query))
         {
         	$category1['image']=get_cid_dir($category1['id'],'small');
@@ -79,7 +94,12 @@ class categorymodel {
     /* 用于在首页左侧显示 */
     function list_by_grade($grade = 1) {
         $categorylist = array();
-        $query = $this->db->query("select id,name,questions,grade,image from " . DB_TABLEPRE . "category where grade=1 order by displayorder asc,id asc");
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if ($this->base->user['identity'] == 3 ) {
+            $query = $this->db->query("select id,name,questions,grade,image from " . DB_TABLEPRE . "category where isFOSS=1 and grade=1 order by displayorder asc,id asc");
+        }else{
+            $query = $this->db->query("select id,name,questions,grade,image from " . DB_TABLEPRE . "category where grade=1 order by displayorder asc,id asc");
+        }
         while ($category1 = $this->db->fetch_array($query)) {
             	$category1['image']=get_cid_dir($category1['id'],'small');
             	$category1['bigimage']=get_cid_dir($category1['id'],'big');
@@ -95,7 +115,9 @@ class categorymodel {
         }
         return $categorylist;
     }
-
+    function filter($elem){
+        return $elem['isFOSS'] == 1;
+    }
     /**
      * 获得分类树
      *
@@ -103,7 +125,12 @@ class categorymodel {
      * @return string
      */
     function get_categrory_tree() {
+
         $allcategory = $this->base->category;
+        //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+        if ($this->base->user['identity'] == 3 ) {
+            $allcategory = array_filter($allcategory, 'filter');
+        }
         $categrorytree = '';
         foreach ($allcategory as $key => $category) {
             if ($category['pid'] == 0) {
@@ -142,7 +169,11 @@ class categorymodel {
 
     function list_by_pid($pid, $limit = 100) {
         $categorylist = array();
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `pid`=$pid ORDER BY displayorder ASC,id ASC LIMIT $limit");
+        if($this->base->user['identity'] == 3) {
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `pid`=$pid  AND isFOSS=1 ORDER BY displayorder ASC,id ASC LIMIT $limit");
+        }else{
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `pid`=$pid ORDER BY displayorder ASC,id ASC LIMIT $limit");
+        }
         while ($category = $this->db->fetch_array($query)) {
         	$category['image']=get_cid_dir($category['id'],'big');
             $categorylist[] = $category;
@@ -198,11 +229,19 @@ class categorymodel {
       
         return $user;
     }
-    
-    
-    
-    
-    
+
+
+
+
+    function rownumbycondition($condition){
+        //用户是顾问则只查询 authoritycontrol = 2
+        if ($this->base->user['identity']==3){
+            $condition .=" and isFOSS=1 ";
+            return $this->db->fetch_total('category',$condition);
+        }else{
+            return $this->db->fetch_total('category',$condition);
+        }
+    }
     
     /* 根据分类名检索 加入cid */
 
@@ -210,7 +249,11 @@ class categorymodel {
         $categorylist = array();
         $condition = " ";
         ($cid!='all')&&$condition.=" AND pid =$cid ";
-        $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY topics DESC LIMIT $limit");
+        if($this->base->user['identity'] == 3) {
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE isFOSS=1 AND `name` like '%$name%'  $condition ORDER BY topics DESC LIMIT $limit");
+        }else{
+            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "category` WHERE `name` like '%$name%'  $condition ORDER BY topics DESC LIMIT $limit");
+        }
         while ($category = $this->db->fetch_array($query)) {
         	  $category['follow'] = $this->is_followed($category['id'], $this->base->user['uid']);
         	$category['image']=get_cid_dir($category['id'],'big');
@@ -223,10 +266,18 @@ class categorymodel {
 
     function list_by_cid_pid($cid, $pid) {
         $sublist = array();
-        $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        if($this->base->user['identity'] == 3) {
+            $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid and isFOSS=1 order by displayorder asc,id asc");
+        }else{
+            $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        }
         $subcount = $this->db->affected_rows();
         if ($subcount <= 0) {
-            $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$pid order by displayorder asc,id asc");
+            if ($this->base->user['identity'] == 3) {
+                $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$pid and isFOSS=1 order by displayorder asc,id asc");
+            }else{
+                $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$pid order by displayorder asc,id asc");
+            }
         }
         while ($category = $this->db->fetch_array($query)) {
         	$category['image']=get_cid_dir($category['id'],'big');
@@ -240,18 +291,30 @@ class categorymodel {
     function query_list_by_cid_pid($cid){
     
         $sublist = array();
-        $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        if($this->base->user['identity'] == 3) {
+            $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid and isFOSS=1 order by displayorder asc,id asc");
+        }else{
+            $query = $this->db->query("select id,name,questions,topics,grade,alias,miaosu,image,followers from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+        }
         $subcount= $this->db->affected_rows();
         if ($subcount<=0)
         {
             ($cid=='all')&&$cid=0;
             if ($cid==0)
             {
-                $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+                if($this->base->user['identity'] == 3) {
+                    $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$cid and isFOSS=1 order by displayorder asc,id asc");
+                }else{
+                    $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where pid=$cid order by displayorder asc,id asc");
+                }
+
             }else
             {
-                $query= $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where id=$cid order by displayorder asc,id asc "); //获取当前分类
-
+                if($this->base->user['identity'] == 3) {
+                    $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where id=$cid and isFOSS=1 order by displayorder asc,id asc "); //获取当前分类
+                }else{
+                    $query = $this->db->query("select id,name,questions,topics,grade,alias from " . DB_TABLEPRE . "category where id=$cid order by displayorder asc,id asc ");
+                }
             }
             
             
@@ -275,7 +338,12 @@ class categorymodel {
         (!$cid) && $cid = $cid;
         $categoryjs = array();
         $category1 = $category2 = $category3 = '';
-        $query = $this->db->query("SELECT *  FROM " . DB_TABLEPRE . "category WHERE `id` != $cid order by displayorder asc ");
+        if($this->base->user['identity'] == 3) {
+            $query = $this->db->query("SELECT *  FROM " . DB_TABLEPRE . "category WHERE `id` != $cid and `isFOSS`=1 order by displayorder asc ");
+        }else{
+            $query = $this->db->query("SELECT *  FROM " . DB_TABLEPRE . "category WHERE `id` != $cid order by displayorder asc ");
+        }
+
         while ($category = $this->db->fetch_array($query)) {
             switch ($category['grade']) {
                 case 1:
@@ -294,7 +362,29 @@ class categorymodel {
         $categoryjs['category3'] = "[" . substr($category3, 0, -1) . "]";
         return $categoryjs;
     }
-    
+    function get_jsforcustomer($cid = 0) {
+        (!$cid) && $cid = $cid;
+        $categoryjs = array();
+        $category1 = $category2 = $category3 = '';
+        $query = $this->db->query("SELECT *  FROM " . DB_TABLEPRE . "category WHERE `id` != $cid and `isFOSS` =1 order by displayorder asc ");
+        while ($category = $this->db->fetch_array($query)) {
+            switch ($category['grade']) {
+                case 1:
+                    $category1.='["' . $category['id'] . '","' . $category['name'] . '"],';
+                    break;
+                case 2:
+                    $category2.='["' . $category['pid'] . '","' . $category['id'] . '","' . $category['name'] . '"],';
+                    break;
+                case 3:
+                    $category3.='["' . $category['pid'] . '","' . $category['id'] . '","' . $category['name'] . '"],';
+                    break;
+            }
+        }
+        $categoryjs['category1'] = "[" . substr($category1, 0, -1) . "]";
+        $categoryjs['category2'] = "[" . substr($category2, 0, -1) . "]";
+        $categoryjs['category3'] = "[" . substr($category3, 0, -1) . "]";
+        return $categoryjs;
+    }
     /*   专题页面显示特定分类  */
     
     function get_topnav($cid ,$grade=1){

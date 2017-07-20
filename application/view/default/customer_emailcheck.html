@@ -1,0 +1,110 @@
+<!--{eval global $starttime,$querynum;$mtime = explode(' ', microtime());$runtime=number_format($mtime[1] + $mtime[0] - $starttime,6); $setting=$this->setting;$user=$this->user;$headernavlist=$this->nav;$regular=$this->regular;}-->
+<link href="{SITE_URL}static/css/dist/css/zui.min.css" rel="stylesheet">
+<div class="poploginform">
+    <div class="form-group" style ="margin-bottom:0px">
+        <label class="control-label" style="margin-bottom: 15px;font-size: 18px;"> 我们已经向注册邮箱发送了一封确认信，请填写收到的验证码：</label>
+    </div>
+    <form  class="form-horizontal" name="loginform" method="post">
+
+        <div class="form-group">
+            <div class="col-md-4">
+                <input type="text"  id="code" name="code" value=""  class="form-control">
+            </div>
+            <div class="col-md-2">
+                <input type="button" id="submitCode" onclick="sendcode();" class="btn btn-danger width-120" value="没有收到验证码，重新发送">
+            </div>
+        </div>
+        <input type="hidden" id="email" name="email" value='{$email}'/>
+        <input type="hidden" id="uname" name="uname" value='{$uname}'/>
+        <input type="hidden" id="popforward" name="forward" value="{$forward}"/>
+        <div class="form-group">
+            <div class="col-md-8" style="padding-right: 0px;padding-left: 0px;margin-left: 8px;">
+                <input type="button" style="width: 100%;display:block;" onclick="submitform();" id="submit" class="sign-up-button" value="验证邮箱" data-loading="稍候...">
+            </div>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+
+        function sendcode() {
+            var email = $("#email").val();
+            $.ajax({
+                type: "POST",
+                async: false,
+                cache: false,
+                //提交的网址
+                url:"{SITE_URL}/?user/resendcustomeremailcode",
+                //提交的数据
+                data:{email:email},
+                //返回数据的格式
+                datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+                success: function(data) {
+                    data = $.trim(data);
+                    new $.zui.Messager(data, {
+                        type: 'info',
+                        close: true,
+                        time: 3000,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                },
+                //调用出错执行的函数
+                error: function () {
+                    //请求出错处理
+                }
+            });
+        }
+        function submitform() {
+            var code = $("#code").val();
+            var email = $("#email").val();
+            var uname = $("#uname").val();
+            var _forward = $("#popforward").val();
+            $.ajax({
+                type: "POST",
+                async: false,
+                cache: false,
+                //提交的网址
+                url: "{SITE_URL}/?user/checkcustomeremailcode",
+                //提交的数据
+                data: {email: email, code: $.trim(code), uname: uname},
+                //返回数据的格式
+                datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+                success: function (data) {
+                    data = $.trim(data);
+                    if (data == 'successful') {
+                        var url=g_site_url+"index.php?user/ajaxcustomertip";
+                        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,keyboard:false});
+                        myModalTrigger.show({hidden: function() {
+                            window.location.href = _forward;
+                        }});
+                    } else {
+                        new $.zui.Messager(data, {
+                            type: 'danger',
+                            close: true,
+                            time: 0,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+                    }
+                }
+            })
+        }
+    </script>
+
+</div>
+<style>
+    .sign-up-button {
+        padding: 3px 10px;
+        font-size: 18px;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        background: #3280fc;
+        cursor: pointer;
+        outline: none;
+        clear: both
+    }
+    label{
+        color: #333;
+        font-family: 'Microsoft YaHei';
+        font-size: 15px;
+    }
+</style>

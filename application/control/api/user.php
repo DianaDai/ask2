@@ -333,10 +333,10 @@ class api_usercontrol extends base
     }
     //---------------------------用户登录接口函数
     /*
-     * 
-     * 
+     *
+     *
      * uname:用户名
-     * 
+     *
      * upwd:用户密码
      */
     function onloginapi()
@@ -344,7 +344,7 @@ class api_usercontrol extends base
 
         //$this->check_apikey();//判断是否为正确的http请求
 //    	if($this->post['seccode_verify']==null||$this->post['seccode_verify']==''){
-//    		 exit('验证码不能为空');	 
+//    		 exit('验证码不能为空');
 //    	}
         //if (strtolower(trim($this->post['seccode_verify'])) != $_ENV['user']->get_code()) {
         // exit('验证码错误');
@@ -369,16 +369,18 @@ class api_usercontrol extends base
             if ($msg == 'ok') {
                 $user = $_ENV['user']->get_by_username($username);
                 $cookietime = 2592000;
-                $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
-                $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                 //exit('login_ok');//登录成功
                 if($user['username']!='admin') {
                     if ($user['identity'] == 0 || $user['active'] != 1) {
                         exit('login_check');//身份邮箱验证
                     } else {
+                        $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                        $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                         exit('login_ok');//登录成功
                     }
                 }else{
+                    $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                    $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                     exit('login_ok');//登录成功
                 }
             } else {
@@ -387,7 +389,9 @@ class api_usercontrol extends base
         }
 
         $user = $_ENV['user']->get_by_username($username);
-
+        if ($user['identity'] == 3) {
+            exit('该用户名属于客户类，请使用E10客户登录界面进行登录!');//登录参数为空
+        }
         $cookietime = 2592000;
         if (is_array($user)) //登录用户存在
         {
@@ -398,19 +402,18 @@ class api_usercontrol extends base
                 if($user['approvestatus']!='y'){
                     exit('未生效用户，非法登录！');
                 }
-
-
-                $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
-                $_ENV['user']->refresh($user['uid'], 1, $cookietime);
-
                 //exit('login_ok');//登录成功
                 if($user['username']!='admin') {
                     if ($user['identity'] == 0 || $user['active'] != 1) {
                         exit('login_check');//身份邮箱验证
                     } else {
+                        $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                        $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                         exit('login_ok');//登录成功
                     }
                 }else{
+                    $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                    $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                     exit('login_ok');//登录成功
                 }
             }
@@ -428,40 +431,78 @@ class api_usercontrol extends base
         if (is_array($user)) {
             if ($isadmin == true) { //域用户验证通过；但是密码不对应该是 ewn密码修改了；或者域密码修改了
                 $_ENV['user']->uppass($user['uid'], $orgpassword);
-                $_ENV['user']->refresh($user['uid'], 1, $cookietime);
-                $user = $_ENV['user']->get_by_username($username);
-                $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                //$user = $_ENV['user']->get_by_username($username);
                 //exit('login_ok');//登录成功
                 if($user['username']!='admin') {
                     if ($user['identity'] == 0 || $user['active'] != 1) {
                         exit('login_check');//身份邮箱验证
                     } else {
+                        $_ENV['user']->refresh($user['uid'], 1, $cookietime);
+                        $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
                         exit('login_ok');//登录成功
                     }
                 }else{
+                    $_ENV['user']->refresh($user['uid'], 1, $cookietime);
+                    $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
                     exit('login_ok');//登录成功
                 }
             }
         } else {     //通过域认证 ；但是用户查不到信息应该是没有登录过ewen或者是用户被删掉了；重新添加登录信息
             //$uid = $_ENV['user']->add($username, $orgpassword);
             $uid =$_ENV['user']->adddomain($username,$orgpassword,$domainidentity);
-            $user = $_ENV['user']->get_by_username($username);
-            $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
-            $_ENV['user']->refresh($user['uid'], 1, $cookietime);
+            //$user = $_ENV['user']->get_by_username($username);
             //exit('login_ok');//登录成功
             if($user['username']!='admin') {
                 if ($user['identity'] == 0 || $user['active'] != 1) {
                     exit('login_check');//身份邮箱验证
                 } else {
+                    $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                    $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                     exit('login_ok');//登录成功
                 }
             }else{
+                $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                 exit('login_ok');//登录成功
             }
         }
         exit('login_user_or_pwd_error');//用户名或者密码错误
     }
+    function oncustomerloginapi()
+    {
+        $username = trim($this->post['uname']); //用户名
+        //判断是否包含特殊字符
+        $password = trim($this->post['upwd']);//用户密码
+        if ('' == $username || '' == $password) {
+            exit('login_null');//登录参数为空
+        }
+        $password = md5($password);//用户密码
+        $this->checkdeepstring($username);
+        $this->checkstring($password);
+        $user = $_ENV['user']->get_by_username($username);
 
+        $cookietime = 2592000;
+        if (is_array($user)) //登录用户存在
+        {
+            if (is_array($user) && ($password == $user['password'])) {
+                if ($user['isblack'] == 1) {
+                    exit('用户被列入网站黑名单!');//登录参数为空
+                }
+                if ($user['approvestatus'] != 'y') {
+                    exit('未生效用户，非法登录,请等待审核通过后再登录！');
+                }
+                if ($user['identity'] != 3) {
+                    exit('该账号不属于客户账号，请使用内部员工登录界面进行登录!');//登录参数为空
+                }
+                $this->credit($this->user['uid'], $this->setting['credit1_login'], $this->setting['credit2_login']); //登录增加积分
+                $_ENV['user']->refresh($user['uid'], 1, $cookietime);
+                exit('login_ok');//登录成功
+            }
+        }else{
+            exit('login_notexist');
+        }
+        exit('login_user_or_pwd_error');//用户名或者密码错误
+    }
     function domainidentityverify($user, $pwd)
     {
         $identity = array("displayname" => "", "cn" => "", "mail" => "", "sn" => "", "givenname" => "", "ex_message" => "", "verify_flag" => "fail","itcode"=>"","adminunit"=>"","adminunitid"=>"","introduction"=>"");
@@ -501,24 +542,6 @@ class api_usercontrol extends base
         }
         return $identity;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //---------------------------绑定微信登录接口函数

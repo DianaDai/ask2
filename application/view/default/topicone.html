@@ -48,6 +48,33 @@
                         <i class="fa fa-star-o"></i><span>推荐文章</span>
                     </a>        
                       </li>
+                     {if $topicone['indextop'] ==1}
+                     <li>
+                         <a href="{url topic/cancelindextop/$topicone['id']}" data-toggle="tooltip" data-html="true" data-original-title="被置顶的文章将取消在首页列表展示">
+                             <i class="fa fa-star-o"></i><span>取消首页置顶</span>
+                         </a>
+                     </li>
+                     {else}
+                     <li>
+                         <a href="{url topic/addindextop/$topicone['id']}" data-toggle="tooltip" data-html="true" data-original-title="被置顶的文章将会在首页列表展示">
+                             <i class="fa fa-star-o"></i><span>首页置顶</span>
+                         </a>
+                     </li>
+                     {/if}
+                     {if $topicone['categorytop'] ==1}
+                     <li>
+                         <a href="{url topic/cancelcategorytop/$topicone['id']}" data-toggle="tooltip" data-html="true" data-original-title="被置顶的文章将取消在文章分类列表展示">
+                             <i class="fa fa-star-o"></i><span>取消分类置顶</span>
+                         </a>
+                     </li>
+                     {else}
+                     <li>
+                         <a href="{url topic/addcategorytop/$topicone['id']}" data-toggle="tooltip" data-html="true" data-original-title="被置顶的文章将会在文章分类列表展示">
+                             <i class="fa fa-star-o"></i><span>分类置顶</span>
+                         </a>
+                     </li>
+                     {/if}
+
                       {/if}
                            <li>
                   

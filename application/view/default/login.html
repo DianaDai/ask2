@@ -3,54 +3,101 @@
 <body class="no-padding reader-black-font">
 <div class="sign">
     <!-- <div class="logo"><a href="/"><img src="{$setting['site_logo']}" alt="Logo"></a></div>-->
-    <div class="main">
+    <div class="main" style="padding: 0px;">
 
 
-        <h4 class="title">
-            <div class="normal-title">
-                <a class="active" href="{url user/login}">登录</a>
-                <!--    <b>·</b>
-                    <a id="js-sign-up-btn" class="" href="{url user/register}">注册</a>-->
+        <!--<h4 class="title">-->
+            <!--<div class="normal-title">-->
+                <!--<a class="active" href="{url user/login}">登录</a>-->
+                <!--&lt;!&ndash;    <b>·</b>-->
+                    <!--<a id="js-sign-up-btn" class="" href="{url user/register}">注册</a>&ndash;&gt;-->
+            <!--</div>-->
+        <!--</h4>-->
+
+        <ul class="menu0" style="padding-left:0px" id="menu0">
+            <li onclick="setTab(0,0)" class="hover">鼎捷内部员工登录</li>
+            <li onclick="setTab(0,1)">E10客户登录</li>
+        </ul>
+        <div class="mainTab" id="main0">
+            <ul class="block">
+                <li>
+                    <div class="js-sign-in-container">
+                <form id="new_session" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden"
+                                                                                   value="✓"><input type="hidden"
+                                                                                                    name="authenticity_token"
+                                                                                                    value="fmDZC5B2M/Cj9fddniQd+UZf9QK++PqX3Jt3VhlwLByyM5eNbhuYXUrfQJeyap54s8abx05bTKo6WDqxqrartg==">
+                    <input type="hidden" id="forward" name="return_url" value="{$forward}">
+                    <input type="hidden" id="usersid" name="usersid" value='{$_SESSION["userid"]}'/>
+                    <input type="hidden" id="apikey" name="apikey" value='{$_SESSION["apikey"]}'/>
+                    <!-- 正常登录登录名输入框 -->
+                    <div class="input-prepend restyle js-normal">
+                        <input placeholder="账号密码同EFGP" type="text" id="xm-login-user-name">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="input-prepend">
+                        <input placeholder="密码" type="password" id="xm-login-user-password">
+                        <i class="fa fa-lock"></i>
+                    </div>
+
+                    <div class="remember-btn">
+                        <input type="checkbox" value="1" name="net_auto_login" checked="checked"><span>记住我</span>
+                    </div>
+                    <!--    <div class="forget-btn">
+                          <a class=""  href="{url user/getpass}">登录遇到问题?</a>
+
+                        </div>-->
+                    <div id="being_login" style="width:100%;text-align:center;display:none;position:relative">
+                        <p style="margin:0px;padding:0px;">正在登录...
+                        <p/>
+                        <img src="{SITE_URL}static/css/images/load.gif"></img>
+                    </div>
+                    <input type="button" id="login_submit" value="登录" class="sign-in-button">
+                </form>
+                <!--{template openlogin}-->
             </div>
-        </h4>
-        <div class="js-sign-in-container">
-            <form id="new_session" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden"
-                                                                               value="✓"><input type="hidden"
-                                                                                                name="authenticity_token"
-                                                                                                value="fmDZC5B2M/Cj9fddniQd+UZf9QK++PqX3Jt3VhlwLByyM5eNbhuYXUrfQJeyap54s8abx05bTKo6WDqxqrartg==">
-                <input type="hidden" id="forward" name="return_url" value="{$forward}">
-                <input type="hidden" id="usersid" name="usersid" value='{$_SESSION["userid"]}'/>
-                <input type="hidden" id="apikey" name="apikey" value='{$_SESSION["apikey"]}'/>
-                <!-- 正常登录登录名输入框 -->
-                <div class="input-prepend restyle js-normal">
-                    <input placeholder="账号密码同EFGP" type="text" id="xm-login-user-name">
-                    <i class="fa fa-user"></i>
-                </div>
+                </li>
+            </ul>
+            <ul><li>
+                <div class="js-sign-in-container">
+                    <form id="new_session1" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden"
+                                                                                       value="✓"><input type="hidden"
+                                                                                                        name="authenticity_token"
+                                                                                                        value="fmDZC5B2M/Cj9fddniQd+UZf9QK++PqX3Jt3VhlwLByyM5eNbhuYXUrfQJeyap54s8abx05bTKo6WDqxqrartg==">
+                        <input type="hidden" id="forward1" name="return_url" value="{$forward}">
+                        <input type="hidden" id="usersid1" name="usersid" value='{$_SESSION["userid"]}'/>
+                        <input type="hidden" id="apikey1" name="apikey" value='{$_SESSION["apikey"]}'/>
+                        <!-- 正常登录登录名输入框 -->
+                        <div class="input-prepend restyle js-normal">
+                            <input placeholder="客户编号" type="text" id="xm-login-customer-name">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <div class="input-prepend">
+                            <input placeholder="密码" type="password" id="xm-login-customer-password">
+                            <i class="fa fa-lock"></i>
+                        </div>
 
-                <!-- 海外登录登录名输入框 -->
+                        <div class="remember-btn">
+                            <input type="checkbox" value="1" name="net_auto_login" checked="checked"><span>记住我</span>
+                        </div>
 
-                <div class="input-prepend">
-                    <input placeholder="密码" type="password" id="xm-login-user-password">
-                    <i class="fa fa-lock"></i>
+                        <div id="being_login1" style="width:100%;text-align:center;display:none;position:relative">
+                            <p style="margin:0px;padding:0px;">正在登录...
+                            <p/>
+                            <img src="{SITE_URL}static/css/images/load.gif"></img>
+                        </div>
+                        <input type="button" id="customer_login_submit" value="登录" class="sign-in-button">
+                        <a style="margin-top: 10px" type="button" id="customer_register" href="{url user/register}" class="sign-in-button">注册</a>
+                        <div class="forget-btn">
+                            <a class=""  href="{url user/getpass}">忘记密码</a>
+                        </div>
+                        <!--<div class="forget-btn" style="margin-right: 10px;">-->
+                            <!--<a class=""  href="{url user/register}">注册</a>-->
+                        <!--</div>-->
+                    </form>
+                    <!--{template openlogin}-->
                 </div>
-
-                <div class="remember-btn">
-                    <input type="checkbox" value="1" name="net_auto_login" checked="checked"><span>记住我</span>
-                </div>
-                <!--    <div class="forget-btn">
-                      <a class=""  href="{url user/getpass}">登录遇到问题?</a>
-
-                    </div>-->
-                <div id="being_login" style="width:100%;text-align:center;display:none;position:relative">
-                    <p style="margin:0px;padding:0px;">正在登录...
-                    <p/>
-                    <img src="{SITE_URL}static/css/images/load.gif"></img>
-                </div>
-                <input type="button" id="login_submit" value="登录" class="sign-in-button">
-            </form>
-            <!--{template openlogin}-->
+            </li></ul>
         </div>
-
     </div>
 </div>
 <script>
@@ -89,17 +136,32 @@
                 if (data == 'login_ok') {
                     window.location.href = "{$forward}";
                 }else if(data=='login_check'){
-                    checkLogin();
+                    checkLogin(_uname);
                 } else {
                     switch (data) {
                         case 'login_null':
-                            alert("用户名或者密码为空");
+                            new $.zui.Messager("用户名或者密码为空", {
+                                type: 'danger',
+                                time:"5000",
+                                close: true,
+                                placement: 'center' // 定义显示位置
+                            }).show();
                             break;
                         case 'login_user_or_pwd_error':
-                            alert("用户名或者密码错误");
+                            new $.zui.Messager("请使用itcode(不带域名)以及对应的密码直接登录，首次登录会稍微等待几秒以进行资料验证、传输；", {
+                                type: 'danger',
+                                time:"3000",
+                                close: true,
+                                placement: 'center' // 定义显示位置
+                            }).show();
                             break;
                         default:
-                            alert(data);
+                            new $.zui.Messager(data, {
+                                type: 'danger',
+                                time:"5000",
+                                close: true,
+                                placement: 'center' // 定义显示位置
+                            }).show();
                             break;
                     }
                 }
@@ -116,11 +178,86 @@
     });
 
     //daixy 验证身份和邮箱激活
-    function checkLogin(){
-        var url=g_site_url+"index.php?user/ajaxpopcheck";
-        var myModalTrigger = new $.zui.ModalTrigger({url:url});
+    function checkLogin(uname){
+        var url=g_site_url+"index.php?user/ajaxpopcheck/"+uname;
+        var myModalTrigger = new $.zui.ModalTrigger({url:url,backdrop:false,showHeader:false,keyboard:false});
         myModalTrigger.show();
     }
+    function setTab(m,n){
+        var tli=document.getElementById("menu"+m).getElementsByTagName("li");
+        var mli=document.getElementById("main"+m).getElementsByTagName("ul");
+        for(i=0;i<tli.length;i++){
+            tli[i].className=i==n?"hover":"";
+            mli[i].style.display=i==n?"block":"none";
+        }
+    }
 
+    $("#customer_login_submit").click(function () {
+        var _forward = $("#forward").val();
+        var _uname = $("#xm-login-customer-name").val();
+        var _upwd = $("#xm-login-customer-password").val();
+        var _apikey = $("#apikey").val();
+
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "POST",
+            //提交的网址
+            url: "{SITE_URL}/?api_user/customerloginapi/3",
+            //提交的数据
+            data: {uname: _uname, upwd: _upwd, apikey: _apikey},
+            //返回数据的格式
+            datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+            beforeSend: function () {
+
+                //ajaxloading("提交中...");
+                $("#being_login").css("top", "-40px");
+                $("#being_login").show();
+            },
+            //成功返回之后调用的函数
+            success: function (data) {
+                data = $.trim(data);
+
+                if (data == 'login_ok') {
+                    window.location.href = "{$forward}";
+                }else if(data == 'login_null') {
+                    new $.zui.Messager("用户名或者密码为空", {
+                        type: 'danger',
+                        time:"5000",
+                        close: true,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }else if(data=='login_notexist'){
+                    new $.zui.Messager("请先注册进行资质校验，审核通过后可直接使用客户编号+自定义的密码登录；", {
+                        type: 'danger',
+                        time:"5000",
+                        close: true,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }else if(data == 'login_user_or_pwd_error'){
+                    new $.zui.Messager("用户名或者密码错误", {
+                        type: 'danger',
+                        time:"5000",
+                        close: true,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }else{
+                    new $.zui.Messager(data, {
+                        type: 'danger',
+                        time:"5000",
+                        close: true,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }
+            },
+            complete: function () {
+                //removeajaxloading();
+                $("#being_login").hide();
+            },
+            //调用出错执行的函数
+            error: function () {
+                //请求出错处理
+            }
+        });
+    });
 </script>
 <!--{template footer}-->

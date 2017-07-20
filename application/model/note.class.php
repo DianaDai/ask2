@@ -36,7 +36,24 @@ class notemodel {
         }
         return $notelist;
     }
-
+    //获取置顶公告
+    function get_toplist($start = 0, $limit = 10) {
+        $notelist = array();
+        $query = $this->db->query("select * from " . DB_TABLEPRE . "note where indextop =1 order by `time` desc limit $start,$limit");
+        while ($note = $this->db->fetch_array($query)) {
+            $note['format_time'] = tdate($note['time'], 3, 0);
+            $note['title'] = checkwordsglobal($note['title']);
+            $note['avatar']=get_avatar_dir($note['authorid']);
+            $note['image']=getfirstimg($note['content']);
+            $note['content']=cutstr( checkwordsglobal(strip_tags($note['content'])), 240,'...');
+            $notelist[] = $note;
+        }
+        return $notelist;
+    }
+    //更新置顶公告
+    function update_indextop($indextop,$noteid) {
+        $this->db->query("UPDATE " . DB_TABLEPRE . "note SET indextop='$indextop' WHERE `id`='$noteid'");
+    }
     function add($title, $url, $content) {
         $username = $this->base->user['realname'];
         $uid = $this->base->user['uid'];

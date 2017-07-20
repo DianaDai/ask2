@@ -13,6 +13,11 @@ nav .fa {
 .lazy {
     display: none;
 }
+.topcontent {
+	position: absolute;
+	top: -5px;
+	right: 10px;
+}
 .btn.active, .btn:active, .btn:focus, .btn:hover, .open .dropdown-toggle.btn{
 	    border-color:transparent ;
 }
@@ -62,10 +67,10 @@ nav .fa {
 	   color:#777;
 	   font-size:20px;
 }
-@media (min-width: 768px)
- .form-horizontal .form-group>label {
-    text-align: left;
-}
+/*@media (min-width: 768px) */
+	.form-horizontal .form-group>label {
+		text-align: left;
+	}
 .alert-success-inverse .close{
 	color:#fff;
 }
@@ -368,9 +373,10 @@ nav .fa {
 }
 .modal-dialog .modal-header{
 	border-bottom:none;
+	padding: 0px 8px;
 }
 .modal-dialog .modal-body{
-	padding:20px;
+	/*padding:20px;*/
 	font-size:12px;
 }
 .site_notes h3{
