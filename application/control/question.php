@@ -89,14 +89,14 @@ class questioncontrol extends base
             exit();
         }
         //$this->setting['code_ask'] && $this->checkcode(); //检查验证码
-        $already = $_ENV['question']->already($qid, $this->user['uid']);
+        //$already = $_ENV['question']->already($qid, $this->user['uid']);
 
-        if ($already) {
-            $message['message'] = '不能重复回答同一个问题，可以修改自己的回答！';
-            echo json_encode($message);
-            exit();
+        //if ($already) {
+        //    $message['message'] = '不能重复回答同一个问题，可以修改自己的回答！';
+        //    echo json_encode($message);
+        //    exit();
 
-        }
+        //}
       
         if ($this->user['isblack'] == 1) {
 

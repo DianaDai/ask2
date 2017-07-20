@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
     <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
     <Server>Custom</Server>
-    <CustomServerUrl>http://localhost/</CustomServerUrl>
+    <CustomServerUrl>http://172.16.1.208</CustomServerUrl>
     <PublishEvent>None</PublishEvent>
     <PHPDevAutoPort>True</PHPDevAutoPort>
     <PHPDevPort>60147</PHPDevPort>
@@ -2649,6 +2649,18 @@
     <Compile Include="lib\encoding\gb-big5.table" />
     <Compile Include="lib\encoding\gb-unicode.table" />
     <Compile Include="lib\encoding\pinyin.dat" />
+    <Compile Include="lib\nusoap\class.nusoap_base.php" />
+    <Compile Include="lib\nusoap\class.soapclient.php" />
+    <Compile Include="lib\nusoap\class.soap_fault.php" />
+    <Compile Include="lib\nusoap\class.soap_parser.php" />
+    <Compile Include="lib\nusoap\class.soap_server.php" />
+    <Compile Include="lib\nusoap\class.soap_transport_http.php" />
+    <Compile Include="lib\nusoap\class.soap_val.php" />
+    <Compile Include="lib\nusoap\class.wsdl.php" />
+    <Compile Include="lib\nusoap\class.wsdlcache.php" />
+    <Compile Include="lib\nusoap\class.xmlschema.php" />
+    <Compile Include="lib\nusoap\nusoap.php" />
+    <Compile Include="lib\nusoap\nusoapmime.php" />
     <Compile Include="lib\php\access_token.php" />
     <Compile Include="lib\php\jsapi_ticket.php" />
     <Compile Include="lib\php\jssdk.php" />
@@ -2689,6 +2701,7 @@
     <Compile Include="lib\simple_html_dom.php" />
     <Compile Include="lib\template.func.php" />
     <Compile Include="lib\zip.class.php" />
+    <Compile Include="mssqltest.php" />
     <Compile Include="plugin\qqlogin\API\class\ErrorCase.class.php" />
     <Compile Include="plugin\qqlogin\API\class\Oauth.class.php" />
     <Compile Include="plugin\qqlogin\API\class\QC.class.php" />
@@ -2715,6 +2728,7 @@
     <Compile Include="plugin\wapqqlogin\API\qqConnectAPI.php" />
     <Compile Include="plugin\wapqqlogin\callback.php" />
     <Compile Include="plugin\wapqqlogin\index.php" />
+    <Compile Include="soaptest.php" />
     <Compile Include="static\caiji\120ask_ask2.txt" />
     <Compile Include="static\caiji\39wenda_ask2.txt" />
     <Compile Include="static\caiji\ask273cn.txt" />
@@ -4040,6 +4054,7 @@
     <Folder Include="install" />
     <Folder Include="lib\alipay" />
     <Folder Include="lib\encoding" />
+    <Folder Include="lib\nusoap\" />
     <Folder Include="lib\php" />
     <Folder Include="lib\phpqrcode\bindings\tcpdf" />
     <Folder Include="lib\phpqrcode\bindings" />

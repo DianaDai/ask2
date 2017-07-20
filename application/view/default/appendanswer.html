@@ -13,26 +13,10 @@
                 
                  <div class="form-group">
          
-          <p class="col-md-24 ">编辑描述</p>
+          <p class="col-md-24 ">编辑内容</p>
           <div class="col-md-16">
             <div id="introContent">
-                        <script type="text/plain" id="editor" name="content" style="height: 222px;"></script>
-                       <script type="text/javascript">  
-            var editor = UE.getEditor('editor',{  
-                //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个  
-                   toolbars:[[ {$setting['editor_toolbars']}]],
-               
-              
-                //关闭字数统计  
-                wordCount:false,  
-                //关闭elementPath  
-                elementPathEnabled:false,  
-                //默认的编辑区域高度  
-                initialFrameHeight:150  
-                //更多其他参数，请参考ueditor.config.js中的配置项  
-                //更多其他参数，请参考ueditor.config.js中的配置项  
-            });  
-        </script> 
+                           <!--{template editor}-->
                     </div>
           </div>
         </div>

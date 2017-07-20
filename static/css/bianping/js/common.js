@@ -542,7 +542,10 @@ function postask(){
 function postarticle(){
 	 ctrdown=false;
 	 returndown=false;
-	var artcomment=$.trim($(".comment-area").val());
+	 var artcomment = $.trim($("#editor").val());
+	 if (artcomment=='') {
+	     artcomment = editor.getContent();
+	 }
     var _tid=$("#artid").val();
     var _artitle=$("#artitle").val();
     
