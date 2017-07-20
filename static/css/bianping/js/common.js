@@ -452,7 +452,10 @@ function topickeydownlistener(e){
 function postask(){
 	 ctrdown=false;
 	 returndown=false;
-	var eidtor_content= $.trim($("#anscontent").val());
+	 var eidtor_content = $.trim($("#editor").val());
+	 if (eidtor_content=='') {
+	     eidtor_content = editor.getContent();
+	 }
 	
 	 var _chakanjine=$("#chakanjine").val();
 	 if(_chakanjine!=0){
@@ -539,7 +542,10 @@ function postask(){
 function postarticle(){
 	 ctrdown=false;
 	 returndown=false;
-	var artcomment=$.trim($(".comment-area").val());
+	 var artcomment = $.trim($("#editor").val());
+	 if (artcomment=='') {
+	     artcomment = editor.getContent();
+	 }
     var _tid=$("#artid").val();
     var _artitle=$("#artitle").val();
     

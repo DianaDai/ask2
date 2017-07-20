@@ -14,7 +14,7 @@
 	<table class="table">
 		<tr class="header">
 			<td colspan="2">
-				全局设置&nbsp;&nbsp;&nbsp;
+				UEditor全局设置&nbsp;&nbsp;&nbsp;
 				<!--<input type="button" value="编辑器功能" onclick="document.location.href='index.php?admin_editor/default{$setting['seo_suffix']}'" style="cursor:pointer">-->
 			</td>
 		</tr>
@@ -46,12 +46,71 @@
             'preview', 'searchreplace', 'drafts'</span></td>
 			<td class="altbg2"><textarea class="area" name="editor_toolbars"  style="height:200px;width:500px;">{$setting['editor_toolbars']}</textarea></td>
 		</tr>
+
+
+
 	</table>
 	<br>
+    <table class="table">
+        <tr class="header">
+            <td colspan="2">
+                	WangEditor全局设置&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="45%"><b>编辑器功能定义:</b><br /> <span class="smalltxt">在编辑器功能管理可以手动调整，  'source',
+        '|',
+        'bold',
+        'underline',
+        'italic',
+        'strikethrough',
+        'eraser',
+        'forecolor',
+        'bgcolor',
+        '|',
+        'quote',
+        'fontfamily',
+        'fontsize',
+        'head',
+        'unorderlist',
+        'orderlist',
+        'alignleft',
+        'aligncenter',
+        'alignright',
+        '|',
+        'link',
+        'unlink',
+        'table',
+        'emotion',
+        '|',
+        'img',
+        'video',
+        'location',
+        'insertcode',
+        '|',
+        'undo',
+        'redo',
+        'fullscreen'</span></td>
+            <td class="altbg2"
+                >
+                <textarea class="area" name="editor_wtoolbars" style="height:200px;width:500px">
+                    {$setting['editor_wtoolbars']}
+                </textarea>
+
+            </td>
+
+        </tr>
+
+    </table>
+   
+
+
+
+
 	<center><input type="submit" class="button" name="submit" value="提 交"></center><br>
 </form>
 <fileset>
-        <legend>COMMAND列表</legend>
+        <legend>UEditor-COMMAND列表</legend>
         <table class="table">
             <thead>
                 <tr>

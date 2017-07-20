@@ -972,7 +972,14 @@ class questionmodel
     //编辑问题分类
     function update_category($qids, $cid, $cid1, $cid2, $cid3)
     {
+        //分类移动简单做法， 先把原来分类 问题先减掉；
+        //统一加上所属分类的数量
+        //这样就不用考虑 分类变化的问题，也比较通用
+        $oldques = $this->db->fetch_first("SELECT  cid1 ,cid2 ,cid3  from ".DB_TABLEPRE."question where `id` =$qids"); //难道能移动多个问题分类嘛？
         $this->db->query("UPDATE `" . DB_TABLEPRE . "question` SET `cid`=$cid,`cid1`=$cid1,`cid2`=$cid2,`cid3`=$cid3 WHERE `id`in ($qids)");
+        $this->db->query("UPDATE ".DB_TABLEPRE."category SET questions=questions-1 WHERE  id IN (".$oldques['cid1'].",".$oldques['cid2'].",".$oldques['cid3'].")");
+        $this->db->query("UPDATE ".DB_TABLEPRE."category SET questions =questions+1 WHERE id in($cid1,$cid2,$cid3)");
+            
         if ($this->base->setting['xunsearch_open']) {
             foreach ($qids as $qid) {
                 $question = array();

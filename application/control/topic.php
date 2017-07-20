@@ -149,8 +149,32 @@ foreach ($topiclist as $key=>$val){
     		echo json_encode($message);
     		exit();
     	}
-    	
-    	$content=strip_tags($this->post['content']);
+    	//现在支持问题提交html内容
+    	$content=$this->post['content'];
+        $contentarray = checkwords($content);
+        
+        if ($contentarray[0]==2)
+        {
+            $message['state']=0;
+            $message['msg'] = '内容包含非法关键词，发布失败!';
+            echo json_encode($message);
+            exit();
+        }
+        $content = $contentarray[1];
+        
+        $content_temp = str_replace('<p>', '', $content);
+        $content_temp = str_replace('</p>', '', $content_temp);
+        $content_temp = str_replace('&nbsp;', '', $content_temp);
+        $content_temp = preg_replace("/\s+/", '', $content_temp);
+        $content_temp = preg_replace('/s(?=s)/', '', $content_temp);
+        $content_temp = trim($content_temp);
+        if (trim($content_temp) == '') {
+            $message['state']=0;
+            $message['msg'] = '回答不能为空！';
+            echo json_encode($message);
+            exit();
+        }
+        
     	$title=strip_tags($this->post['title']);
     	$tid=intval($this->post['tid']);
     	$this->load("articlecomment");

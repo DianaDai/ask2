@@ -8,5 +8,6 @@
     <JsDebugging>False</JsDebugging>
     <SilverlightDebugging>False</SilverlightDebugging>
     <NameOfLastUsedPHPPublishProfile>local</NameOfLastUsedPHPPublishProfile>
+    <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
 </Project>
