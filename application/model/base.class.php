@@ -403,6 +403,8 @@ WHERE  B.CUSTOMER_CODE = '$customercode' AND A.SOURCE_ID_RTK = 'DELIVERY_CUSTOME
         $routing .= ',chat/default,api_article/newqlist,api_article/list,api_user/editpwdapi,api_user/loginoutapi,api_user/bindloginapi,api_user/loginapi,api_user/bindregisterapi,api_user/registerapi';
         //daixy用户认证
         $routing .= ',user/emailcheck,user/neweditemail,user/sendemailcode,user/checkemail';
+        //邀请回答
+        $routing .=',question/updateinvite_askuid';
         //daixy 客户注册登陆等
         $routing .= ',user/customercheck,user/savecustomer,user/customerapproval,user/querypass,user/checkcustomeremailcode,user/resendcustomeremailcode,user/checkcustomerinfo,api_user/customerloginapi,user/registercustomer';
         //daixy 置顶取消置顶

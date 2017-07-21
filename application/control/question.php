@@ -2069,10 +2069,10 @@ class questioncontrol extends base
         if ($this->user['uid'] == 0) {
             $this->message("游客不能邀请回答问题!");
         }
-        $question = $_ENV['question']->get_askname_byid($qid);
-        if($question) {
+        $question = $_ENV['question']->get($qid);
+        if($question['askuid']) {
             exit('exist');
-        }else{
+        }else {
             exit('notexist');
         }
     }
@@ -2089,11 +2089,19 @@ class questioncontrol extends base
         include template("invite_form");
     }
     function onupdateinvite_askuid(){
-        $qid = $this->post[2];
-        $question = taddslashes($_ENV['question']->get($qid), 1);
-        $askuid = $this->post[3];
-        $_ENV['question']->updateaskuid($qid,$askuid);
+        $qid = $this->post['qid'];
+        $askuid = $this->post['askuid'];
+
+        if(!$qid || !$askuid){
+            exit('请输入被邀请者的姓名或者itcode');
+        }
         $askuser = $_ENV['user']->get_by_uid($askuid, 2);//被邀请的人
+        $question = taddslashes($_ENV['question']->get($qid), 1);
+        if($askuser['uid'] == $question['askuid']){
+            exit('该问题已经邀请'.$askuser['realname'].'回答了');
+        }
+        $_ENV['question']->updateaskuid($qid,$askuid);
+
         $url =SITE_URL . 'index.php?q-'.$qid.'html';
         $title = 'E问待办：有人在E问上向你求助了，请您协助解答！';
         $message = '<p>尊敬的' . $askuser['realname'] . '您好！</p>';
@@ -2106,7 +2114,7 @@ class questioncontrol extends base
         $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$question['title'].'，感谢您的协助！<br/>';
         $message .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$url.'">点此答复</a><br/>';
         $this->sendmsg($askuser,$title,$message);
-        $this->message("邀请回答成功");
+        exit("successful");
     }
 }
 

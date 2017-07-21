@@ -3,14 +3,14 @@
 <div class="poploginform">
     <form  class="form-horizontal" name="loginform" method="post">
         <div class="form-group">
-            <label class="col-md-4 control-label">求助对象：</label>
+            <label class="col-md-3 control-label">求助对象：</label>
             <div class="col-md-6">
-                <input  type="text"  id="askid" name="askid" class="form-control">
+                <input  type="text"  id="askid" name="askid" class="form-control" placeholder="输入姓名或itcode，只允许求助一人">
             </div>
         </div>
         <input type="hidden" id="qid" name="qid" value='{$qid}'/>
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
+            <div class="col-md-8" style="float: right;width: 68%;">
                 <input type="button" onclick="submitform();" id="submit" class="sign-up-button" value="确定">
                 <input type="button" style="margin-left: 20px;" onclick="closeform();" id="submit1" class="sign-up-button" value="取消">
             </div>
@@ -32,19 +32,46 @@
                 //返回数据的格式
                 datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
                 success: function (data) {
-                    data = $.trim(data);
-                    new $.zui.Messager(data, {
-                        type: 'danger',
-                        close: true,
-                        time: 0,
-                        placement: 'center' // 定义显示位置
-                    }).show();
+                    //window.location.reload();
+                    console.log(data)
+                    if (data == 'successful') {
+                        new $.zui.Messager('邀请回答成功', {
+                            type: 'info',
+                            close: true,
+                            time: 0,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+                        setTimeout(function(){
+                            window.location.reload();
+                        },4000);
+                    }else{
+                        new $.zui.Messager(data, {
+                            type: 'danger',
+                            close: true,
+                            time: 4000,
+                            placement: 'center' // 定义显示位置
+                        }).show();
+                    }
                 }
-            })
+            });
         }
         function closeform() {
             new $.zui.closeModal();
         }
+//        $('#askid').autocomplete(
+//            serviceUrl: '{SITE_URL}/?question/searchuserinfo',
+//        {
+//            formatItem: function(data, i, max) {//格式化列表中的条目 row:条目对象,i:当前条目数,max:总条目数
+//                return i + '/' + max + ':"' + data.name;
+//            },
+//            formatMatch: function(data, i, max) {//配合formatItem使用，作用在于，由于使用了formatItem，所以条目中的内容有所改变，而我们要匹配的是原始的数据，所以用formatMatch做一个调整，使之匹配原始数据
+//                return data.name;
+//            },
+//            formatResult: function(data) {//定义最终返回的数据，比如我们还是要返回原始数据，而不是formatItem过的数据
+//                return data.name;
+//            }
+//        }
+//        });
     </script>
 
 </div>

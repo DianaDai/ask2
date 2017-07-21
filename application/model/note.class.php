@@ -15,6 +15,7 @@ class notemodel {
     function get($id) {
         $note = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "note WHERE id='$id'");
         $note['format_time'] = tdate($note['time'], 3, 0);
+
            $note['title'] = checkwordsglobal($note['title']);
         $note['content'] = checkwordsglobal($note['content']);
           $note['artlen'] = strlen(strip_tags($note['content']));
@@ -27,6 +28,7 @@ class notemodel {
         $query = $this->db->query("select * from " . DB_TABLEPRE . "note order by id desc limit $start,$limit");
         while ($note = $this->db->fetch_array($query)) {
             $note['format_time'] = tdate($note['time'], 3, 0);
+            $note['sortime'] = $note['time'];//用于排序
               $note['title'] = checkwordsglobal($note['title']);
        $note['avatar']=get_avatar_dir($note['authorid']);
           $note['image']=getfirstimg($note['content']);
@@ -42,6 +44,7 @@ class notemodel {
         $query = $this->db->query("select * from " . DB_TABLEPRE . "note where indextop =1 order by `time` desc limit $start,$limit");
         while ($note = $this->db->fetch_array($query)) {
             $note['format_time'] = tdate($note['time'], 3, 0);
+            $note['sortime'] = $note['time'];//用于排序
             $note['title'] = checkwordsglobal($note['title']);
             $note['avatar']=get_avatar_dir($note['authorid']);
             $note['image']=getfirstimg($note['content']);
@@ -52,7 +55,7 @@ class notemodel {
     }
     //更新置顶公告
     function update_indextop($indextop,$noteid) {
-        $this->db->query("UPDATE " . DB_TABLEPRE . "note SET indextop='$indextop' WHERE `id`='$noteid'");
+        $this->db->query("UPDATE " . DB_TABLEPRE . "note SET indextop='$indextop',time='{$this->base->time}' WHERE `id`='$noteid'");
     }
     function add($title, $url, $content) {
         $username = $this->base->user['realname'];

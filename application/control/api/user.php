@@ -416,6 +416,8 @@ class api_usercontrol extends base
                     $_ENV['user']->refresh($user['uid'], 1, $cookietime);
                     exit('login_ok');//登录成功
                 }
+            }else{
+                exit('login_user_or_pwd_error');
             }
         }
         //增加域网络验证功能  前面用户验证不通过；   不管是用户存在密码不对或者用户不存在；下面开始域认证

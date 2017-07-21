@@ -107,7 +107,7 @@ class notecontrol extends base {
     }
     //首页置顶
     function onaddindextop(){
-        $id=intval($this->get[2]);
+        $id=$this->get[2];
         $_ENV['note']->update_indextop(1,$id);
         //cleardir(ASK2_ROOT . '/data/cache'); //清除缓存文件
         $this->message("公告首页置顶成功!");

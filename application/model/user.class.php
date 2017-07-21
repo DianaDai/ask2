@@ -74,6 +74,7 @@ class usermodel {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE username='$username' or email='$username' or phone='$username'");
         return $user;
     }
+
     function get_by_customername($username) {
         $user = $this->db->fetch_first("SELECT * FROM " . DB_TABLEPRE . "user WHERE username='$username' and active =1");
         return $user;

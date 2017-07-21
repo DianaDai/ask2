@@ -318,36 +318,35 @@ foreach ($topiclist as $key=>$val){
      @$page =max(1,intval($this->get[3]));
      $pagesize =$this->setting['list_default'];
      $startindex=($page-1)*$pagesize;
+     if ($cid != 'all') {
+         $category=$_ENV['category']->get($cid);
+     }else{
+         $category=$this->category;
+     }
      if ($cid!='all')
      {
-         $category=$this->category[$cid]; //获取分类信息
+        //$category=$this->category[$cid]; //获取分类信息
          $navtitle= $category['name'];
          $cfield ='cid'.$category['grade']; //获取当前分类的节点
          //置顶内容显示
          if(!isset($this->setting['list_topdatanum'])){
-             $topictoplist = $_ENV['topic']->get_indextoplistbycid(1,0,3,10,$cid);
+             $topictoplist = $_ENV['topic']->get_categorytoplistbycid(1,0,3,10,$cid);
          }else{
-             $topictoplist = $_ENV['topic']->get_indextoplistbycid(1,0,$this->setting['list_topdatanum'],10,$cid);
+             $topictoplist = $_ENV['topic']->get_categorytoplistbycid(1,0,$this->setting['list_topdatanum'],10,$cid);
          }
      }else
      {
-         $category=$this->category;
          $category['pid']=0;
          $cfield ='';
          $navtitle = '文章列表';
          //置顶内容显示
          if(!isset($this->setting['list_topdatanum'])){
-             $topictoplist = $_ENV['topic']->get_indextoplist(1,0,3,10);
+             $topictoplist = $_ENV['topic']->get_categorytoplist(1,0,3,10);
          }else{
-             $topictoplist = $_ENV['topic']->get_indextoplist(1,0,$this->setting['list_topdatanum'],10);
+             $topictoplist = $_ENV['topic']->get_categorytoplist(1,0,$this->setting['list_topdatanum'],10);
          }
      }
-     
-     if ($cid != 'all') {
-         $category=$_ENV['category']->get($cid);
-     }
 
-     
      $rownum =$_ENV['topic']->rownum_by_topic_articleid($cfield,$cid); 
 
      $topiclist= $_ENV['topic']->get_topic_byarticle($cfield,$cid,$startindex,$pagesize);

@@ -105,11 +105,11 @@
             </a>
                 <!--{if $user['grouptype']==1}-->
                 <!--{if $note['indextop']==1}-->
-                <a href="{url note/cancelindextop/$notetop['id']}" >
+                <a href="{url note/cancelindextop/$note['id']}" >
                     <span>取消置顶</span>
                 </a>
                 <!--{else}-->
-                <a href="{url note/addindextop/$notetop['id']}" >
+                <a href="{url note/addindextop/$note['id']}" >
                     <span>置顶</span>
                 </a>
                 <!--{/if}-->

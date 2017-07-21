@@ -1071,10 +1071,19 @@ class usercontrol extends base
     }
     //审核客户页面
     function  oncustomercheck(){
+        //如果没有登录，进行登录
         if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
             $this->message('您还没有登录！', 'user/login');
         }
-        //如果没有登录，进行登录
+        //判断当前登陆用户是否是审核人
+        if($this->user['FOSSapprove'] !=1){
+            $forward = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : SITE_URL;
+            if(strpos($forward,'user/logout') !== false){
+                $forward = SITE_URL;
+            }
+            $this->message('您不是审核人，没有权限审核客户！', $forward);
+        }
+
         $customerlist =$_ENV['user']->getapprovestatuslist();
         include template("customercheck");
     }
@@ -1095,6 +1104,10 @@ class usercontrol extends base
     //客户审核审批
     function oncustomerapproval()
     {
+        if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+            $this->message('您还没有登录！', 'user/login');
+        }
+
         $uidlist = $this->post['uid'];
         if (is_array($uidlist)) {
             foreach ($uidlist as $uid) {

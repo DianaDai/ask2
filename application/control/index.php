@@ -37,7 +37,22 @@ var $whitelist;
         }else{
             $notedatalist = $_ENV['note']->get_toplist(0,$this->setting['list_topdatanum']);
         }
-
+        $toplist=array_merge($notedatalist,$topicdatalist);
+        $toplist=$this->getnewlist_bytime($toplist);
+        if(!isset($this->setting['list_topdatanum'])) {
+            $toplist = array_slice($toplist, 0, 3);
+        }else{
+            $toplist = array_slice($toplist, 0, $this->setting['list_topdatanum']);
+        }
+        $topicdatalist = array();
+        $notedatalist = array();
+        foreach ($toplist as $key=> $value){
+            if($value['articleclassid']!=null){
+                $topicdatalist[] =$value;
+            }else{
+                $notedatalist[] = $value;
+            }
+        }
 //        $topictoplist=$this->fromcache('topictopdata');
 //        $notetoplist=$this->fromcache('notetopdata');
 
@@ -70,7 +85,7 @@ var $whitelist;
             }
             $temp_notelist[$key]['answers'] = $value['comments'];
             //不是首页置顶的加入
-            if($this->checkexist($notedatalist,$temp_notelist[$key])) {
+            if(!$this->checkexist($notedatalist,$temp_notelist[$key])) {
                 $notelist[] = $temp_notelist[$key];
             }
         }
@@ -83,7 +98,7 @@ var $whitelist;
             $temp_topiclist[$key]['tempurl']="?topic/getone/".$value['id'];
             $temp_topiclist[$key]['tempcomments']="?topic/getone/".$value['id']."#comments";
             //不是首页置顶的加入
-            if($this->checkexist($topicdatalist,$temp_topiclist[$key])) {
+            if(!$this->checkexist($topicdatalist,$temp_topiclist[$key])) {
                 $topiclist[] = $temp_topiclist[$key];
             }
         }

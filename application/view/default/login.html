@@ -103,7 +103,11 @@
 <script>
     $(document).keyup(function (event) {
         if (event.keyCode == 13) {
-            $("#login_submit").trigger("click");
+            if(typelogin ==1){
+                $("#customer_login_submit").trigger("click");
+            }else {
+                $("#login_submit").trigger("click");
+            }
         }
     });
 
@@ -176,7 +180,7 @@
             }
         });
     });
-
+    var typelogin = 0;
     //daixy 验证身份和邮箱激活
     function checkLogin(uname){
         var url=g_site_url+"index.php?user/ajaxpopcheck/"+uname;
@@ -184,6 +188,7 @@
         myModalTrigger.show();
     }
     function setTab(m,n){
+        typelogin= n;
         var tli=document.getElementById("menu"+m).getElementsByTagName("li");
         var mli=document.getElementById("main"+m).getElementsByTagName("ul");
         for(i=0;i<tli.length;i++){

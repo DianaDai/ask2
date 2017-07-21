@@ -84,40 +84,40 @@
                 <!-- 文章列表模块 -->
                 <ul class="note-list">
 
-                    <!--{loop $notedatalist  $notedata}-->
-                    <li id="note-{$notedata['id']}" data-note-id="{$notedata['id']}" {if $notedata['image']!=null}  class="have-img" {else}class="" {/if}>
-                        {if $notedata['image']!=null}
-                        <a class="wrap-img"  {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}" {/if}  target="_blank">
-                        <img src="{$notedata['image']}">
+                    <!--{loop $notedatalist  $topdata}-->
+                    <li id="note-{$topdata['id']}" data-note-id="{$topdata['id']}" {if $topdata['image']!=null}  class="have-img" {else}class="" {/if}>
+                        {if $topdata['image']!=null}
+                        <a class="wrap-img"  {if $topdata['url']} href="{$topdata['url']}"  {else}  href="{url note/view/$topdata['id']}" {/if}  target="_blank">
+                        <img src="{$topdata['image']}">
                         </a>
                         {/if}
                         <div class="content">
                             <div class="author">
-                                <a class="avatar" target="_blank" href="{url user/space/$notedata['authorid']}" onmouseover="pop_user_on(this,$notedata['authorid'],'text')"  onmouseout="pop_user_out()">
-                                    <img src="{$notedata['avatar']}" alt="96">
+                                <a class="avatar" target="_blank" href="{url user/space/$topdata['authorid']}" onmouseover="pop_user_on(this,$topdata['authorid'],'text')"  onmouseout="pop_user_out()">
+                                    <img src="{$topdata['avatar']}" alt="96">
                                 </a>      <div class="name">
-                                <a class="blue-link" target="_blank" href="{url user/space/$notedata['authorid']}">{$notedata['author']}</a>
+                                <a class="blue-link" target="_blank" href="{url user/space/$topdata['authorid']}">{$topdata['author']}</a>
                                 发布了一篇公告
                                 <span class="ico_point">.</span>
-                                <span class="time" data-shared-at="{$notedata['format_time']}">{$notedata['format_time']}</span>
+                                <span class="time" data-shared-at="{$topdata['format_time']}">{$topdata['format_time']}</span>
 
                                 <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
 
                             </div>
                             </div>
-                            <a class="title" target="_blank" {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}" {/if} >{$notedata['title']}</a>
+                            <a class="title" target="_blank" {if $topdata['url']} href="{$topdata['url']}"  {else}  href="{url note/view/$topdata['id']}" {/if} >{$topdata['title']}</a>
                             <p class="abstract">
-                                {eval echo strip_tags($notedata['content']);}
+                                {eval echo strip_tags($topdata['content']);}
                             </p>
                             <div class="meta">
 
-                                <a target="_blank" {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}" {/if}" >
-                                    <i class="fa fa-eye"></i> {$notedata['views']}
-                                </a>        <a target="_blank" {if $notedata['url']} href="{$notedata['url']}"  {else}  href="{url note/view/$notedata['id']}#comments" {/if} >
-                                <i class="fa fa-comment-o"></i> {$notedata['comments']}
+                                <a target="_blank" {if $topdata['url']} href="{$topdata['url']}"  {else}  href="{url note/view/$topdata['id']}" {/if}" >
+                                    <i class="fa fa-eye"></i> {$topdata['views']}
+                                </a>        <a target="_blank" {if $topdata['url']} href="{$topdata['url']}"  {else}  href="{url note/view/$topdata['id']}#comments" {/if} >
+                                <i class="fa fa-comment-o"></i> {$topdata['comments']}
                             </a>
                                 <!--{if $user['grouptype']==1}-->
-                                <a href="{url note/cancelindextop/$notedata['id']}" >
+                                <a href="{url note/cancelindextop/$topdata['id']}" >
                                     <span>取消置顶</span>
                                 </a>
                                 <!--{/if}-->
@@ -126,44 +126,43 @@
                     </li>
                     <!--{/loop}-->
 
-
-                    <!--{loop $topicdatalist  $topicdata}-->
-                    <li id="note-{$topicdata['id']}" data-note-id="{$topicdata['id']}" {if $topicdata[
+                    <!--{loop $topicdatalist  $topdata}-->
+                    <li id="note-{$topdata['id']}" data-note-id="{$topdata['id']}" {if $topdata[
                     'image']!=null} class="have-img" {else}class="" {/if}>
-                        {if $topicdata['image']!=null}
-                        <a class="wrap-img" href="{url topic/getone/$topicdata['id']}" target="_blank">
-                        <img src="{$topicdata['image']}">
+                        {if $topdata['image']!=null}
+                        <a class="wrap-img" href="{url topic/getone/$topdata['id']}" target="_blank">
+                        <img src="{$topdata['image']}">
                         </a>
                         {/if}
                         <div class="content">
                             <div class="author">
-                                <a class="avatar" target="_blank" href="{url user/space/$topicdata['authorid']}" onmouseover="pop_user_on(this,$topicdata['authorid'],'text')"  onmouseout="pop_user_out()">
-                                    <img src="{$topicdata['avatar']}" alt="96">
+                                <a class="avatar" target="_blank" href="{url user/space/$topdata['authorid']}" onmouseover="pop_user_on(this,$topdata['authorid'],'text')"  onmouseout="pop_user_out()">
+                                    <img src="{$topdata['avatar']}" alt="96">
                                 </a>      <div class="name">
-                                <a class="blue-link" target="_blank" href="{url user/space/$topicdata['authorid']}">{$topicdata['author']}</a>
+                                <a class="blue-link" target="_blank" href="{url user/space/$topdata['authorid']}">{$topdata['author']}</a>
                                 发布了一篇文章
                                 <span class="ico_point">.</span>
-                                <span class="time" data-shared-at="{$topicdata['format_time']}">{$topicdata['format_time']}</span>
+                                <span class="time" data-shared-at="{$topdata['format_time']}">{$topdata['format_time']}</span>
 
                                 <img src="{SITE_URL}static/css/images/zhiding.png" class="topcontent">
 
                             </div>
                             </div>
-                            <a class="title" target="_blank"  href="{url topic/getone/$topicdata['id']}">{$topicdata['title']}</a>
+                            <a class="title" target="_blank"  href="{url topic/getone/$topdata['id']}">{$topdata['title']}</a>
                             <p class="abstract">
-                                {eval echo strip_tags($topicdata['description']);}
+                                {eval echo strip_tags($topdata['description']);}
                             </p>
                             <div class="meta">
                                 <a class="collection-tag" target="_blank"
-                                href="{url topic/catlist/$topicdata['articleclassid']}">$topicdata['category_name']</a>
-                                <a target="_blank" href="{url topic/getone/$topicdata['id']}"  >
-                                    <i class="fa fa-eye"></i> {$topicdata['views']}
-                                </a>        <a target="_blank"  href="{url topic/getone/$topicdata['id']}#comments"  >
-                                <i class="fa fa-comment-o"></i> {$topicdata['answers']}
-                            </a>      <span><i class=" fa fa-heart-o"></i>  {$topicdata['attentions']}</span>
-                                <span ><i class=" fa fa-thumbs-o-up"></i>  {$topicdata['supports']}</span>
+                                href="{url topic/catlist/$topdata['articleclassid']}">$topdata['category_name']</a>
+                                <a target="_blank" href="{url topic/getone/$topdata['id']}"  >
+                                    <i class="fa fa-eye"></i> {$topdata['views']}
+                                </a>        <a target="_blank"  href="{url topic/getone/$topdata['id']}#comments"  >
+                                <i class="fa fa-comment-o"></i> {$topdata['answers']}
+                            </a>      <span><i class=" fa fa-heart-o"></i>  {$topdata['attentions']}</span>
+                                <span ><i class=" fa fa-thumbs-o-up"></i>  {$topdata['supports']}</span>
                                 {if $user['grouptype']==1}
-                                <a href="{url topic/cancelindextop/$topicdata['id']}" >
+                                <a href="{url topic/cancelindextop/$topdata['id']}" >
                                     <span>取消置顶</span>
                                 </a>
                                 {/if}
