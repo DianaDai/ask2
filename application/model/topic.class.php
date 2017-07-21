@@ -77,7 +77,7 @@ class topicmodel
                         $isAdd = true;
                     }
                 }else if($this->base->user['identity'] == 3){
-                    if($cainfo['isFOSS'] ==1){
+                    if($cainfo['isFOSS'] ==1 && $doc->authoritycontrol ==2){
                         $isAdd = true;
                     }
                 }else{
@@ -125,7 +125,7 @@ class topicmodel
                 $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
             }else if($this->base->user['identity']==3){
                 //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
-                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and ( title like '%$word%' or describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 AND t.authoritycontrol = 2  and ( t.title like '%$word%' or t.describtion like '%$word%') $condition   order by id desc LIMIT $start,$limit");
             }else {
                 //未登录用户
                 $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic WHERE ( title like '%$word%' or describtion like '%$word%' ) AND authoritycontrol = 0   $condition order by id desc LIMIT $start,$limit");
@@ -244,7 +244,7 @@ class topicmodel
         ($cfield && $cid != 'all') && $condition .= " AND $cfield=$cid ";
         //如果是客户，只选择属于它的分类
         if ($this->base->user['identity'] == 3){
-            $sql =  "SELECT COUNT(*) num FROM ".DB_TABLEPRE."topic as q,".DB_TABLEPRE."category as ca WHERE q.articleclassid = ca.id and ca.isFOSS = 1 and ";
+            $sql =  "SELECT COUNT(*) num FROM ".DB_TABLEPRE."topic as q,".DB_TABLEPRE."category as ca WHERE q.articleclassid = ca.id AND q.authoritycontrol = 2 and ca.isFOSS = 1 and ";
             $sql .=$condition;
             return $this->db->result_first($sql);
         }
@@ -306,7 +306,7 @@ class topicmodel
     function get_article_by_uid($uid)
     {
         if($this->base->user['identity'] == 3){
-            $sql = "SELECT COUNT(t.id) as num ,ca.name ,ca.id ,t.authorid,u.username FROM `" . DB_TABLEPRE . "topic` as t ," . DB_TABLEPRE . "category as ca," . DB_TABLEPRE . "user as u where ca.id=t.articleclassid and ca.isFOSS = 1 and t.authorid=$uid and t.authorid=u.uid GROUP BY t.articleclassid HAVING COUNT(t.id)>0 ORDER BY num DESC LIMIT 0,15";
+            $sql = "SELECT COUNT(t.id) as num ,ca.name ,ca.id ,t.authorid,u.username FROM `" . DB_TABLEPRE . "topic` as t ," . DB_TABLEPRE . "category as ca," . DB_TABLEPRE . "user as u where ca.id=t.articleclassid and ca.isFOSS = 1 and t.authoritycontrol = 2 and t.authorid=$uid and t.authorid=u.uid GROUP BY t.articleclassid HAVING COUNT(t.id)>0 ORDER BY num DESC LIMIT 0,15";
         }else{
             $sql = "SELECT COUNT(t.id) as num ,ca.name ,ca.id ,t.authorid,u.username FROM `" . DB_TABLEPRE . "topic` as t ," . DB_TABLEPRE . "category as ca," . DB_TABLEPRE . "user as u where ca.id=t.articleclassid and t.authorid=$uid and t.authorid=u.uid GROUP BY t.articleclassid HAVING COUNT(t.id)>0 ORDER BY num DESC LIMIT 0,15";
         }
@@ -588,10 +588,10 @@ class topicmodel
             if ($this->base->user['identity']==2){
                 $rownum = $this->db->fetch_total('topic', " $condition and authoritycontrol=2  and (title like '%$word%' or describtion like '%$word%') ");
             }else if($this->base->user['identity']==1||$this->base->user['username']=='admin') {
-                $rownum = $this->db->fetch_total('topic', " $condition and authoritycontrol=2  and (title like '%$word%' or describtion like '%$word%') ");
+                $rownum = $this->db->fetch_total('topic', " $condition and (title like '%$word%' or describtion like '%$word%') ");
             }else if($this->base->user['identity']==3){
                 //如果是客户，只选择属于它的分类
-                $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and (t.title like '%$word%' or t.describtion like '%$word%') and ";
+                $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and t.authoritycontrol=2 and (t.title like '%$word%' or t.describtion like '%$word%') and ";
                 $sql .= $condition;
                 $rownum = $this->db->result_first($sql);
             }else{ //如果用户没有登录 查询authoritycontrol=0
@@ -618,7 +618,7 @@ class topicmodel
             return $this->db->fetch_total('topic',$condition);
         }else if($this->base->user['identity']==3){
             //如果是客户，只选择属于它的分类
-            $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and ";
+            $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id and ca.isFOSS = 1 and t.authoritycontrol=2 and ";
             $sql .= $condition;
             return $this->db->result_first($sql);
         }
@@ -767,7 +767,7 @@ class topicmodel
     {
         if($this->base->user['identity'] == 3) {
             //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
-            $sql = "SELECT * FROM `" . DB_TABLEPRE . "topic` as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND 1=1 ";
+            $sql = "SELECT * FROM `" . DB_TABLEPRE . "topic` as t, " . DB_TABLEPRE . "category as ca WHERE t.articleclassid = ca.id AND ca.isFOSS = 1 AND t.authoritycontrol = 2 AND 1=1 ";
         }else{
             $sql = "SELECT * FROM `" . DB_TABLEPRE . "topic` as t WHERE 1=1 ";
         }
@@ -864,7 +864,7 @@ class topicmodel
         if ($this->base->user['identity'] != 1 && $this->base->user['username']!='admin') {
             if($this->base->user['identity'] == 3) {
                 //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
-                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca where t.articleclassid = ca.id and ca.isFOSS = 1  LIMIT 0,50");
+                $query = $this->db->query("SELECT t.* FROM " . DB_TABLEPRE . "topic as t," . DB_TABLEPRE . "category as ca where t.articleclassid = ca.id and ca.isFOSS = 1 and t.authoritycontrol = 2  LIMIT 0,50");
             }else{
                 $query = $this->db->query("SELECT * FROM " . DB_TABLEPRE . "topic  where authoritycontrol = 2 LIMIT 0,50");
             }

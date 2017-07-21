@@ -414,7 +414,7 @@ class categorymodel {
     function get_navigation($cid = 0, $contain = false) {
         $navlist = array();
         do {
-            $category = $this->base->category[$cid];
+            $category = $this->get($cid);
             if ($category) {
                 $cid = $category['pid'];
                 $navlist[] = $category;

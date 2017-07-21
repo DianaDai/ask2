@@ -766,6 +766,22 @@ class usermodel {
   
         return $question;
     }
+    function queryuser($parameter){
+        $sql = "SELECT uid,username,realname,adminunit FROM " . DB_TABLEPRE . "user where username like '%$parameter%' or  realname like '%$parameter%' ORDER BY username ";
+        $query = $this->db->query($sql);
+        $userlist = array();
+        while ($user = $this->db->fetch_array($query)) {
+            $userinfo = array();
+            $userinfo['value'] =urlencode($user['username']);
+            $userinfo['value'] .=urlencode(';');
+            $userinfo['value'] .=urlencode($user['realname']);
+            $userinfo['value'] .=urlencode(';');
+            $userinfo['value'] .=urlencode($user['adminunit']);
+            $userinfo['data'] = $user['uid'];
+            $userlist[] = $userinfo;
+        }
+        return $userlist;
+    }
 
 }
 

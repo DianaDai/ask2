@@ -302,11 +302,13 @@ class questionmodel
     {
         //用户是顾问则只查询 authoritycontrol = 2
         if ($this->base->user['identity'] != 1 && $this->base->user['username'] != 'admin') {
-            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 AND q.status IN ($status) ORDER BY q.answers DESC");
-        } else if($this->base->user['identity'] == 3 ){
-            //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
-            $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t ," . DB_TABLEPRE . "category AS ca
-            WHERE q.id=t.qid AND t.name='$name' AND q.cid = ca.id and ca.isFOSS = 1 AND q.status IN ($status) ORDER BY q.answers DESC");
+            if ($this->base->user['identity'] == 3) {
+                //当用户的identity = 3时，浏览问题、文章时，只能浏览 isFOSS=1的分类下的文章或问题
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t ," . DB_TABLEPRE . "category AS ca
+            WHERE q.id=t.qid AND t.name='$name' AND q.cid = ca.id and ca.isFOSS = 1 and q.authoritycontrol=2 AND q.status IN ($status) ORDER BY q.answers DESC");
+            } else {
+                $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.authoritycontrol =2 AND q.status IN ($status) ORDER BY q.answers DESC");
+            }
         }else{
             $query = $this->db->query("SELECT * FROM `" . DB_TABLEPRE . "question` AS q," . DB_TABLEPRE . "question_tag AS t WHERE q.id=t.qid AND t.name='$name' AND q.status IN ($status) ORDER BY q.answers DESC");
         }
@@ -620,7 +622,7 @@ class questionmodel
             return $this->db->fetch_total('question',$condition);
         }else if($this->base->user['identity']==3){
             //如果是客户，只选择属于它的分类
-            $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "question as t," . DB_TABLEPRE . "category as ca WHERE t.cid = ca.id and ca.isFOSS = 1 and ";
+            $sql = "SELECT COUNT(*) num FROM " . DB_TABLEPRE . "question as t," . DB_TABLEPRE . "category as ca WHERE t.cid = ca.id and ca.isFOSS = 1 and t.authoritycontrol=2 and ";
             $sql .= $condition;
             return $this->db->result_first($sql);
         }

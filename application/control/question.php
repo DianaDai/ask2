@@ -2116,6 +2116,23 @@ class questioncontrol extends base
         $this->sendmsg($askuser,$title,$message);
         exit("successful");
     }
+
+    function onajaxsearchuser()
+    {
+        $username = $this->post['query'];
+        $list = $_ENV['user']->queryuser($username);
+        $result = array();
+        $suggestions = array();
+        $data = array();
+        foreach ($list as $key=>$val){
+            $suggestions[] = $val['value'];
+            $data[] = $val['data'];
+        }
+        $result['query'] = $username;
+        $result['suggestions'] = $suggestions;
+        $result['data'] = $data;
+        echo urldecode(json_encode($result));
+    }
 }
 
 ?>
