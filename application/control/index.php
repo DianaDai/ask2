@@ -62,7 +62,7 @@ var $whitelist;
         foreach ($tnosolvelist as $key=> $value)
         {
             $tnosolvelist[$key]['flag']=1;//1 代表问题
-            $tnosolvelist[$key]['temptitle']='提了一个问题';
+            $tnosolvelist[$key]['temptitle']='提了一个<strong style="background-color: #ffe574">问题</strong>';
             $tnosolvelist[$key]['tempurl']="?question/view/".$value['id'];
             $tnosolvelist[$key]['tempcomments']="?question/view/".$value['id'] ."#comments";
         }
@@ -74,7 +74,7 @@ var $whitelist;
         foreach ($temp_notelist as $key=> $value)
         {
             $temp_notelist[$key]['flag']=2;//2 代表公告
-            $temp_notelist[$key]['temptitle']='发布了一篇公告';
+            $temp_notelist[$key]['temptitle']='发布了一篇<strong style="background-color: #ea6f5a;color：#ea6f5a">公告</strong>';
             //$note['url']} href="{$note['url']}"  {else}  href="{url note/view/$note['id']}"
             if($temp_notelist[$key]['url']){
                 $temp_notelist[$key]['tempurl']=$value['url'];
@@ -94,7 +94,7 @@ var $whitelist;
         foreach ($temp_topiclist as $key=> $value)
         {
             $temp_topiclist[$key]['flag']=3;//3 代表文章
-            $temp_topiclist[$key]['temptitle']='发布了一篇文章';
+            $temp_topiclist[$key]['temptitle']= '发布了一篇<strong style="background-color:#0afffa">文章</strong>';
             $temp_topiclist[$key]['tempurl']="?topic/getone/".$value['id'];
             $temp_topiclist[$key]['tempcomments']="?topic/getone/".$value['id']."#comments";
             //不是首页置顶的加入

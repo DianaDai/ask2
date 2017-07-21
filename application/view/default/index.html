@@ -85,8 +85,9 @@
                 <ul class="note-list">
 
                     <!--{loop $notedatalist  $topdata}-->
+
                     <li id="note-{$topdata['id']}" data-note-id="{$topdata['id']}" {if $topdata['image']!=null}  class="have-img" {else}class="" {/if}>
-                        {if $topdata['image']!=null}
+                    {if $topdata['image']!=null}
                         <a class="wrap-img"  {if $topdata['url']} href="{$topdata['url']}"  {else}  href="{url note/view/$topdata['id']}" {/if}  target="_blank">
                         <img src="{$topdata['image']}">
                         </a>
@@ -97,7 +98,7 @@
                                     <img src="{$topdata['avatar']}" alt="96">
                                 </a>      <div class="name">
                                 <a class="blue-link" target="_blank" href="{url user/space/$topdata['authorid']}">{$topdata['author']}</a>
-                                发布了一篇公告
+                                发布了一篇<strong style="background-color: #ea6f5a;color：#ea6f5a">公告</strong>
                                 <span class="ico_point">.</span>
                                 <span class="time" data-shared-at="{$topdata['format_time']}">{$topdata['format_time']}</span>
 
@@ -140,7 +141,7 @@
                                     <img src="{$topdata['avatar']}" alt="96">
                                 </a>      <div class="name">
                                 <a class="blue-link" target="_blank" href="{url user/space/$topdata['authorid']}">{$topdata['author']}</a>
-                                发布了一篇文章
+                                发布了一篇<strong style="background-color:#0afffa">文章</strong>
                                 <span class="ico_point">.</span>
                                 <span class="time" data-shared-at="{$topdata['format_time']}">{$topdata['format_time']}</span>
 
@@ -377,6 +378,13 @@
     }
     .selectedCss{
         color: #ea6f5a !important;
+    }
+    .catetag{
+        padding: 2px 6px !important;
+        /*color: #ea6f5a!important;*/
+        /*border: 1px solid;*/
+        border-radius: 3px;
+        width: 50px;
     }
 </style>
 <script>
