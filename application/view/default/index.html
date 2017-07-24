@@ -220,7 +220,7 @@
                                     {/if}
                                 </div>
                             </div>
-                            <a class="title" target="_blank" href="{$question['tempurl']}"> <h3>{$question['title']} <small >{$question['srcs']}</small></h3> </a>
+                            <a class="title" target="_blank" href="{url $question['tempurl']}"> <h3>{$question['title']} <small >{$question['srcs']}</small></h3> </a>
                             {if $question['flag']!=2}
                             <p class="abstract">
                                 {eval echo strip_tags($question['description']);}
@@ -236,10 +236,10 @@
                                 href="{url topic/catlist/$question['articleclassid']} {else} href="{url
                                 category/view/$question['cid']} {/if} ">$question['category_name']</a>
                                 {/if}
-                                <a target="_blank" href="{$question['tempurl']}">
+                                <a target="_blank" href="{url $question['tempurl']}">
                                 <i class="fa fa-eye"></i> {$question['views']}
                                 </a>
-                                <a target="_blank" href="{$question['tempcomments']}">
+                                <a target="_blank" href="{url $question['tempcomments']}">
                                 <i class="fa fa-comment-o"></i> {$question['answers']}
                                 </a>
                                 {if $question['flag']!=2}

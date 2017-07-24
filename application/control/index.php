@@ -63,8 +63,8 @@ var $whitelist;
         {
             $tnosolvelist[$key]['flag']=1;//1 代表问题
             $tnosolvelist[$key]['temptitle']='提了一个<strong style="background-color: #ffe574">问题</strong>';
-            $tnosolvelist[$key]['tempurl']="?question/view/".$value['id'];
-            $tnosolvelist[$key]['tempcomments']="?question/view/".$value['id'] ."#comments";
+            $tnosolvelist[$key]['tempurl']="question/view/".$value['id'];
+            $tnosolvelist[$key]['tempcomments']="question/view/".$value['id'] ."#comments";
         }
     	// }else{
     	 	//$nosolvelist=$this->fromcache('nosolvelist');
@@ -80,8 +80,8 @@ var $whitelist;
                 $temp_notelist[$key]['tempurl']=$value['url'];
                 $temp_notelist[$key]['tempcomments']=$value['url'];
             }else{
-                $temp_notelist[$key]['tempurl']="?note/view/".$value['id'];
-                $temp_notelist[$key]['tempcomments']="?note/view/".$value['id'] ."#comments";
+                $temp_notelist[$key]['tempurl']="note/view/".$value['id'];
+                $temp_notelist[$key]['tempcomments']="note/view/".$value['id'] ."#comments";
             }
             $temp_notelist[$key]['answers'] = $value['comments'];
             //不是首页置顶的加入
@@ -95,8 +95,8 @@ var $whitelist;
         {
             $temp_topiclist[$key]['flag']=3;//3 代表文章
             $temp_topiclist[$key]['temptitle']= '发布了一篇<strong style="background-color:#0afffa">文章</strong>';
-            $temp_topiclist[$key]['tempurl']="?topic/getone/".$value['id'];
-            $temp_topiclist[$key]['tempcomments']="?topic/getone/".$value['id']."#comments";
+            $temp_topiclist[$key]['tempurl']="topic/getone/".$value['id'];
+            $temp_topiclist[$key]['tempcomments']="topic/getone/".$value['id']."#comments";
             //不是首页置顶的加入
             if(!$this->checkexist($topicdatalist,$temp_topiclist[$key])) {
                 $topiclist[] = $temp_topiclist[$key];
