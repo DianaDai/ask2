@@ -405,6 +405,8 @@ WHERE  B.CUSTOMER_CODE = '$customercode' AND A.SOURCE_ID_RTK = 'DELIVERY_CUSTOME
         $routing .= ',user/emailcheck,user/neweditemail,user/sendemailcode,user/checkemail';
         //邀请回答
         $routing .=',question/updateinvite_askuid';
+        //我的喜好设置
+        $routing .=',user/savemylike';
         //daixy 客户注册登陆等
         $routing .= ',user/customercheck,user/savecustomer,user/customerapproval,user/querypass,user/checkcustomeremailcode,user/resendcustomeremailcode,user/checkcustomerinfo,api_user/customerloginapi,user/registercustomer';
         //daixy 置顶取消置顶

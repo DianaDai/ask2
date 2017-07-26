@@ -89,7 +89,7 @@
                     <li id="note-{$topdata['id']}" data-note-id="{$topdata['id']}" {if $topdata['image']!=null}  class="have-img" {else}class="" {/if}>
                     {if $topdata['image']!=null}
                         <a class="wrap-img"  {if $topdata['url']} href="{$topdata['url']}"  {else}  href="{url note/view/$topdata['id']}" {/if}  target="_blank">
-                        <img src="{$topdata['image']}">
+                        <img <!--{if strpos($topdata['image'],'http') ===false}--> src="{SITE_URL}{$topdata['image']}" <!--{else}--> src="{$topdata['image']}" <!--{/if}--> >
                         </a>
                         {/if}
                         <div class="content">
@@ -132,7 +132,7 @@
                     'image']!=null} class="have-img" {else}class="" {/if}>
                         {if $topdata['image']!=null}
                         <a class="wrap-img" href="{url topic/getone/$topdata['id']}" target="_blank">
-                        <img src="{$topdata['image']}">
+                            <img <!--{if strpos($topdata['image'],'http') ===false}--> src="{SITE_URL}{$topdata['image']}" <!--{else}--> src="{$topdata['image']}" <!--{/if}--> >
                         </a>
                         {/if}
                         <div class="content">
@@ -180,7 +180,7 @@
                     {if $question['image']!=null}
                     <a class="wrap-img" {if $question['articleclassid']!=null} href="{url topic/getone/$question['id']}"
                     {else} href="{url question/view/$question['id']}" {/if} target="_blank">
-                    <img src="{$question['image']}">
+                    <img <!--{if strpos($question['image'],'http') ===false}--> src="{SITE_URL}{$question['image']}" <!--{else}--> src="{$question['image']}" <!--{/if}--> >
                     </a>
                     {/if}
                     <div class="content">

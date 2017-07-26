@@ -16,6 +16,7 @@
        
        <!-- 内容页面 -->  
     <div class="row">
+
                  <div class="col-sm-24">
                      <div class="dongtai">
                          <p>
@@ -33,6 +34,7 @@
                          <hr>
                       
                     <div class="row">
+                        <div style="margin-top: -30px;margin-bottom: 20px;color: red">擅长设置</div>
                     <div class="col-sm-16">
                     <div>为更好推荐您擅长的问题，请设置您的擅长分类</div>
                     <div>
@@ -106,6 +108,39 @@
 
 
              </div>
+                <hr style="margin-top: 20px;">
+                <div class="row">
+                    <div style="margin-top: -30px;margin-bottom: 20px;;color: red">喜好设置</div>
+                    <div class="row" style="padding-top:0px">
+                        <div class="col-md-4" style="width: 19%">
+                            <span style="float: right">接收通知：</span>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row" style="padding-top:0px">
+                                <span><input class="normal_checkbox" id="categoriescheck" type="checkbox" <!--{if false!==strpos($user['receivemsg'],'C')}-->checked<!--{/if}--> value="1" name="categoriescheck" />关注专题有新增文章时</span>
+                            </div>
+                            <div class="row" style="padding-top:10px">
+                                <span><input class="normal_checkbox" id="topiccheck" type="checkbox" <!--{if false!==strpos($user['receivemsg'],'T')}-->checked<!--{/if}--> value="2" name="topiccheck"/>关注文章有新评论时</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class=" col-md-4" style="width: 19%">
+                            <span>文章封面默认：</span>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row" style="padding-top:0px">
+                                <span><input class="normal_checkbox" id="systemradio" type="radio" <!--{if 1==$user['defaultcover']}-->checked<!--{/if}--> value="1" name="moren"/>系统帮我自动默认</span>
+                            </div>
+                            <div class="row" style="padding-top:10px">
+                                <span><input class="normal_checkbox" id="selfradio" type="radio" <!--{if 0==$user['defaultcover']}-->checked<!--{/if}--> value="2" name="moren"/>由我自行选择</span>
+                            </div>
+                            <div class="row">
+                                <input type="button" onclick="savebt()" id='save_btn' style="width: 80px" class="btn btn-info" name="save_btn"  value="保存">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
            
             <!--右侧栏目-->
@@ -136,6 +171,61 @@
 
 <!--用户中心结束-->
 <script type="text/javascript">
+
+    function savebt() {
+        var receivemsg='';
+        var categoriescheck = $("#categoriescheck").is(':checked');
+        if(categoriescheck==true){
+            receivemsg='C;';
+        }else {
+            receivemsg=';';
+        }
+        var topiccheck = $("#topiccheck").is(':checked');
+        if(topiccheck==true){
+            receivemsg=receivemsg+'T;';
+        }
+        var topicimage;
+        var systemradio = $("#systemradio").is(':checked');
+        if(systemradio == true){
+            topicimage = 1;
+        }
+        var selfradio = $("#selfradio").is(':checked');
+        if(selfradio == true){
+            topicimage = 0;
+        }
+        $.ajax({
+            //提交数据的类型 POST GET
+            type: "POST",
+            //提交的网址
+            url: "{SITE_URL}/?user/savemylike",
+            //提交的数据
+            data: {'receivemsg':receivemsg,'defaultcover':topicimage},
+            //返回数据的格式
+            datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+            //成功返回之后调用的函数
+            success: function (data) {
+                if(data=='ok'){
+                    new $.zui.Messager('保存成功', {
+                        type: 'info',
+                        close: true,
+                        time: 4000,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }else{
+                    new $.zui.Messager(data, {
+                        type: 'info',
+                        close: true,
+                        time: 4000,
+                        placement: 'center' // 定义显示位置
+                    }).show();
+                }
+            },
+            //调用出错执行的函数
+            error: function () {
+                //请求出错处理
+            }
+        });
+    }
 function change(){
 	var _val=$("#mypay").val();
 	if(parseInt(_val)>20000){

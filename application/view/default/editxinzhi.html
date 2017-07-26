@@ -1,14 +1,14 @@
 <!--{template header}-->
 <script type="text/javascript" src="{SITE_URL}static/js/neweditor/ueditor.config.js"></script> 
-<script type="text/javascript" src="{SITE_URL}static/js/neweditor/ueditor.all.min.js"></script> 
-
+<script type="text/javascript" src="{SITE_URL}static/js/neweditor/ueditor.all.min.js"></script>
+<!--<script type="text/javascript" src="{SITE_URL}static/css/dist//js/zui.js"></script>-->
 <!--用户中心-->
 
 <div class="user-home bg-white">
     <div class="container">
  <form class="form-horizontal mar-t-1" action="{url user/editxinzhi}"  method="post" enctype="multipart/form-data">
     <div class="row">
-                 <div class="col-md-16">
+                 <div>
                      <div class="dongtai">
                          <p>
                              <strong class="font-18">发表文章</strong>
@@ -72,58 +72,80 @@
                      </div>
                
                
-                 </div>
- <div class="col-md-8">
- 
- <div class="fixedright">
+ <div>
 
-<p>封面图:</p>
-  <div class="form-group">
-        
-        <div class="col-md-24">
-         <div id="preview" style="overflow:visible">
-  <!--{if isset($topic['image'])}-->
-   {eval $index=strpos($topic['image'],'http');}
-                     {if $index==0 }
-                            
-                           <img class="img-thumbnail" data-toggle="lightbox"  data-image="{$topic['image']}" data-caption="{$topic['title']}"  id="imghead" src="{$topic['image']}" width="489" height="240"/>&nbsp;&nbsp;&nbsp;
-                            {else}
-                        <img class="img-thumbnail" data-toggle="lightbox"  data-image="{SITE_URL}{$topic['image']}" data-caption="{$topic['title']}"  id="imghead" src="{SITE_URL}{$topic['image']}" width="489" height="240"/>&nbsp;&nbsp;&nbsp;
-                            
-                            {/if}
-  
-  
-  <!--{else}-->
-  
-    <img class="img-thumbnail" data-toggle="lightbox"  data-image="{SITE_URL}static/css/dist/css/images/default.jpg" data-caption="{$topic['title']}" id="imghead" width="489" height="240" border=0 src='{SITE_URL}static/css/dist/css/images/default.jpg'>
-    <!--{/if}-->
-  
-</div>
-  <div class="add-img-box row">
-  <div class="col-sm-24">
-    <span class="add-img" >
-  <a id="layerUploadButton"></a></span>
-  <div class="add-img-html5" style=""><span>
-  </span><a class="text-danger" href="###" text="网页提问浮层添加图片点击">封面图片，大小建议288px*192px,或者填封面图外部链接
-      <br />
-      <span style="text-decoration:underline" >点击这选择</span>
-  <input type="file" id="layer_upload" onchange="previewImage(this)" name="image" title="请选择图片" accept="image/*" style="opacity: 0;height: 40px;position:relative;top:-2rem;">
-  </a>
-  </div>
-  </div>
-
-  </div>
- 
-    <div class="add-img-box row">
-     <div class="col-sm-24">
-     外部封面图地址:(<a class="text-danger" href="javascript:getimg()">点击内容提取</a>)
-     <input type="text" AUTOCOMPLETE="OFF" id="outimgurl" name="outimgurl" value="{$topic['image']}" size="350" class="form-control" placeholder="如果不上传可以选择外部封面图片地址">
-        
-   </div>     
-   </div> 
-        </div>
-        </div>
      <div class="form-group">
+         <div class=" col-md-3">
+             <span>封面默认:</span>
+         </div>
+         <div class=" col-md-20">
+            <span>
+                <input class="normal_checkbox" id="radio1" onclick="systemchoose()" type="radio" value="1" name="fengmian" checked />系统帮我自动默认</span>
+             <span style="margin-left: 50px">
+                <input class="normal_checkbox" id="radio2" onclick="selfchoose()" type="radio" value="2" name="fengmian"/>由我自行选择</span>
+             <p class="text-danger">注：系统默认逻辑   优先默认为文章的第一张图片，找不到的话默认预设图片</p>
+             <div class=" col-md-15" style="padding-left: 0px">
+                 <!--{if isset($topic['image'])}-->
+                 <input type="text" id="imgurl" name="imgurl" class="form-control" value="{$topic['image']}" placeholder="封面图片地址">
+                 <!--{else}-->
+                 <input type="text" id="imgurl" name="imgurl" class="form-control" placeholder="封面图片地址">
+                 <!--{/if}-->
+             </div>
+             <div class="col-md-3" id="div1" style="height: 40px">
+                 <input type="button" id='pic_view' class="btn btn-info" name="pic_view"  value="浏览">
+                 <input type="file" id="layer_upload" onchange="previewImage(this)" name="image" title="请选择图片" accept="image/*" style="opacity: 0; width:40px;height: 40px;position:relative;top:-3rem;">
+             </div>
+             <div class=" col-md-3" id="div2">
+                 <input type="button" onclick="getimg()" id='getview' class="btn btn-info" name="pic_view"  value="通过文章内容提取">
+             </div>
+         </div>
+     </div>
+     <div class="form-group">
+         <div class=" col-md-3">
+             <span>封面缩略图：</span>
+         </div>
+         <div class="col-md-13" style="width: 52%">
+             <div id="preview" style="overflow:visible">
+                 <!--{if isset($topic['image'])}-->
+                 {eval $index=strpos($topic['image'],'http');}
+                 {if $index===0 }
+                 <a target="_blank" id="imgshowlink" href="{$topic['image']}">
+                     <img class="img-thumbnail" id="imghead" src="{$topic['image']}" width="490" height="240"/></a>&nbsp;&nbsp;
+                 {else}
+                 <a target="_blank" id="imgshowlink" href="{SITE_URL}{$topic['image']}">
+                 <img class="img-thumbnail"   id="imghead" src="{SITE_URL}{$topic['image']}" width="490" height="240"/></a>
+                 {/if}
+                 <!--{else}-->
+                 <a target="_blank" id="imgshowlink" href="{$unknownpic}">
+                 <img class="img-thumbnail" id="imghead" width="490" height="240" border=0 src='{$unknownpic}'></a>
+                 <!--{/if}-->
+             </div>
+         </div>
+         <div class=" col-md-3" style="padding-left: 12px;">
+             <input type="button" onclick="originalPic()" id='originalpic' class="btn btn-info" name="originalpic"  value="还原编辑前封面图">
+             <input type="button" style="margin-top: 100px;" onclick="nextPic()" id='nextpic' class="btn btn-info" name="nextpic"  value="下一张">
+             <input type="button" style="margin-top: 15px;" onclick="prePic()" id='prepic' class="btn btn-info" name="prepic"  value="上一张">
+         </div>
+
+     </div>
+
+
+     <div class="form-group">
+         <div class=" col-md-3">
+         </div>
+         <div class=" col-md-20">
+             <span><input class="normal_checkbox" id="moren" type="checkbox" value="1" name="moren" />存为我的默认方案</span>
+             <p class="text-danger">注:勾选后，后续发布文章会依本次设定的封面设定方案自动设置封面:</p>
+             <p class="text-danger"> * 若保存的是“系统帮我自动默认”方案，则后续发表文章再不需要自行设定封面</p>
+             <p class="text-danger"> * 若保存的是“有我自行选择”方案，则每次都需要自行指定</p>
+             <p class="text-danger"> * 该默认设定，可以到 “个人中心---个人设置---喜好设定”里修改</p>
+         </div>
+     </div>
+
+     <div class="form-group">
+         <div class=" col-md-3">
+             <span>权限选择：</span>
+         </div>
          <!--{if $userinfo['identity'] == 3}-->
          <div class=" col-md-20">
              <span><input class="normal_checkbox" id="duinei" type="checkbox" disabled="disabled" checked value="1" name="duinei" />研发&nbsp;&nbsp;</span>
@@ -137,17 +159,15 @@
          <!--{/if}-->
      </div>
         <!-- -待续 -->
-        
-          <div class="form-group">
-        <div class=" col-md-20">
-        
-          <input type="hidden" name="usersid" value='{$_SESSION["userid"]}'/>
-          
-  <input type="submit" id='article_btn' class="btn btn-success width-120" name="submit"  value="提 交">
-   <input type="button" onclick="getimg()" class="btn btn-default width-120 mar-ly-1" name="submit"  value="内容提取封面图">
-        
-        </div>
-        </div>
+
+     <div class="form-group">
+         <div class=" col-md-3">
+         </div>
+         <div class=" col-md-20">
+             <input type="hidden" name="usersid" value='{$_SESSION["userid"]}'/>
+             <input type="submit" id='article_btn' class="btn btn-success width-120" name="submit"  value="提 交">
+         </div>
+     </div>
                    
                         <div class="modal fade" id="myLgModal">
   <div class="modal-dialog modal-md">
@@ -196,15 +216,12 @@
   </div>
 </div>
  </div>
- </div>
+                 </div>
 
-             </div>
-               </form>  
-           
-            </div>
-           
-            
-        </div>
+    </div>
+ </form>
+    </div>
+</div>
 
   
 
@@ -215,23 +232,122 @@ window.onload=function(){
 }
 function getimg(){
 	var _html =editor.getContent();
-	
-	
 	var firstimg=$(_html).find("img");
-	
-	if(firstimg!=null)
-	$("#outimgurl").val(firstimg[0].src);
+    if(firstimg!=null && firstimg[0]!=null) {
+        $("#imgurl").val(firstimg[0].src);
+        setimgsrc(firstimg[0].src, firstimg[0].src);
+    }else {
+        alert('文章中没有获取到图片，请检查');
+    }
 }
     var category1 = {$categoryjs[category1]};
     var category2 = {$categoryjs[category2]};
     var category3 = {$categoryjs[category3]};
+    var originalpicvalue = '{$topic['image']}';
         $(document).ready(function() {
         initcategory(category1);
-       
-
-
-
         });
+
+var picArr = new Array();
+var index = 0;
+var selfpicpath='';
+var selfpicvalue='';
+function getpicarray() {
+    $.ajax({
+        //提交数据的类型 POST GET
+        type: "POST",
+        //提交的网址
+        url: "{SITE_URL}/?user/ajaxread_file",
+        //提交的数据
+        data: {},
+        //返回数据的格式
+        datatype: "text",//"xml", "html", "script", "json", "jsonp", "text".
+        //成功返回之后调用的函数
+        success: function (data) {
+            picArr = eval('(' + data + ')');
+            $("#div1").hide();
+            $("#div2").show();
+            $("#imgurl").attr({"readonly":"readonly"});
+            $("#nextpic").show();
+            $("#prepic").show();
+            $("#originalpic").show();
+            $("#moren").removeAttr("disabled");
+        },
+        //调用出错执行的函数
+        error: function () {
+            //请求出错处理
+        }
+    });
+}
+getpicarray();
+function nextPic(){
+    index++;
+    if(index==picArr.length){
+        index=0;
+    }
+    setimgsrc(picArr[index],getFileName(picArr[index]));
+}
+function prePic(){
+    index--;
+    if(index<0){
+        index=picArr.length-1;
+    }
+    setimgsrc(picArr[index],getFileName(picArr[index]));
+}
+function originalPic() {
+    var orvalue = '{$topic['image']}';
+    var rooturl = '{SITE_URL}';
+    if(orvalue.slice(0, 'http'.length) == 'http'){
+        setimgsrc(orvalue,orvalue);
+    }else {
+        setimgsrc(rooturl+orvalue,orvalue);
+    }
+}
+function getFileName(o){
+//    var pos=o.lastIndexOf("\\");
+//    if(pos ==-1){
+//        pos = o.lastIndexOf("/");
+//    }
+    var newvalue = o.replace('{SITE_URL}','');
+    return newvalue;
+}
+function setimgsrc(src,urlvalue) {
+    var img = document.getElementById('imghead');
+    img.src = src;
+    $("#imghead").attr("data-image",src);
+    $("#imgshowlink").attr("href",src);
+
+    $("#imgurl").val(urlvalue);
+}
+
+function systemchoose() {
+    //浏览按钮禁用,下一张按钮启动，存为我的默认方案启动
+    $("#div1").hide();
+    $("#div2").show();
+    $("#imgurl").attr({"readonly":"readonly"});
+    $("#nextpic").show();
+    $("#prepic").show();
+    $("#originalpic").show();
+    $("#moren").removeAttr("disabled");
+    setimgsrc(picArr[index],getFileName(picArr[index]));
+}
+
+function selfchoose() {
+    //浏览按钮启动,下一张按钮禁用，存为我的默认方案禁用
+    $("#div1").show();
+    $("#div2").hide();
+    $("#imgurl").removeAttr("readonly");
+    $("#nextpic").hide();
+    $("#prepic").hide();
+    $("#originalpic").hide();
+    $("#moren").attr({"disabled":"disabled"});
+    $("#moren").removeAttr("checked");
+    if(selfpicpath!=''){
+        setimgsrc(selfpicvalue,selfpicpath);
+    }else {
+        setimgsrc('{$unknownpic}','');
+    }
+}
         function selectcate() {
             var selectedcatestr = '';
             var category1 = $("#category1 option:selected").val();
@@ -259,11 +375,7 @@ function getimg(){
             $("#changecategory").html("更改");
             $("#myLgModal").modal("hide");
         }
-</script>
 
-
-
-<script type="text/javascript">
 function showcategory(){
 	 $('#myLgModal').modal({
 		 position    :100,  
@@ -306,25 +418,28 @@ $("#article_btn").click(function(){
                 //图片上传预览    IE是用了滤镜。
         function previewImage(file)
         {
-          var MAXWIDTH  = 260; 
-          var MAXHEIGHT = 180;
+          var MAXWIDTH  = 490;
+          var MAXHEIGHT = 240;
           var div = document.getElementById('preview');
           if (file.files && file.files[0])
           {
-              div.innerHTML =' <a target="_blank" id="imgshowlink" href="" data-toggle="lightbox" data-group="image-group-1"><img class="img-thumbnail" id=imghead></a>';
+              //div.innerHTML =' <a target="_blank" id="imgshowlink" href="" data-toggle="lightbox" data-group="image-group-1"><img class="img-thumbnail" id=imghead></a>';
               var img = document.getElementById('imghead');
               img.onload = function(){
-                var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
-                img.width  =  rect.width;
-                img.height =  rect.height;
-//                 img.style.marginLeft = rect.left+'px';
-                img.style.marginTop = rect.top+'px';
+//                var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+//                img.width  =  rect.width;
+//                img.height =  rect.height;
+////                 img.style.marginLeft = rect.left+'px';
+//                img.style.marginTop = rect.top+'px';
               }
               var reader = new FileReader();
               reader.onload = function(evt){
-            	  img.src = evt.target.result;
-            	  $("#imghead").attr("data-img",evt.target.result);
-            	  $("#imgshowlink").attr("href",evt.target.result);
+                  setimgsrc(evt.target.result,file.files[0].name);
+                  selfpicpath = file.files[0].name;
+                  selfpicvalue = evt.target.result;
+//            	  img.src = evt.target.result;
+//            	  $("#imghead").attr("data-img",evt.target.result);
+//            	  $("#imgshowlink").attr("href",evt.target.result);
             	  
               }
               reader.readAsDataURL(file.files[0]);
@@ -343,7 +458,7 @@ $("#article_btn").click(function(){
           }
         }
         function clacImgZoomParam( maxWidth, maxHeight, width, height ){
-            var param = {top:0, left:0, width:width, height:height};
+            var param = {top:0, left:0, width:maxWidth, height:maxHeight};
             if( width>maxWidth || height>maxHeight )
             {
                 rateWidth = width / maxWidth;

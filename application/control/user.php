@@ -200,7 +200,7 @@ class usercontrol extends base
             $topic_tag = $this->post['topic_tag'];
             $ataglist = explode(",", $topic_tag);
             $desrc = $this->post['desc'];
-            $outimgurl = $this->post['outimgurl'];
+            $outimgurl = $this->post['imgurl'];
             // $tagarr= dz_segment($title,$desrc);
             $acid = $this->post['topicclass'];
             $cid1= $this->post['cid1'];
@@ -225,58 +225,50 @@ class usercontrol extends base
 
                 exit;
             }
-            if ($_FILES['image']['name'] == null && trim($outimgurl) == '') {
-                $this->message('封面图和外部图片至少填写一个!', 'user/addxinzhi');
-
-                exit;
-            }
-            if ($_FILES['image']['name'] != null && trim($outimgurl) == '') {
-
-
-                $imgname = strtolower($_FILES['image']['name']);
-                $type = substr(strrchr($imgname, '.'), 1);
-                if (!isimage($type)) {
-                    $this->message('当前图片图片格式不支持，目前仅支持jpg、gif、png格式！', 'user/addxinzhi');
-
+            $pictype = $this->post['fengmian'];
+            //如果是1代表系统帮我自动默认，1通过$outimgurl获取，2代表由我自行选择，通过$_FILES['image']
+            if($pictype ==1){
+                if(trim($outimgurl) == ''){
+                    $this->message('封面图和外部图片至少填写一个!', 'user/addxinzhi');
                     exit;
+                }else{
+                    $filepath = $outimgurl;
                 }
-                $upload_tmp_file = ASK2_ROOT . '/data/tmp/topic_' . random(6, 0) . '.' . $type;
+            }
+            if($pictype ==2){
+                if($_FILES['image']['name'] == null){
+                    $this->message('封面图和外部图片至少填写一个!', 'user/addxinzhi');
+                    exit;
+                }else{
+                    $imgname = strtolower($_FILES['image']['name']);
+                    $type = substr(strrchr($imgname, '.'), 1);
+                    if (!isimage($type)) {
+                        $this->message('当前图片图片格式不支持，目前仅支持jpg、gif、png格式！', 'user/addxinzhi');
 
-                $filepath = '/data/attach/topic/topic' . random(6, 0) . '.' . $type;
-                forcemkdir(ASK2_ROOT . '/data/attach/topic');
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_tmp_file)) {
-                    image_resize($upload_tmp_file, ASK2_ROOT . $filepath, 270, 220);
+                        exit;
+                    }
+                    $upload_tmp_file = ASK2_ROOT . '/data/tmp/topic_' . random(6, 0) . '.' . $type;
+                    $filepath = '/data/attach/topic/topic' . random(6, 0) . '.' . $type;
+                    forcemkdir(ASK2_ROOT . '/data/attach/topic');
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_tmp_file)) {
+                        image_resize($upload_tmp_file, ASK2_ROOT . $filepath, 270, 220);
+                    } else {
 
-                    //try{
-//                require_once ASK2_STATIC_ROOT.'/js/neweditor/php/Config.php';
-//                if(Config::OPEN_OSS){
-//                
-//                require_once ASK2_STATIC_ROOT.'/js/neweditor/php/up.php';
-//            if(Common::getOpenoss()=='1'){
-//$diross=$filepath;
-//$tmpfile=$filepath;
-//
-//if(substr($filepath, 0,1)=='/'){
-//	$diross=substr($filepath, 1);
-//}
-//$filepath=uploadFile(Common::getOssClient(), Common::getBucketName(),$diross,ASK2_ROOT . $filepath);
-//if($filepath!='error'){
-//	//unlink(ASK2_ROOT . $tmpfile);
-//}
+                        $this->message('服务器忙，请稍后再试！', 'user/addxinzhi');
+                    }
+                }
+            }
+            $moren = $this->post['moren'];
+            //设置封面默认
+            if($moren ==1){
+                $_ENV['user']->updatedefaultcover($this->user['uid'],1,$filepath);
+            }
+
+//            if ($_FILES['image']['name'] == null && trim($outimgurl) == '') {
+//                $this->message('封面图和外部图片至少填写一个!', 'user/addxinzhi');
+//                exit;
 //            }
-//}
-//                }catch (Exception $e){
-//                	print $e->getMessage();  
-//                }
 
-                } else {
-
-                    $this->message('服务器忙，请稍后再试！', 'user/addxinzhi');
-                }
-            }
-            if (trim($outimgurl) != '') {
-                $filepath = $outimgurl;
-            }
             $aid = $_ENV['topic']->addtopic($title, $desrc, $filepath, $this->user['realname'], $this->user['uid'], 1, $acid,$authoritycontrol,$cid1,$cid2,$cid3);
 //$tag=implode(',',$tagarr);
             // $taglist = explode(",", $tag);
@@ -294,11 +286,12 @@ class usercontrol extends base
 
             foreach ($followerlist as $fov)
             {
-            	$msginfo =$_ENV['email_msg']->special($fov['realname'],$category['name'],$weburl);
-                $this->sendmsg($fov,$msginfo['title'],$msginfo['content']);
+                //当专题有新增文章时，消息发送给关注该专题的粉丝前，先判断 该粉丝的接收通知设定
+                if(strpos($fov['receivemsg'],'C')!==false) {
+                    $msginfo = $_ENV['email_msg']->special($fov['realname'], $category['name'], $weburl);
+                    $this->sendmsg($fov, $msginfo['title'], $msginfo['content']);
+                }
             }
-
-            
             $this->message('添加成功！', 'article-' . $aid);
         } else {
             // $this->load("topicclass");
@@ -312,11 +305,34 @@ class usercontrol extends base
             }else {
                 $categoryjs = $_ENV['category']->get_js();
             }
+            $unknownpic = SITE_URL.'/static/js/neweditor/dialogs/attachment/images/image.png';
+            $index=strpos($userinfo['defaultcoverimage'],'http');
             include template('addxinzhi');
         }
 
     }
-
+    function onajaxread_file($dir)
+    {
+        //获取默认图片
+        $dir = ASK2_ROOT . '/static/js/neweditor/dialogs/attachment/fileTypeImages';
+        $result = array();
+        $handle = opendir($dir);
+        if ($handle) {
+            while (($file = readdir($handle)) !== false) {
+                if ($file != '.' && $file != '..') {
+                    $cur_path = $dir . DIRECTORY_SEPARATOR . $file;
+                    if (is_dir($cur_path)) {
+                        //$result['dir'][$cur_path] = read_all_dir($cur_path);
+                    } else if(strpos($file, 'coverimage') === 0){
+                        $rela_path = SITE_URL.'/static/js/neweditor/dialogs/attachment/fileTypeImages'. DIRECTORY_SEPARATOR . $file;
+                        $result[] = $rela_path;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        echo json_encode($result);
+    }
     function ondeletexinzhi()
     {
         if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
@@ -357,7 +373,7 @@ class usercontrol extends base
             $topic_tag = $this->post['topic_tag'];
             $taglist = explode(",", $topic_tag);
             $desrc = $this->post['desc'];
-            $outimgurl = $this->post['outimgurl'];
+            $outimgurl = $this->post['imgurl'];
             $upimg = $this->post['upimg'];
             $views = $this->post['views'];
             $isphone = $this->post['isphone'];
@@ -384,14 +400,16 @@ class usercontrol extends base
                     $authoritycontrol = $this->post['duinei'];
                 }
             }
-            $imgname = strtolower($_FILES['image']['name']);
             if ('' == $title || '' == $desrc) {
                 $this->message('请完整填写专题相关参数!', 'errormsg');
                 exit;
             }
+            $pictype = $this->post['fengmian'];
+            //如果是1代表系统帮我自动默认，1通过$outimgurl获取，2代表由我自行选择，通过$_FILES['image']
+            $imgname = strtolower($_FILES['image']['name']);
             // print_r($tagarr);
             // exit();
-            if ($imgname) {
+            if ($pictype ==2) {
                 $type = substr(strrchr($imgname, '.'), 1);
                 if (!isimage($type)) {
                     $this->message('当前图片图片格式不支持，目前仅支持jpg、gif、png格式！', 'errormsg');
@@ -402,28 +420,6 @@ class usercontrol extends base
                 forcemkdir(ASK2_ROOT . '/data/attach/topic');
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_tmp_file)) {
                     image_resize($upload_tmp_file, ASK2_ROOT . $filepath, 270, 220);
-//                      try{
-//                require_once ASK2_STATIC_ROOT.'/js/neweditor/php/Config.php';
-//                if(Config::OPEN_OSS){
-//                
-//                 require_once ASK2_STATIC_ROOT.'/js/neweditor/php/up.php';
-//            if(Common::getOpenoss()=='1'){
-//$diross=$filepath;
-//$tmpfile=$filepath;
-//
-//if(substr($filepath, 0,1)=='/'){
-//	$diross=substr($filepath, 1);
-//}
-//$filepath=uploadFile(Common::getOssClient(), Common::getBucketName(),$diross,ASK2_ROOT . $filepath);
-//if($filepath!='error'){
-//	//unlink(ASK2_ROOT . $tmpfile);
-//}
-//}
-//                
-//}
-//                }catch (Exception $e){
-//                	print $e->getMessage();  
-//                }
                     $ispc = $topic['ispc'];
                     $_ENV['topic']->updatetopic($tid, $title, $desrc, $filepath, $isphone, $views, $acid, $ispc,$authoritycontrol,$cid1,$cid2,$cid3);
                     $viewurl = urlmap('topic/getone/' . $tid, 2);
@@ -431,8 +427,11 @@ class usercontrol extends base
                     $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
                     foreach ($favusers as $fav)
                     {
-                        $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'],$topic['title'],$weburl);
-                        $this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+                        //当文章更新或者有新评论时，消息发送给关注该文章的粉丝之前，先判断该粉丝的接收通知设定
+                        if(strpos($fav['receivemsg'],'T')!==false) {
+                            $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'], $topic['title'], $weburl);
+                            $this->sendmsg($fav, $msginfo['title'], $msginfo['content']);
+                        }
                     }
                     $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                     $this->message('文章修改成功！', 'article-' . $tid);
@@ -450,8 +449,11 @@ class usercontrol extends base
                 $favusers = $_ENV['favorite']->get_list_bytid_fav($tid);
                 foreach ($favusers as $fav)
                 {
-                    $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'],$topic['title'],$weburl);
-                	$this->sendmsg($fav,$msginfo['title'],$msginfo['content']);
+                    //当文章更新或者有新评论时，消息发送给关注该文章的粉丝之前，先判断该粉丝的接收通知设定
+                    if(strpos($fav['receivemsg'],'T')!==false) {
+                        $msginfo = $_ENV['email_msg']->topic_edit($fav['realname'], $topic['title'], $weburl);
+                        $this->sendmsg($fav, $msginfo['title'], $msginfo['content']);
+                    }
                 }
                 $taglist && $_ENV['topic_tag']->multi_add(array_unique($taglist), $tid);
                 $this->message('文章修改成功！', 'article-' . $tid);
@@ -476,6 +478,7 @@ class usercontrol extends base
                 $categoryjs = $_ENV['category']->get_js();
             }
             //$categoryjs = $_ENV['category']->get_js();
+            $unknownpic = SITE_URL.'/static/js/neweditor/dialogs/attachment/images/image.png';
             include template('editxinzhi');
         }
 
@@ -1894,9 +1897,16 @@ class usercontrol extends base
         $categoryjs = $_ENV['category']->get_js();
         $qqlogin = $_ENV['user']->get_login_auth($this->user['uid'], 'qq');
         $sinalogin = $_ENV['user']->get_login_auth($this->user['uid'], 'sina');
+        $user = $this->user;
         include template("mycategory");
     }
 
+    function onsavemylike(){
+        $receivemsg = $this->post['receivemsg'];
+        $defaultcover = $this->post['defaultcover'];
+        $_ENV['user']->updatemylike($this->user['uid'],$defaultcover,$receivemsg);
+        exit('ok');
+    }
     //解除绑定
     function onunchainauth()
     {

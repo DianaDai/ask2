@@ -204,6 +204,7 @@ class categorymodel {
          $follower['username'] = $_user['username'];
          $follower['realname'] = $_user['realname'];
          $follower['uid'] = $_user['uid'];
+         $follower['receivemsg'] = $_user['receivemsg'];
          $follower['email'] = $_user['email'];
          $follower['isnotify'] = $_user['isnotify'];
          $follower['avatar'] = get_avatar_dir($follower['uid']);

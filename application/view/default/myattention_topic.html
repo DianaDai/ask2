@@ -29,7 +29,7 @@
                         <li class ="note-{$topic['id']}" data-note-id="{$topic['id']}"  {if $topic['image']!=null} class="have-img"{else} class="" {/if}>
                            {if $topic['image']!=null}
                              <a class="wrap-img" {if $topic['articleclassid']!=null} href="{url topic/getone/$topic['id']}"  {else}  href="{url question/view/$topic['id']}" {/if} target="_blank">
-                              <img src="{$topic['image']}">
+                    <img <!--{if strpos($topic['image'],'http') ===false}--> src="{SITE_URL}{$topic['image']}" <!--{else}--> src="{$topic['image']}" <!--{/if}--> >
                           </a>
                             {/if}
                             <div class="content">

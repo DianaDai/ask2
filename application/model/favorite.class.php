@@ -71,6 +71,7 @@ class favoritemodel {
         	$user['format_time']=tdate($fav['time']);
             $_user =$this->get_by_uid($fav['uid']);
             $user['username'] = $_user['username'];
+            $user['receivemsg'] = $_user['receivemsg'];
             $user['realname'] = $_user['realname'];
             $user['isnotify'] = $_user['isnotify'];
             $user['uid'] = $_user['uid'];

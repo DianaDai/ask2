@@ -782,7 +782,12 @@ class usermodel {
         }
         return $userlist;
     }
-
+    function updatedefaultcover($uid,$defaultcover,$image=''){
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `defaultcover`=$defaultcover,`defaultcoverimage`='$image' WHERE `uid`=$uid");
+    }
+    function updatemylike($uid,$defaultcover,$receivemsg=''){
+        $this->db->query("UPDATE " . DB_TABLEPRE . "user SET `defaultcover`=$defaultcover,`receivemsg`='$receivemsg' WHERE `uid`=$uid");
+    }
 }
 
 ?>
