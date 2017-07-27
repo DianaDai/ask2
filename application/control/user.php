@@ -324,7 +324,7 @@ class usercontrol extends base
                     if (is_dir($cur_path)) {
                         //$result['dir'][$cur_path] = read_all_dir($cur_path);
                     } else if(strpos($file, 'coverimage') === 0){
-                        $rela_path = SITE_URL.'/static/js/neweditor/dialogs/attachment/fileTypeImages'. DIRECTORY_SEPARATOR . $file;
+                        $rela_path = SITE_URL.'/static/js/neweditor/dialogs/attachment/fileTypeImages/'.$file;
                         $result[] = $rela_path;
                     }
                 }
