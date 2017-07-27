@@ -619,8 +619,11 @@ class questioncontrol extends base
 
     function onview()
     {
+        if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+            header("location:user/login");
+            exit();
+        }
         //先检查是否有权限查看
-
         $useragent = $_SERVER['HTTP_USER_AGENT'];
 
 

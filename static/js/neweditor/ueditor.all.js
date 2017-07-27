@@ -27277,7 +27277,7 @@ UE.ui = baidu.editor.ui = {};
                 this.editor.container.style.zIndex && (this.getDom().style.zIndex = this.editor.container.style.zIndex * 1 + 10);
                 this._hidden = false;
                 this.fireEvent('show');
-                baidu.editor.ui.uiUtils.getFixedLayer().style.zIndex = this.getDom().style.zIndex - 4;
+                baidu.editor.ui.uiUtils.getFixedLayer().style.zIndex = this.getDom().style.zIndex + 4;
             }
         },
         isHidden: function (){

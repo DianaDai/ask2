@@ -59,9 +59,10 @@ class categorymodel {
         	   	 	$category['image']=get_cid_dir($category['id'],'small');
         	 	$category['bigimage']=get_cid_dir($category['id'],'big');
         	 	 $category['follow'] = $this->is_followed($category['id'], $this->base->user['uid']);
-        	 	$category['miaosu']=cutstr( checkwordsglobal(strip_tags($category['miaosu'])), 40,'...');
-                 if($category['miaosu']==''){
-                 	$category['miaosu']="该专题暂无描述";
+        	 	$category['cutmiaosu']=cutstr( checkwordsglobal(strip_tags($category['miaosu'])), 72,'...');
+                $category['miaosu']=checkwordsglobal(strip_tags($category['miaosu']));
+        	 	if($category['cutmiaosu']==''){
+                 	$category['cutmiaosu']="该专题暂无描述";
                  }
         	 	$categorylist[] = $category;
         }

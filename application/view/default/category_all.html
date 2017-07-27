@@ -30,9 +30,9 @@
 </a>  
          
        <h4><a target="_blank" href="{url topic/catlist/$category1['id']}">{$category1['name']}</a></h4>
-    <p class="collection-description">
-{$category1['miaosu']}
-</p>
+    <div class="collection-description" title="{$category1['miaosu']}" style="word-break: break-all;max-height: 55px;text-overflow: ellipsis;overflow: hidden;">
+{$category1['cutmiaosu']}
+</div>
 {if $category1['follow']}
  <a class="btn btn-default following" id="attenttouser_{$category1['id']}" onclick="attentto_cat($category1['id'])"><i class="fa fa-check"></i><span>已关注</span></a>
     

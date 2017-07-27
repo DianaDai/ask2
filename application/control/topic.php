@@ -315,7 +315,10 @@ foreach ($topiclist as $key=>$val){
   */
 
  function ondefault(){
-
+     if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+         header("location:user/login");
+         exit();
+     }
 
      $cid =intval($this->get[2])?$this->get[2]:'all';
      @$page =max(1,intval($this->get[3]));
@@ -550,7 +553,10 @@ foreach ($topiclist as $key=>$val){
     }
 
     function ongetone(){
-    	
+        if ($this->user['uid'] == 0 || $this->user['uid'] == null) {
+            header("location:user/login");
+            exit();
+        }
     	$useragent = $_SERVER['HTTP_USER_AGENT']; 
  
       
