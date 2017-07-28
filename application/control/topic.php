@@ -577,7 +577,7 @@ foreach ($topiclist as $key=>$val){
         $count = count($nav_article);
         for ($i = 0; $i < $count; $i++)
         {
-            $categoryurl = '<a style="color: #777;" href="'.SITE_URL.'?topic/default/'.$nav_article[$i]['id'].'">'.$nav_article[$i]['name'].'/ </a>';
+            $categoryurl = '<a class="catecss" href="'.SITE_URL.'?topic/default/'.$nav_article[$i]['id'].'">'.$nav_article[$i]['name'].'/ </a>';
             $toptemp.= $categoryurl;
         }
         $toptemp= substr($toptemp,1,strlen($toptemp)-1);

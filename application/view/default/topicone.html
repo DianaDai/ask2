@@ -1,6 +1,14 @@
 ﻿<!--{template header}-->
 <link rel="stylesheet" media="all" href="{SITE_URL}static/css/bianping/css/detail.css" />
-   <script type="text/javascript" src="{SITE_URL}static/js/jquery.qrcode.min.js"></script> 
+   <script type="text/javascript" src="{SITE_URL}static/js/jquery.qrcode.min.js"></script>
+<style>
+    .catecss{
+        color: #777;
+    }
+    .catecss:hover{
+        color:#ea6f5a;
+    }
+</style>
 <div class="container index">
 <div class="row">
    <div class="col-xs-16 main">
@@ -95,7 +103,7 @@
             <!-- -->
 
             <!-- 文章内容 -->
-            <div class="show-content art-content">
+            <div class="show-content art-content" style="overflow: hidden;">
             
                 <p>
                 {eval    echo replacewords($topicone['describtion']);    }     

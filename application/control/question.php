@@ -705,7 +705,7 @@ class questioncontrol extends base
         $count = count($nav_ques);
         for ($i = 0; $i < $count; $i++)
         {
-            $categoryurl = '<a style="color: #777;" href="'.SITE_URL.'?new/default/'.$nav_ques[$i]['id'].'">'.$nav_ques[$i]['name'].'/ </a>';
+            $categoryurl = '<a class="catecss" href="'.SITE_URL.'?new/default/'.$nav_ques[$i]['id'].'">'.$nav_ques[$i]['name'].'/ </a>';
             $quetemp.=$categoryurl;
         }
         $quetemp= substr($quetemp,1,strlen($quetemp)-1);

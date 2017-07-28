@@ -20259,6 +20259,7 @@ UE.plugins['table'] = function () {
                     var defaultValue = getDefaultValue(me, table);
                     table.style.width = me.body.offsetWidth - (needIEHack ? parseInt(domUtils.getComputedStyle(me.body, 'margin-left'), 10) * 2 : 0) - defaultValue.tableBorder * 2 - (me.options.offsetWidth || 0) + 'px'
                 }
+                table.style.width='';
             })
         });
         me.addListener('blur', function () {
